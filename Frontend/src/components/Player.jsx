@@ -6,7 +6,7 @@ import { useState } from "react";
 
 function Player(){
   const {videoId} = useParams()
-  const [video, setVideo] = useState("")
+  const [video, setVideo] = useState(null)
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,7 +18,11 @@ function Player(){
     }
 
     getVideo()
-  },[])
+  },[videoId])
+
+  if (loading) {
+    return <p className="text-white p-4">Loading...</p>;
+  }
 
   return(
     <div className="w-full outline-1 p-4">
