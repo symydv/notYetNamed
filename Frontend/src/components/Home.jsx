@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/axios.js";
 
 function Home() {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
-
+  
+  const navigate = useNavigate()
   const search = searchParams.get("search");
+
+  function play(videoId){
+    navigate(`/player/${videoId}`)
+  }
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -33,7 +38,7 @@ function Home() {
       )}
 
       {videos.map((video) => (
-        <div key={video._id}>
+        <div onClick={()=>play(video._id)} key={video._id}>
           <img src={video.thumbnail} alt={video.title}/>
           <h3 className="text-stone-100">{video.title}</h3>
         </div>

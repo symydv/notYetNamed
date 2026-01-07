@@ -34,6 +34,7 @@ function Header() {
             <input
               type="text"
               placeholder="Search"
+              id="video-title"
               className="h-full w-96 px-4 outline-none bg-transparent"
               value={search}
               onChange={(e)=> setSearch(e.target.value)}
