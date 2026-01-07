@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    async function login() {
+      const res = await fetch("http://localhost:8000/api/v1/users/login",{
+        method:"post",
+        headers: {
+        "Content-Type": "application/json"
+        },
+        body: await JSON.stringify({
+          "email": "dev@2gmail.com",
+          "password": "1232123"
+        })
+      })
+      const result = await res.json();
+      authToken = result.data.accessToken;
+      console.log(result);
+      console.log(authToken);
+      
+      
+      
+    }
+    async function getVideos(){  const response = await fetch("http://localhost:8000/api/v1/videos/",{
+      headers: {
+        "Authorization": `Bearer ${authToken}`
+      }
+    })
+      const res = await response.json()
+      console.log(await res);
+      videoUrl = res.data[0].videoFile
+      const player = document.getElementById("player")
+      player.src = videoUrl
+    }
+    
+
+  </script>
+  <button onclick="login()">login</button>
+  <button onclick="getVideos()">Videos</button>
+  <video id="player" width="600" controls>
+    Your browser does not support the video tag.
+  </video>
+</body>
+</html>
