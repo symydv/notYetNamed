@@ -25,9 +25,14 @@ function Player(){
   }
 
   return(
-    <div className="w-full outline-1 p-4">
-      <video src={video.videoFile} controls></video>
+    <div className="aspect-video p-4 flex items-center justify-center">
+      <video
+        src={video.videoFile}
+        controls
+        className="w-full h-full rounded-xl"
+      />
     </div>
+
   )
 }
 

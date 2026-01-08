@@ -43,6 +43,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 
     const videos = await Video.find(filter)
+    .populate("owner", "username avatar")      // this will change the owner field from _id to {_id, username, avatar} in response only not in database, so that we can use it for frontend without changing our video schema
     .sort({[sortBy]: sortOrder} )              //.sort({ createdAt: -1 }) // Sort by createdAt descending
     .skip((pageNumber-1)*limitNumber)          //This skips the first N documents depending on which page you're on.
     .limit(limitNumber)                        // If limitNumber = 10, you get only 10 documents per page

@@ -7,7 +7,6 @@ function App() {
   return (
     < >
       <Header/>
-      
       {/* Push content below fixed header */}
       <main className="pt-16">
         <Outlet />
