@@ -36,13 +36,21 @@ function Player(){
   }
 
   return(
-    <div className="aspect-video p-4 flex items-center justify-center">
-      <video
-        src={video.videoFile}
-        controls
-        className="w-full h-full rounded-xl"
-        onPlay={()=>{played(videoId)}}
-      />
+    <div className="w-full h-full flex p-2">
+      {/* Player container */}
+      <div className="w-full  p-0.5 ">
+        
+        {/* Aspect ratio wrapper */}
+        <div className="aspect-video w-310 h-170 bg-black rounded-2xl overflow-hidden">
+          <video
+            src={video.videoFile}
+            controls
+            className="w-full h-full object-contain"
+            onPlay={() => played(videoId)}
+          />
+        </div>
+
+      </div>
     </div>
 
   )

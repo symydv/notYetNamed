@@ -17,19 +17,19 @@ function Header() {
   }
 
   return (
-    <div className="fixed top-0 left-0 w-full py-4 bg-gray-400">
+    <div className="fixed top-0 left-0 w-full py-4 bg-gray-500 z-50">
       
       <div className="relative flex items-center px-4">
         
         {/* Left */}
-        <div className="font-semibold">
+        <div className="font-bold text-white">
           Header
         </div>
 
         {/* Center */}
         
         <form onSubmit={handleSubmit } className="absolute left-1/2 -translate-x-1/2 flex items-center">
-          <div className="flex items-center h-10 border border-gray-500 rounded-full overflow-hidden bg-white">
+          <div className="flex items-center h-10 border border-gray-500 rounded-full overflow-hidden bg-gray-300">
 
             <input
               type="text"
@@ -42,7 +42,7 @@ function Header() {
 
             <button
               type="submit"
-              className="h-full px-5 bg-gray-200 hover:bg-gray-300 border-l border-gray-400"
+              className="h-full px-5 bg-white hover:bg-gray-300 border-l border-gray-400"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
