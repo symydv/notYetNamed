@@ -16,7 +16,7 @@ export {asyncHandler}
 
 
 //const asyncHandler = (func) => () => {}  //this types of syntax is used for higher order functions it is used when we give a funcion as a parameter to our function, to understand it better it can be written like:
-//const asyncHandler = (func) => () => {() => {}}
+//const asyncHandler = (func) => {() => {}}
 
 
 //this below is try catch method to do the same above code.

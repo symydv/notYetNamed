@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/axios";
@@ -8,6 +8,15 @@ function Player(){
   const {videoId} = useParams()
   const [video, setVideo] = useState(null)
   const [loading, setLoading] = useState(true);
+
+  const viewSentRef = useRef(false);
+
+  async function played(videoId) {
+    if (viewSentRef.current) return;
+
+    viewSentRef.current = true;
+    await api.post(`/videos/${videoId}/view`);
+  }
 
   useEffect(() => {
     const getVideo = async()=>{
@@ -20,6 +29,8 @@ function Player(){
     getVideo()
   },[videoId])
 
+  
+
   if (loading) {
     return <p className="text-white p-4">Loading...</p>;
   }
@@ -30,6 +41,7 @@ function Player(){
         src={video.videoFile}
         controls
         className="w-full h-full rounded-xl"
+        onPlay={()=>{played(videoId)}}
       />
     </div>
 

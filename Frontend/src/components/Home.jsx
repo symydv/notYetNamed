@@ -86,7 +86,7 @@ function Home() {
               <h3 className="text-stone-100 font-semibold ">{video.title}</h3>  {/**make changes to it later. */}
               <h4 className="text-stone-100 font-light">{video.owner.username}</h4>
               <div className="flex gap-1">
-                <h5 className="text-white">{video.views} views</h5>
+                <h5 className="text-white">{video.views} views(approx)</h5>
                 <div className="text-white font-extralight"> •</div>
                 <div className="text-white">{timeAgo(video.createdAt)}</div>
               </div>

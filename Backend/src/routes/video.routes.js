@@ -6,6 +6,7 @@ import {
     publishAVideo,
     togglePublishStatus,
     updateVideo,
+    addView
 } from "../controllers/video.controller.js"
 import {verifyJWT} from "../middlewares/auth.middleware.js"
 import {upload} from "../middlewares/multer.middleware.js"
@@ -38,6 +39,7 @@ router
     .delete(verifyJWT, deleteVideo)
     .patch(verifyJWT, upload.single("thumbnail"), updateVideo); //.patch : Common Use Case: You want to modify one or more properties without replacing the entire document.
 
+router.route("/:videoId/view").post(addView);
 
 router.route("/toggle/publish/:videoId").patch(verifyJWT, togglePublishStatus);
 
