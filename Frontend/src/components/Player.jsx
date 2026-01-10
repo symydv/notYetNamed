@@ -45,7 +45,7 @@ function Player(){
             src={video.videoFile}
             controls
             className="w-full h-full object-contain"
-            preload="metadata"  //Only loads metadata (duration, dimensions), Starts fetching video on play
+            preload="metadata"  //Only loads metadata (duration, dimensions), Starts fetching video on play (to optimize a little bit)
             controlsList="nodownload"   //Hides download option in some browsers
             onPlay={() => played(videoId)}
           />

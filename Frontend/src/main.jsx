@@ -8,6 +8,7 @@ import { Login } from './components/auth/Login.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { Signup } from './components/auth/Signup.jsx'
 import { AuthLayout } from './AuthLayout.jsx'
+import { GuestRoute } from './GuestRoute.jsx'
 
 
 const router = createBrowserRouter([
@@ -30,12 +31,20 @@ const router = createBrowserRouter([
     element: <AuthLayout/>,
     children: [
       {
-        path: "login",
-        element: <Login/>
+        path: "login", //wraped inside guest route to protect it from logged in users.
+        element: (
+          <GuestRoute> 
+            <Login/>
+          </GuestRoute>
+        ) 
       },
       {
         path: "signup",
-        element: <Signup/>
+        element: (
+          <GuestRoute> 
+            <Signup/>
+          </GuestRoute>
+        ) 
       }
     ]
   }

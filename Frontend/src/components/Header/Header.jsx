@@ -5,6 +5,8 @@ import { getAvatarUrl } from "../../utils/cloudinary.js";
 
 function Header() {
   const [search, setSearch] = useState("")
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const navigate = useNavigate()
 
   const handleSubmit = (e)=>{
@@ -32,7 +34,10 @@ function Header() {
   const logoutHandler = async(e)=>{
     // e.preventDefault() //we need preventDefault only for forms and links (Preventing form submission, Preventing anchor navigation, Preventing page reload)
     await logout()
+    setShowLogoutModal(false)
   }
+
+
 
   return (
     <div className="fixed top-0 left-0 w-full py-4 bg-gray-500 z-50">
@@ -96,12 +101,48 @@ function Header() {
                 alt="profile"
                 className="w-10 h-10 rounded-full cursor-pointer"
               />
-              <button className="bg-gray-700 text-white rounded-2xl p-1 hover:bg-gray-600 cursor-pointer" onClick={logoutHandler}>Logout</button>
+              <button className="bg-gray-700 text-white rounded-2xl p-1 hover:bg-gray-600 cursor-pointer" onClick={()=> setShowLogoutModal(true)}>Logout</button>
             </div>
             
           )}
         </div>
       </div>
+
+        {/* for logout conformation */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          
+          {/* Background overlay */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowLogoutModal(false)}
+          />
+
+          {/* Modal */}
+          <div className="relative bg-zinc-900 text-white rounded-xl p-6 w-80 z-10">
+            <h2 className="text-lg font-semibold mb-2">Log out?</h2>
+            <p className="text-sm text-gray-400 mb-4">
+              Are you sure you want to log out?
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                className="px-4 py-1 rounded-lg bg-gray-700 hover:bg-gray-600"
+                onClick={() => setShowLogoutModal(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="px-4 py-1 rounded-lg bg-red-600 hover:bg-red-700"
+                onClick={logoutHandler}
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
