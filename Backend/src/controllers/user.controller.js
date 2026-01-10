@@ -206,7 +206,7 @@ const logoutUser = asyncHandler(async(req, res) => {
         }
     )
     
-    console.log("User in logout:", req.user) //jsut to check if we are getting the correct user.
+    // console.log("User in logout:", req.user) //jsut to check if we are getting the correct user.
 
     const options = {
         httpOnly: true, //JS on the client can’t access these cookies (prevents XSS)

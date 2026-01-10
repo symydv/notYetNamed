@@ -122,7 +122,7 @@ function Header() {
           <div className="relative bg-zinc-900 text-white rounded-xl p-6 w-80 z-10">
             <h2 className="text-lg font-semibold mb-2">Log out?</h2>
             <p className="text-sm text-gray-400 mb-4">
-              Are you sure you want to log out?
+              सही में?!!
             </p>
 
             <div className="flex justify-end gap-3">
