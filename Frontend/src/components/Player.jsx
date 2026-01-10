@@ -29,12 +29,11 @@ function Player(){
     getVideo()
   },[videoId])
 
-  
-
   if (loading) {
     return <p className="text-white p-4">Loading...</p>;
   }
 
+  
   return(
     <div className="w-full h-full flex p-2">
       {/* Player container */}
@@ -46,6 +45,8 @@ function Player(){
             src={video.videoFile}
             controls
             className="w-full h-full object-contain"
+            preload="metadata"  //Only loads metadata (duration, dimensions), Starts fetching video on play
+            controlsList="nodownload"   //Hides download option in some browsers
             onPlay={() => played(videoId)}
           />
         </div>

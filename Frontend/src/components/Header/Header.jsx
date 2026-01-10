@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 function Header() {
-  const isLoggedIn = false; // later from Redux / Context
   const [search, setSearch] = useState("")
   const navigate = useNavigate()
 
@@ -14,6 +14,23 @@ function Header() {
     //navigate to home with search query (our backend supports)
     navigate(`/?search=${encodeURIComponent(search)}`)
 
+  }
+
+  const {user, loading, logout} = useAuth()
+
+  const goToLogin = (e)=>{
+    e.preventDefault()
+    navigate("/login")
+  }
+
+  const goToSignUp = (e)=>{
+    e.preventDefault()
+    navigate("/signup")
+  }
+
+  const logoutHandler = async(e)=>{
+    // e.preventDefault() //we need preventDefault only for forms and links (Preventing form submission, Preventing anchor navigation, Preventing page reload)
+    await logout()
   }
 
   return (
@@ -65,16 +82,22 @@ function Header() {
 
 
         <div className="ml-auto">
-          {!isLoggedIn ? (
-            <button className="px-4 py-1.5 bg-gray-800 text-white rounded-full hover:bg-gray-500">
-              Login
+          {!user ? (
+            <button className="flex px-4 py-1.5 bg-gray-800 text-white rounded-full hover:bg-gray-600">
+              <div onClick={goToLogin} className="hover:text-black">Login</div>
+              /
+              <div onClick={goToSignUp} className="hover:text-black">SignUp</div>
             </button>
           ) : (
-            <img
-              src="https://images.pexels.com/photos/30905185/pexels-photo-30905185.jpeg"
-              alt="profile"
-              className="w-10 h-10 rounded-full cursor-pointer"
-            />
+            <div className="flex gap-1">
+              <img
+                src="https://images.pexels.com/photos/30905185/pexels-photo-30905185.jpeg"
+                alt="profile"
+                className="w-10 h-10 rounded-full cursor-pointer"
+              />
+              <button className="bg-gray-700 text-white rounded-2xl p-1 hover:bg-gray-600 cursor-pointer" onClick={logoutHandler}>Logout</button>
+            </div>
+            
           )}
         </div>
       </div>
