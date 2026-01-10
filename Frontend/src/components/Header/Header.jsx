@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { getAvatarUrl } from "../../utils/cloudinary.js";
 
 function Header() {
   const [search, setSearch] = useState("")
@@ -91,7 +92,7 @@ function Header() {
           ) : (
             <div className="flex gap-1">
               <img
-                src="https://images.pexels.com/photos/30905185/pexels-photo-30905185.jpeg"
+                src={getAvatarUrl(user.avatar)}  //this function is to resize the avatar image for optimization, not neccesary
                 alt="profile"
                 className="w-10 h-10 rounded-full cursor-pointer"
               />
