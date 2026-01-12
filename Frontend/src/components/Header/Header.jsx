@@ -97,7 +97,8 @@ function Header() {
           ) : (
             <div className="flex gap-1">
               <img
-                src={getAvatarUrl(user.avatar)}  //this function is to resize the avatar image for optimization, not neccesary
+                loading="lazy"
+                src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`)}  //this function is to resize the avatar image for optimization, not neccesary
                 alt="profile"
                 className="w-10 h-10 rounded-full cursor-pointer"
               />
@@ -130,7 +131,7 @@ function Header() {
                 className="px-4 py-1 rounded-lg bg-gray-700 hover:bg-gray-600"
                 onClick={() => setShowLogoutModal(false)}
               >
-                Cancel
+                नहीं रे.
               </button>
 
               <button

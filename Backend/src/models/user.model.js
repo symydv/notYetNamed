@@ -1,6 +1,7 @@
 import mongoose, {Schema} from "mongoose";  //Schema isliye taki baar baar mongoose.Schema na likhna pade.
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
+import { type } from "os";
 
 
 
@@ -37,14 +38,14 @@ const userschema = new Schema(
     },
     avatar: {
         type: String, //cloudinary url
-        required: true,
     },
     coverImage: {
         type: String //cloudinary url
     },
     password: {
         type: String,
-        required: [true, "password is required"]
+        required: [true, "password is required"],
+        // select:false      // so that on any call of "User" password field is not returned.but right now we are not adding it because we have to change our login (baad me karenge.)
     },
     refreshToken: {
         type: String
@@ -55,6 +56,16 @@ const userschema = new Schema(
     updatedAt: {
         type: Date
     },
+    isEmailVerified:{
+        type: Boolean,
+        default: false
+    },
+    emailVerificationToken:{
+        type: String
+    },
+    emailVerificationExpiry:{
+        type: Date
+    }
     },
     {
         timestamps: true

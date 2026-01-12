@@ -89,24 +89,16 @@ const registerUser = asyncHandler( async(req, res) => {
     if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
         coverImageLocalPath = req.files.coverImage[0].path;
     }
-
-    if (!avatarLocalPath) {
-        throw new ApiError(400, "avatar image is required") //coverimage is not neccessarily  required as we have saved in models
-    }
     
     //5.
     const avatar = await uploadOnCloudinary(avatarLocalPath) //you have to wait till this process is finished.
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
-    if (!avatar) {
-        throw new ApiError(400, "avatar image is required")
-    }
-
     //6.
     const user = await User.create({ //Used to insert a new document into a MongoDB collection (database)
         fullName,
-        avatar: avatar.url,
-        coverImage: coverImage?.url || "", //as we have not checked that coverImage is provided or not
+        avatar: avatar?.url || null,
+        coverImage: coverImage?.url || null, //as we have not checked that coverImage is provided or not
         email,
         password,
         username: username.toLowerCase()
