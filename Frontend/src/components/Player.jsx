@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/axios";
 import { useState } from "react";
+import { getAvatarUrl } from "../utils/cloudinary";
 
 function Player(){
   const {videoId} = useParams()
@@ -35,16 +36,16 @@ function Player(){
 
   
   return(
-    <div className="w-full h-full flex p-2">
+    <div className="w-full h-full  p-5">
       {/* Player container */}
       <div className="w-full  p-0.5 ">
         
         {/* Aspect ratio wrapper */}
-        <div className="aspect-video w-310 h-170 bg-black rounded-2xl overflow-hidden">
+        <div className="aspect-video w-310 h-170 bg-black rounded-2xl overflow-hidden  ">
           <video
             src={video.videoFile}
             controls
-            className="w-full h-full object-contain"
+            className="w-full h-full object-cover block"
             preload="metadata"  //Only loads metadata (duration, dimensions), Starts fetching video on play (to optimize a little bit)
             controlsList="nodownload"   //Hides download option in some browsers
             onPlay={() => played(videoId)}
@@ -52,7 +53,21 @@ function Player(){
         </div>
 
       </div>
+      <div className="p-1">
+        <div className="text-white text-2xl font-semibold">{video.title}</div>
+      </div>
+      <div className="flex gap-2">
+        <div className="w-10 h-10 rounded-full overflow-hidden translate-x-1">
+          <img src={getAvatarUrl(video.owner.avatar)} alt="" className="w-full h-full object-cover block"/>
+        </div>
+        <div className="p-1">
+          <div className="text-stone-100 font-medium">{video.owner.username}</div>
+        </div>
+      </div>
+      
+      
     </div>
+    
 
   )
 }

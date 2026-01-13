@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/axios.js";
+import { getAvatarUrl } from "../utils/cloudinary.js";
 
 function Home() {
   const [videos, setVideos] = useState([]);
@@ -80,7 +81,14 @@ function Home() {
           </div>
           <div className="flex relative gap-2 p-1.5">
             <div className=" text-black">
-              <div className="top-0 rounded-2xl bg-white p-0.5">Img</div>
+              <div className="top-0 rounded-2xl bg-white  size-8">
+                <img 
+                  className="w-8 h-8 rounded-full cursor-pointer"
+                  src={getAvatarUrl(video.owner.avatar || `https://ui-avatars.com/api/?name=${video.owner.username}&background=0f172a&color=fff`)} 
+                  alt="Profile" 
+                />
+              </div>
+              
             </div>
             <div>
               <h3 className="text-stone-100 font-semibold ">{video.title}</h3>  {/**make changes to it later. */}

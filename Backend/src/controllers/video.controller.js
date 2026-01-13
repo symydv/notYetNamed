@@ -121,7 +121,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: get video by id
-    const video = await Video.findById(videoId)
+    const video = await Video.findById(videoId).populate("owner", "username avatar")
     if (!video) {
         throw new ApiError(404, "video not found")   
     }

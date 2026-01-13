@@ -40,7 +40,7 @@ function Header() {
 
 
   return (
-    <div className="fixed top-0 left-0 w-full py-4 bg-gray-500 z-50">
+    <div className="fixed top-0 left-0 w-full py-3 bg-gray-500 z-50">
       
       <div className="relative flex items-center px-4">
         
