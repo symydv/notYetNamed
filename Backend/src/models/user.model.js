@@ -47,6 +47,10 @@ const userschema = new Schema(
         required: [true, "password is required"],
         // select:false      // so that on any call of "User" password field is not returned.but right now we are not adding it because we have to change our login (baad me karenge.)
     },
+    subscriberCount:{     //added later on 13/01/26, used in toggel subscription to increase and decrease it there and shown on player page.
+        type: Number,
+        default:0
+    },
     refreshToken: {
         type: String
     },

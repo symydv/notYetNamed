@@ -9,6 +9,9 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 const toggleSubscription = asyncHandler(async (req, res) => {
     const {channelId} = req.params
     // TODO: toggle subscription
+    if (!isValidObjectId(channelId)) {
+        throw new ApiError(400, "Invalid channel id")
+    }
     const channel = await User.findById(channelId);
     if (!channel) {
         throw new ApiError(404, "Channel not found.")
@@ -23,6 +26,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
         const alreadySubscribed = await Subscription.findOne({subscriber : subscriber._id, channel: channelId})
         if (alreadySubscribed) {
             await Subscription.deleteOne({_id: alreadySubscribed._id})
+            await User.findByIdAndUpdate(channelId, {$inc: {subscriberCount: -1}})
             message = "Channel unsubscribed successfully."
             isSubscribed = false;
         }else{
@@ -30,6 +34,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
             channel: channelId,
             subscriber: subscriber._id
             })
+            await User.findByIdAndUpdate(channelId, {$inc: {subscriberCount: 1}})
             message = "Channel subscribed successfully."
             isSubscribed = true;
         }
@@ -44,6 +49,10 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 // controller to return subscriber list of a channel
 const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     const {channelId} = req.params
+
+    if (!isValidObjectId(channelId)) {
+        throw new ApiError(400, "Invalid channel id")
+    }
     const channel = await User.findById(channelId)
     if (!channel) {
         throw new ApiError(404,"channel not found")
@@ -91,7 +100,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
         },
         {
             $project:{
-                subscriberCount:{ $size: "$subscribers" }, //using this we elemenated the need of saperate "$addFields".
+                subscriberCount:"$subscriberCount", //we already store number of subscribers in our user schema.
                 subscriberList: {
                     $slice: ["$subscribers", skip, limit] //pegination
                 }

@@ -23,6 +23,10 @@ const videoSchema = new Schema(
             type: Number, //duration bhi claudnary website automatically de dega.
             required: true
         },
+        likeCount:{
+            type: Number,
+            default: 0
+        },
         views: {
             type: Number,
             default: 0

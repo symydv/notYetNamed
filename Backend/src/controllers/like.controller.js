@@ -11,6 +11,7 @@ import { User } from "../models/user.model.js"
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
     const {videoId} = req.params
+    let isLiked;
     //TODO: toggle like on video
     if (!mongoose.Types.ObjectId.isValid(videoId)) {
         throw new ApiError(400, "Invalid video ID.");
@@ -20,20 +21,28 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Video not found.");
     }
 
-    let videoLike = await Like.findOne({video:videoId, likedBy: req.user._id});
+    let videoLike = await Like.findOne({targetType:"video", targetId: videoId, likedBy: req.user._id});
     let message = ""
 
     if (videoLike) {
         await videoLike.deleteOne()
+        await Video.findByIdAndUpdate(videoId, {
+            $inc: { likeCount: -1 }
+        });
+        isLiked = false;
         message = "Video unliked successfully."
     } else {
-        videoLike = await Like.create({video: videoId, likedBy: req.user._id})
+        videoLike = await Like.create({targetType:"video", targetId: videoId, likedBy: req.user._id})
+        await Video.findByIdAndUpdate(videoId, {$inc:{likeCount: 1}})
+        isLiked= true
         message = "Video liked successfully."
     }
 
+    const updatedVideo = await Video.findById(videoId).select("likeCount");
+
     return res
     .status(200)
-    .json(new ApiResponse(200, videoLike, message))
+    .json(new ApiResponse(200, {isLiked, likeCount:updatedVideo.likeCount }, message))
 })
 
 const toggleCommentLike = asyncHandler(async (req, res) => {
@@ -47,14 +56,14 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
         throw new ApiError(404, "comment not found.")
     }
 
-    let commentLike = await Like.findOne({comment:commentId, likedBy: req.user._id});
+    let commentLike = await Like.findOne({targetType:"comment", targetId: commentId, likedBy: req.user._id});
     let message =""
 
     if (commentLike) {
         await commentLike.deleteOne()
         message = "comment unliked successfully."
     } else {
-        commentLike = await Like.create({comment:commentId, likedBy: req.user._id})
+        commentLike = await Like.create({targetType:"comment", targetId: commentId, likedBy: req.user._id})
         message = "comment liked successfully."
     }
 
@@ -72,13 +81,13 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
         throw new ApiError(404, "tweet not found.")
     }
 
-    let tweetLike = await Like.findOne({tweet: tweetId, likedBy: req.user._id})
+    let tweetLike = await Like.findOne({targetType:"tweet", targetId: tweetId, likedBy: req.user._id})
     let message = ""
     if (tweetLike) {
         await tweetLike.deleteOne()
         message = "tweet  unliked successfully"
     }else{
-        tweetLike = await Like.create({tweet: tweetId, likedBy: req.user._id})
+        tweetLike = await Like.create({targetType:"tweet", targetId: tweetId, likedBy: req.user._id})
         message = "tweet liked successfully"
     }
 
@@ -107,11 +116,11 @@ const getLikedVideos = asyncHandler(async (req, res) => {
                 foreignField: "likedBy",
                 as: "myLikes",
                 pipeline: [
-                    { $match: { video: { $exists: true } } },
+                    {  $match: { targetType: "video" } },
                     {
                         $lookup: {
                             from: "videos",
-                            localField: "video",
+                            localField: "targetId",
                             foreignField: "_id",
                             as: "likedVideo"
                         }

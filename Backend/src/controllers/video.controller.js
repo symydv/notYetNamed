@@ -121,14 +121,24 @@ const publishAVideo = asyncHandler(async (req, res) => {
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: get video by id
-    const video = await Video.findById(videoId).populate("owner", "username avatar")
+    const video = await Video.findById(videoId).populate("owner", "username avatar subscriberCount")
     if (!video) {
         throw new ApiError(404, "video not found")   
     }
 
+    let isLiked = false; // tihs field will provide info about video is liked or not by current user, upon first render
+
+    if (req.user) {
+        isLiked = await Like.exists({
+        targetType: "video",
+        targetId:videoId ,
+        likedBy: req.user._id
+        });
+    }
+
     return res
     .status(200)
-    .json(new ApiResponse(200, video, "video fetched successfully."))
+    .json(new ApiResponse(200, {video, isLiked}, "video fetched successfully."))
 })
 
 const updateVideo = asyncHandler(async (req, res) => {
@@ -234,7 +244,10 @@ const deleteVideo = asyncHandler(async (req, res) => {
     await Comment.deleteMany({ video: videoId });
 
     // Delete all likes on this video
-    await Like.deleteMany({ video: videoId });
+    await Like.deleteMany({
+        targetType: "video",
+        targetId: videoId
+    });
 
     // Remove this video from all playlists that contain it
     await Playlist.updateMany(
