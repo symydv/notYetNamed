@@ -31,7 +31,7 @@ function Player(){
       const res = await api.get(`/videos/${videoId}`)
       setVideo(res.data.data.video);
       setIsLiked(res.data.data.isLiked);
-      console.log(res.data.data.isLiked);
+      // console.log(res.data.data.isLiked);
       setLikeCount(res.data.data.video.likeCount);
       
       setLoading(false)
