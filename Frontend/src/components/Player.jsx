@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { isSession, useParams } from "react-router-dom";
 import api from "../api/axios";
 import { useState } from "react";
 import { getAvatarUrl } from "../utils/cloudinary";
@@ -13,6 +13,8 @@ function Player(){
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
+  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [disable, setDisable] = useState(false)
   
   const {user} = useAuth()
 
@@ -33,6 +35,8 @@ function Player(){
       setIsLiked(res.data.data.isLiked);
       // console.log(res.data.data.isLiked);
       setLikeCount(res.data.data.video.likeCount);
+      // console.log(res.data.data.isSubscribed);
+      setIsSubscribed(res.data.data.isSubscribed)
       
       setLoading(false)
     }
@@ -50,15 +54,34 @@ function Player(){
     }
 
     try {
+      setDisable(true)
       const res = await api.post(`/likes/toggle/v/${videoId}`)
       setIsLiked(res.data.data.isLiked);
       setLikeCount(res.data.data.likeCount)
+      setDisable(false)
     } catch (error) {
+      setDisable(false)
       toast.error("Something went wrong");
     }
     
   }
 
+  const subscriptionHandler = async()=>{
+    if(!user){
+      toast("sign in to subscribe", {id: "login required"})
+      return;
+    }
+
+    try {
+      setDisable(true)
+      const res = await api.patch(`/subscriptions/${video.owner._id}`)
+      setIsSubscribed(res.data.data.isSubscribed)
+      setDisable(false)
+    } catch (error) {
+      setDisable(false)
+      toast.error("Something went wrong")
+    }
+  }
   
   return(
     <div  className="w-full px-6 py-4 flex ">
@@ -93,7 +116,7 @@ function Player(){
             </div>
 
             <div>
-              <div className="text-stone-100 font-medium leading-tight">
+              <div className="text-stone-100 font-medium leading-tight cursor-pointer">
                 {video.owner.username}
               </div>
               <div className="text-stone-400 text-sm">
@@ -107,7 +130,7 @@ function Player(){
             <button
               onClick={likeHandler}
               className={`
-                flex items-center gap-2 px-4 py-2 rounded-full
+                flex items-center gap-2 px-4 py-2 cursor-pointer rounded-full
                 transition-all duration-200
                 ${isLiked
                   ? "bg-blue-100 text-blue-600"
@@ -131,8 +154,13 @@ function Player(){
             </button>
 
             {/* Subscribe */}
-            <button className="bg-white text-black px-4 py-2 rounded-full font-medium hover:bg-stone-200 transition">
-              Subscribe
+            <button 
+              disabled={disable}
+              className={isSubscribed?"bg-slate-700 text-stone-400 px-4 py-2 rounded-full font-medium hover:bg-slate-500 transition cursor-pointer":"bg-white text-black px-4 py-2 rounded-full font-medium hover:bg-stone-200 transition cursor-pointer"}
+              onClick={subscriptionHandler}
+              >
+              {isSubscribed?"Subscribed":"Subscribe"}
+              
             </button>
           </div>
         </div>

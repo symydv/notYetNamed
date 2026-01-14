@@ -9,6 +9,7 @@ import { v2 as cloudinary} from "cloudinary"
 import { Comment } from "../models/comment.model.js"
 import { Like } from "../models/like.model.js"
 import { Playlist } from "../models/playlist.model.js"
+import { Subscription } from "../models/subscription.model.js"
 
 //TODO : After completion of whole code write aggregation pipelines to connect more things.as you need many user details like user's avatar and username , subscribers , views, likes aling with video. 
 
@@ -118,7 +119,9 @@ const publishAVideo = asyncHandler(async (req, res) => {
     
 })
 
-const getVideoById = asyncHandler(async (req, res) => {
+
+//below function returns us many resourses for video player page (might consider to move all this info to a dedicated videoPage controller)
+const getVideoById = asyncHandler(async (req, res) => {  
     const { videoId } = req.params
     //TODO: get video by id
     const video = await Video.findById(videoId).populate("owner", "username avatar subscriberCount")
@@ -127,18 +130,23 @@ const getVideoById = asyncHandler(async (req, res) => {
     }
 
     let isLiked = false; // tihs field will provide info about video is liked or not by current user, upon first render
-
+    let isSubscribed = false;
     if (req.user) {
         isLiked = await Like.exists({
         targetType: "video",
         targetId:videoId ,
         likedBy: req.user._id
         });
+
+        isSubscribed = await Subscription.exists({
+            subscriber: req.user._id,
+            channel: video.owner._id
+        })
     }
 
     return res
     .status(200)
-    .json(new ApiResponse(200, {video, isLiked}, "video fetched successfully."))
+    .json(new ApiResponse(200, {video, isLiked, isSubscribed}, "video fetched successfully."))
 })
 
 const updateVideo = asyncHandler(async (req, res) => {

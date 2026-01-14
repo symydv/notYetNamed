@@ -35,6 +35,7 @@ function Header() {
     // e.preventDefault() //we need preventDefault only for forms and links (Preventing form submission, Preventing anchor navigation, Preventing page reload)
     await logout()
     setShowLogoutModal(false)
+    navigate("/")
   }
 
 
