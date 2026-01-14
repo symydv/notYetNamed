@@ -14,7 +14,9 @@ function Player(){
   const [isLiked, setIsLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
   const [isSubscribed, setIsSubscribed] = useState(false)
-  const [disable, setDisable] = useState(false)
+
+  const [likeLoading, setLikeLoading] = useState(false);
+  const [subLoading, setSubLoading] = useState(false);
   
   const {user} = useAuth()
 
@@ -53,15 +55,17 @@ function Player(){
       return;
     }
 
+    if(likeLoading) return;
+
     try {
-      setDisable(true)
+      setLikeLoading(true)
       const res = await api.post(`/likes/toggle/v/${videoId}`)
       setIsLiked(res.data.data.isLiked);
       setLikeCount(res.data.data.likeCount)
-      setDisable(false)
     } catch (error) {
-      setDisable(false)
       toast.error("Something went wrong");
+    }finally{
+      setLikeLoading(false)
     }
     
   }
@@ -72,14 +76,16 @@ function Player(){
       return;
     }
 
+    if(subLoading) return;
+
     try {
-      setDisable(true)
+      setSubLoading(true)
       const res = await api.patch(`/subscriptions/${video.owner._id}`)
       setIsSubscribed(res.data.data.isSubscribed)
-      setDisable(false)
     } catch (error) {
-      setDisable(false)
       toast.error("Something went wrong")
+    }finally{
+      setSubLoading(false)
     }
   }
   
@@ -128,6 +134,7 @@ function Player(){
           <div className="flex items-center gap-3">
             {/* Like */}
             <button
+              disabled={likeLoading}
               onClick={likeHandler}
               className={`
                 flex items-center gap-2 px-4 py-2 cursor-pointer rounded-full
@@ -154,13 +161,27 @@ function Player(){
             </button>
 
             {/* Subscribe */}
-            <button 
-              disabled={disable}
-              className={isSubscribed?"bg-slate-700 text-stone-400 px-4 py-2 rounded-full font-medium hover:bg-slate-500 transition cursor-pointer":"bg-white text-black px-4 py-2 rounded-full font-medium hover:bg-stone-200 transition cursor-pointer"}
+            <button
+              disabled={subLoading}
               onClick={subscriptionHandler}
-              >
-              {isSubscribed?"Subscribed":"Subscribe"}
-              
+              className={`px-4 py-2 rounded-full font-medium transition
+                ${
+                  isSubscribed
+                    ? "bg-slate-700 text-stone-400"
+                    : "bg-white text-black"
+                }
+                ${
+                  subLoading
+                    ? "opacity-60 cursor-not-allowed"
+                    : "hover:bg-slate-500 hover:text-stone-200 cursor-pointer"
+                }
+              `}
+            >
+              {subLoading
+                ? "Processing..."
+                : isSubscribed
+                ? "Subscribed"
+                : "Subscribe"}
             </button>
           </div>
         </div>
