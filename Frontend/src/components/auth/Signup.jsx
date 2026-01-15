@@ -15,6 +15,8 @@ export const Signup = ()=>{
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const handleSubmit = async(e)=>{
     e.preventDefault()
@@ -86,30 +88,51 @@ export const Signup = ()=>{
         </div>
 
         {/* Password */}
-        <div className="mb-6">
+        <div>
           <label className="block text-sm text-gray-400 mb-1">
-            Password
+            password
           </label>
+        </div>
+        <div className="relative mb-4">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none"
+            className="w-full px-4 py-2 pr-12 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none"
           />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword(prev => !prev)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 hover:text-white"
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
         </div>
         {/* confirm password */}
         <div className="mb-6">
           <label className="block text-sm text-gray-400 mb-1">
             confirm password
           </label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            className="w-full px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none"
-          />
+          <div className="flex relative">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none"
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(prev => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 hover:text-white"
+            >
+              {showConfirmPassword ? "Hide" : "Show"}
+            </button>
+          </div>
+          
         </div>
 
         {/* Error */}
