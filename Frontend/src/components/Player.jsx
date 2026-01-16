@@ -101,6 +101,7 @@ function Player(){
             preload="metadata"
             controlsList="nodownload"
             onPlay={() => played(videoId)}
+            onContextMenu={(e) => e.preventDefault()} //used to prevent right clicks from mouse
           />
         </div>
 
@@ -183,6 +184,9 @@ function Player(){
                 ? "Subscribed"
                 : "Subscribe"}
             </button>
+          </div>
+          <div className="text-white ml-100">
+            views
           </div>
         </div>
       </div>

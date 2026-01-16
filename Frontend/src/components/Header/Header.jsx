@@ -52,8 +52,8 @@ function Header() {
 
         {/* Center */}
         
-        <form onSubmit={handleSubmit } className="absolute left-1/2 -translate-x-1/2 flex items-center">
-          <div className="flex items-center h-10 border border-gray-500 rounded-full overflow-hidden bg-gray-300">
+        <form onSubmit={handleSubmit } className="absolute left-1/2 -translate-x-1/2 flex items-center ">
+          <div className="hidden sm:flex items-center h-10 border border-gray-500 rounded-full overflow-hidden bg-gray-300 sm:w-sm  md:w-md lg:w-full">
 
             <input
               type="text"
