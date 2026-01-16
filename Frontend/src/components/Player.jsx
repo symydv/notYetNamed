@@ -6,6 +6,7 @@ import { useState } from "react";
 import { getAvatarUrl } from "../utils/cloudinary";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import { timeAgo } from "../utils/timeAgo.js";
 
 function Player(){
   const {videoId} = useParams()
@@ -89,110 +90,122 @@ function Player(){
     }
   }
   
-  return(
-    <div  className="w-full px-6 py-4 flex ">
-      <div className="w-full max-w-6xl">
-        {/* Video */}
-        <div className="aspect-video bg-black rounded-2xl overflow-hidden">
-          <video
-            src={video.videoFile}
-            controls
-            className="w-full h-full object-cover block"
-            preload="metadata"
-            controlsList="nodownload"
-            onPlay={() => played(videoId)}
-            onContextMenu={(e) => e.preventDefault()} //used to prevent right clicks from mouse
-          />
+  return (
+  <div className="w-full px-6 py-4 flex justify-start">
+    <div className="w-full max-w-6xl">
+      {/* Video */}
+      <div className="aspect-video bg-black rounded-2xl overflow-hidden">
+        <video
+          src={video.videoFile}
+          controls
+          className="w-full h-full object-contain block"
+          preload="metadata"
+          controlsList="nodownload"
+          onPlay={() => played(videoId)}
+          onContextMenu={(e) => e.preventDefault()}
+        />
+      </div>
+
+      {/* Title */}
+      <h1 className="mt-4 text-white text-xl font-semibold leading-snug">
+        {video.title}
+      </h1>
+
+      {/* Views + Time */}
+      <div className="mt-1 flex items-center gap-2 text-sm text-stone-400">
+        <span>{video.views.toLocaleString()} views</span>
+        <span>•</span>
+        <span>{new Date(video.createdAt).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+        </span>
+      </div>
+
+      {/* Channel + Actions */}
+      <div className="mt-4 flex items-center justify-between flex-wrap gap-4">
+        {/* Channel info */}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full overflow-hidden">
+            <img
+              src={getAvatarUrl(
+                video.owner.avatar ||
+                  `https://ui-avatars.com/api/?name=${video.owner.username}&background=0f172a&color=fff`
+              )}
+              alt=""
+              className="w-full h-full object-cover block"
+            />
+          </div>
+
+          <div>
+            <div className="text-stone-100 font-medium leading-tight cursor-pointer">
+              {video.owner.username}
+            </div>
+            <div className="text-stone-400 text-sm">
+              {video.owner.subscriberCount} subscribers
+            </div>
+          </div>
         </div>
 
-        {/* Title */}
-        <h1 className="mt-4 text-white text-xl font-semibold leading-snug">
-          {video.title}
-        </h1>
-
-        {/* Channel row */}
-        <div className="mt-3 flex items-center gap-9">
-          {/*Channel info */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden">
-              <img
-                src={getAvatarUrl(video.owner.avatar || `https://ui-avatars.com/api/?name=${video.owner.username}&background=0f172a&color=fff`)}
-                alt=""
-                className="w-full h-full object-cover block"
-              />
-            </div>
-
-            <div>
-              <div className="text-stone-100 font-medium leading-tight cursor-pointer">
-                {video.owner.username}
-              </div>
-              <div className="text-stone-400 text-sm">
-                {video.owner.subscriberCount} subscribers
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Like */}
-            <button
-              disabled={likeLoading}
-              onClick={likeHandler}
-              className={`
-                flex items-center gap-2 px-4 py-2 cursor-pointer rounded-full
-                transition-all duration-200
-                ${isLiked
-                  ? "bg-blue-100 text-blue-600"
-                  : "bg-stone-800 text-white hover:bg-stone-700"}
-                active:scale-95
-              `}
+        {/* Actions */}
+        <div className="flex items-center gap-3">
+          {/* Like */}
+          <button
+            disabled={likeLoading}
+            onClick={likeHandler}
+            className={`
+              flex items-center gap-2 px-4 py-2 rounded-full
+              transition-all duration-200
+              ${isLiked
+                ? "bg-blue-100 text-blue-600"
+                : "bg-stone-800 text-white hover:bg-stone-700"}
+              active:scale-95
+              ${likeLoading ? "opacity-60 cursor-not-allowed" : ""}
+            `}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="w-5 h-5"
+              fill={isLiked ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-               <svg
-                viewBox="0 0 24 24 "
-                className="w-5 h-5"
-                fill={isLiked ? "currentColor" : "none"}
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M7 11v10M15 21H9a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2h6l1-4a2 2 0 0 0-2-2h-1" />
-              </svg>
+              <path d="M7 11v10M15 21H9a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2h6l1-4a2 2 0 0 0-2-2h-1" />
+            </svg>
+            <span className="text-sm font-medium">{likeCount}</span>
+          </button>
 
-              <span className="text-sm font-medium">{likeCount}</span>
-            </button>
-
-            {/* Subscribe */}
-            <button
-              disabled={subLoading}
-              onClick={subscriptionHandler}
-              className={`px-4 py-2 rounded-full font-medium transition
-                ${
-                  isSubscribed
-                    ? "bg-slate-700 text-stone-400"
-                    : "bg-white text-black"
-                }
-                ${
-                  subLoading
-                    ? "opacity-60 cursor-not-allowed"
-                    : "hover:bg-slate-500 hover:text-stone-200 cursor-pointer"
-                }
-              `}
-            >
-              {subLoading
-                ? "Processing..."
-                : isSubscribed
-                ? "Subscribed"
-                : "Subscribe"}
-            </button>
-          </div>
-          <div className="text-white ml-100">
-            views
-          </div>
+          {/* Subscribe */}
+          <button
+            disabled={subLoading}
+            onClick={subscriptionHandler}
+            className={`
+              px-4 py-2 rounded-full font-medium transition
+              ${isSubscribed
+                ? "bg-slate-700 text-stone-400"
+                : "bg-white text-black"}
+              ${
+                subLoading
+                  ? "opacity-60 cursor-not-allowed"
+                  : "hover:bg-slate-500 hover:text-stone-200"
+              }
+            `}
+          >
+            {subLoading
+              ? "Processing..."
+              : isSubscribed
+              ? "Subscribed"
+              : "Subscribe"}
+          </button>
         </div>
       </div>
     </div>
-    
-  )
+  </div>
+);
+
 }
 
 
