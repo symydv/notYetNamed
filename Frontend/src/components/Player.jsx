@@ -18,6 +18,11 @@ function Player(){
 
   const [likeLoading, setLikeLoading] = useState(false);
   const [subLoading, setSubLoading] = useState(false);
+
+  const [expanded, setExpanded] = useState(false)
+  const [isOverflowing, setIsOverflowing] = useState(false)
+  const descRef = useRef(null)
+
   
   const {user} = useAuth()
 
@@ -45,6 +50,13 @@ function Player(){
     }
     getVideo()
   },[videoId])
+
+  useEffect(() => {
+    if (!descRef.current ) return
+
+    const el = descRef.current
+    setIsOverflowing(el.scrollHeight > el.clientHeight) //check them on GPT. easy
+  }, [video?.description])
 
   if (loading) {
     return <p className="text-white p-4">Loading...</p>;
@@ -202,6 +214,39 @@ function Player(){
           </button>
         </div>
       </div>
+
+      {/* Description */}
+      <div className="mt-5 w-full bg-gray-800 rounded-2xl p-4">
+        <h1 className="font-semibold text-white">Description</h1>
+        <p
+          ref={descRef}
+          className={`
+            text-white text-sm leading-relaxed
+            whitespace-pre-wrap break-words
+            transition-all duration-200
+            ${expanded ? "" : "line-clamp-2 md:line-clamp-3"}
+          `}
+        >
+          {video.description}
+        </p>
+
+        {isOverflowing && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="mt-2 text-sm font-medium text-stone-300 hover:text-white"
+          >
+            {expanded ? "Show less" : "Show more"}
+          </button>
+        )}
+      </div>
+
+      {/* Comments */}
+      <div className="mt-6">
+        <h2 className="text-white text-lg font-semibold mb-4">
+          Comments
+        </h2>
+      </div>
+
     </div>
   </div>
 );
