@@ -7,6 +7,7 @@ import { getAvatarUrl } from "../utils/cloudinary";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import { timeAgo } from "../utils/timeAgo.js";
+import Comments from "./Comments.jsx";
 
 function Player(){
   const {videoId} = useParams()
@@ -241,11 +242,7 @@ function Player(){
       </div>
 
       {/* Comments */}
-      <div className="mt-6">
-        <h2 className="text-white text-lg font-semibold mb-4">
-          Comments
-        </h2>
-      </div>
+      <Comments videoId={videoId}/>
 
     </div>
   </div>

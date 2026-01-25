@@ -29,13 +29,17 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
     const totalComments = await Comment.countDocuments({video: videoId})
 
+    const hasMore = page < Math.ceil(totalComments / limit)
+
     return res
     .status(200)
     .json(new ApiResponse(200, {
+
         videoComments,
         totalComments,
         totalPages: Math.ceil(totalComments / limit),
         currentPage: page,
+        hasMore,
         message
     }, "video comments fetched successfully." ))
 

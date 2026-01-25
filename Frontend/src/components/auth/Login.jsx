@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const from = location.state?.from?.pathname || "/"; //this detects if we have attached the details of previous path/page from where we called login.
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // ⛔ prevent page reload
@@ -21,7 +24,10 @@ export const Login = () => {
         email: emailOrUsername,  //only email login is possible for now.
         password
       });
-      navigate("/"); // redirect after login
+
+      console.log(from);
+      
+      navigate(from, { replace: true });  // redirect after login
     } catch (err) {
       setError("Invalid credentials");
     } finally {
