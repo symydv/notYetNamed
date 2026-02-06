@@ -15,7 +15,7 @@ export const Login = () => {
   const from = location.state?.from?.pathname || "/"; //this detects if we have attached the details of previous path/page from where we called login.
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // ⛔ prevent page reload
+    e.preventDefault(); // prevent page reload
     setError("");
     setLoading(true);
 
@@ -25,7 +25,7 @@ export const Login = () => {
         password
       });
 
-      console.log(from);
+      // console.log(from);
       
       navigate(from, { replace: true });  // redirect after login
     } catch (err) {

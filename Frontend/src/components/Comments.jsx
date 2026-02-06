@@ -3,6 +3,7 @@ import api from "../api/axios";
 import { getAvatarUrl } from "../utils/cloudinary";
 import { useAuth } from "../context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 
 function Comments({videoId}){
@@ -63,6 +64,52 @@ function Comments({videoId}){
     navigate("/login",{state: {from:location}})
   }
 
+  const likeHandler = async (commentId) => {
+    if (!user) {
+      toast("sign in to like", { id: "login required" });
+      return;
+    }
+
+    let prevLiked;
+    let prevLikeCount;
+
+    setComments(prev =>
+      prev.map(c => {
+        if (c._id === commentId) {
+          prevLiked = c.isLiked;
+          prevLikeCount = c.likeCount;
+
+          return {
+            ...c,
+            isLiked: !c.isLiked,
+            likeCount: c.isLiked ? c.likeCount - 1 : c.likeCount + 1
+          };
+        }
+        return c;
+      })
+    );
+
+    try {
+      await api.post(`/likes/toggle/c/${commentId}`);
+    } catch (error) {
+      // rollback safely
+      setComments(prev =>
+        prev.map(c =>
+          c._id === commentId
+            ? {
+                ...c,
+                isLiked: prevLiked,
+                likeCount: prevLikeCount
+              }
+            : c
+        )
+      );
+      toast.error("something went wrong");
+    }
+  };
+
+
+
   return (
   <div className="mt-6 ml-3">
     <h2 className="text-white text-lg font-semibold mb-4">
@@ -110,12 +157,44 @@ function Comments({videoId}){
           <h1 className="text-blue-400 text-md font-medium">
           {c.owner.username}
         </h1>
-        <p className="text-white text-md font-normal leading-relaxed break-words overflow-wrap-anywhere">
-          {c.content}
-        </p>
-        </div>
-
         
+        <CommentContent content={c.content} />
+        
+        {/*comment likes */}
+        <div className="text-gray-500 ml-2 text-sm flex gap-2 items-center">
+          {c.likeCount}
+          <button onClick={()=>likeHandler(c._id)} className="cursor-pointer hover:opacity-80 p-1">
+            {!c.isLiked ? (
+              // NOT LIKED → hollow
+              <svg
+                className="w-3 h-3"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ transform: "scaleX(-1)" }}
+              >
+                <path d="M1 21h4V9H1v12z" />
+                <path d="M23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
+              </svg>
+            ) : (
+              // LIKED → filled white
+                <svg
+                  className="w-3 h-3"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="white"
+                  style={{ transform: "scaleX(-1)" }}
+                >
+                  <path d="M1 21h4V9H1v12zM23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
+                </svg>
+            )}
+          </button>
+        </div>
+        </div>
       </div>
     ))}
 
@@ -134,5 +213,43 @@ function Comments({videoId}){
   </div>
   )
 }
+
+//comment content logic
+
+const CommentContent = ({ content }) => {
+  const [expanded, setExpanded] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+  const textRef = useRef(null);
+
+  useEffect(() => {
+    if (textRef.current) {
+      const isOverflowing =
+        textRef.current.scrollHeight > textRef.current.clientHeight;
+      setShowMore(isOverflowing);
+    }
+  }, [content]);
+
+  return (
+    <div>
+      <p
+        ref={textRef}
+        className={`text-gray-300 text-md font-normal leading-relaxed break-words overflow-wrap-anywhere ${
+          !expanded ? "line-clamp-3" : ""
+        }`}
+      >
+        {content}
+      </p>
+
+      {showMore && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-1 text-gray-400 hover:text-white text-sm"
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      )}
+    </div>
+  );
+};
 
 export default Comments;

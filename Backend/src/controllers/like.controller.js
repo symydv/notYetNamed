@@ -8,6 +8,7 @@ import { Comment } from "../models/comment.model.js"
 import { Tweet } from "../models/tweet.model.js"
 import { app } from "../app.js"
 import { User } from "../models/user.model.js"
+import { updateComment } from "./comment.controller.js"
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
     const {videoId} = req.params
@@ -58,18 +59,30 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 
     let commentLike = await Like.findOne({targetType:"comment", targetId: commentId, likedBy: req.user._id});
     let message =""
+    let isLiked;
+    let likeCountChange ;
 
     if (commentLike) {
         await commentLike.deleteOne()
+        likeCountChange  = -1;
+        isLiked = false;
         message = "comment unliked successfully."
     } else {
         commentLike = await Like.create({targetType:"comment", targetId: commentId, likedBy: req.user._id})
+        likeCountChange  = 1;
+        isLiked = true;
         message = "comment liked successfully."
     }
 
+    const updatedComment = await Comment.findByIdAndUpdate(
+        commentId,
+        {$inc: {likeCount: likeCountChange}},
+        {new: true}
+    ).select("likeCount")
+
     return res
     .status(200)
-    .json(new ApiResponse(200, commentLike, message))
+    .json(new ApiResponse(200, {isLiked, likeCount: updatedComment.likeCount }, message))
 
 })
 

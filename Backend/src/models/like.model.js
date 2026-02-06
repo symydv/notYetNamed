@@ -23,6 +23,6 @@ const likeSchema = new Schema(
 likeSchema.index(
   { targetType: 1, targetId: 1, likedBy: 1 },
   { unique: true }
-);
+); //this prevents duplicate likes even under race around conditions
 
 export const Like = mongoose.model("Like", likeSchema);

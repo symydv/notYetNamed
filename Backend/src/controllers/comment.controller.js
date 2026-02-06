@@ -8,42 +8,67 @@ import { Like } from "../models/like.model.js"
 
 
 const getVideoComments = asyncHandler(async (req, res) => {
-    const {videoId} = req.params
-    const {page = 1, limit = 10} = req.query
-    //TODO: get all comments for a video
-    const video = await Video.findById(videoId)
-    if (!video) {
-        throw new ApiError(404, "video not found.")
-    }
+  const { videoId } = req.params;
+  const { page = 1, limit = 10 } = req.query;
 
-    const videoComments = await Comment.find({video: videoId})
-    .sort({ createdAt: -1 }) //newest first.
-    .skip((page-1)*limit)
+  const video = await Video.findById(videoId);
+  if (!video) {
+    throw new ApiError(404, "video not found.");
+  }
+
+  const videoComments = await Comment.find({ video: videoId })
+    .sort({ createdAt: -1 })
+    .skip((page - 1) * limit)
     .limit(limit)
     .populate("owner", "username avatar")
+    .lean(); 
 
-    let message = ""
-    if (!videoComments || videoComments.length === 0) {
-        message = "there are no comments on this video."
-    }
+  const totalComments = await Comment.countDocuments({ video: videoId });
+  const hasMore = page < Math.ceil(totalComments / limit);
 
-    const totalComments = await Comment.countDocuments({video: videoId})
+  
+  let commentsWithLikeStatus = videoComments;
 
-    const hasMore = page < Math.ceil(totalComments / limit)
+  if (req.user) {
+    const commentIds = videoComments.map(c => c._id);
 
-    return res
-    .status(200)
-    .json(new ApiResponse(200, {
+    const userLikes = await Like.find({
+      targetType: "comment",
+      targetId: { $in: commentIds },
+      likedBy: req.user._id
+    }).select("targetId");
 
-        videoComments,
+    const likedSet = new Set(
+      userLikes.map(like => like.targetId.toString())
+    );
+
+    commentsWithLikeStatus = videoComments.map(comment => ({
+      ...comment,
+      isLiked: likedSet.has(comment._id.toString())
+    }));
+  } else {
+    // user not logged in → no likes
+    commentsWithLikeStatus = videoComments.map(comment => ({
+      ...comment,
+      isLiked: false
+    }));
+  }
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        videoComments: commentsWithLikeStatus,
         totalComments,
         totalPages: Math.ceil(totalComments / limit),
         currentPage: page,
-        hasMore,
-        message
-    }, "video comments fetched successfully." ))
+        hasMore
+      },
+      "video comments fetched successfully."
+    )
+  );
+});
 
-})
 
 const addComment = asyncHandler(async (req, res) => {
     // TODO: add a comment to a video
