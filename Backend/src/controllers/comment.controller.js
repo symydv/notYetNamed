@@ -75,6 +75,10 @@ const addComment = asyncHandler(async (req, res) => {
     const {videoId} = req.params
     const {content} = req.body
 
+    if (!content || !content.trim()) {
+      throw new ApiError(400, "comment content is required.");
+    }
+
     const video = await Video.findById(videoId)
     if (!video) {
         throw new ApiError(404, "video does not exist.")
@@ -86,13 +90,18 @@ const addComment = asyncHandler(async (req, res) => {
         owner: req.user._id
     })
 
+    const populatedComment = await comment.populate(
+      "owner",
+      "avatar username"
+    );
+
     if (!comment) {
         throw new ApiError(500, "comment was not created.")
     }
 
     return res
     .status(200)
-    .json(new ApiResponse(200, comment, "comment created successfully."))
+    .json(new ApiResponse(200, populatedComment, "comment created successfully."))
 })
 
 const updateComment = asyncHandler(async (req, res) => {
