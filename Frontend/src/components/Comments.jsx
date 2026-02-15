@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import api from "../api/axios";
 import { getAvatarUrl } from "../utils/cloudinary";
 import { useAuth } from "../context/AuthContext";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useAsyncError, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 
@@ -13,6 +13,9 @@ function Comments({videoId}){
   const [loading, setLoading] = useState(false);
   const [totalComments, setTotalComments] = useState(0)
 
+  const [newComment, setNewComment] = useState("")
+  const [isClicked, setIsClicked] = useState(false)
+
   const triggerRef = useRef(null);
 
   const navigate = useNavigate()
@@ -20,17 +23,19 @@ function Comments({videoId}){
   const {user} = useAuth();
   
   const fetchComments = useCallback(async () => {
-    if (loading || !hasMore) return;
+    setLoading(prev => {
+      if (prev || !hasMore) return prev;
+      return true;
+    });
 
-    setLoading(true);
-    
-    const res = await api.get(`/comments/${videoId}?page=${page}&limit=10`)
+    const res = await api.get(`/comments/${videoId}?page=${page}&limit=10`);
 
-    setComments((prev)=> [...prev, ...res.data.data.videoComments])
-    setHasMore(res.data.data.hasMore)
+    setComments(prev => [...prev, ...res.data.data.videoComments]);
+    setHasMore(res.data.data.hasMore);
     setTotalComments(res.data.data.totalComments);
-    setLoading(false)
-  },  [page, videoId, hasMore, loading])
+    setLoading(false);
+  }, [page, videoId, hasMore]);
+
 
   //lazy load first batch
   useEffect(() => {
@@ -55,8 +60,27 @@ function Comments({videoId}){
     fetchComments()
   }, [page, videoId])
 
-  const addComment = async()=>{
+  //add new comment.
+  const addComment = async(e)=>{
+    e.preventDefault();
+    if(isClicked) return;
+    if(!newComment.trim()) return;
+    if(!user) return;
 
+    try {
+      setIsClicked(true)
+      const res = await api.post(`/comments/${videoId}`, {content: newComment, videoId: videoId})
+      
+      setComments(prev => [res.data.data, ...prev]);
+      setNewComment("")
+      setTotalComments(prev => prev + 1);
+      setPage(1);
+      setHasMore(true);
+    } catch (error) {
+      toast.error("something went wrong")
+    }finally{
+      setIsClicked(false)
+    }
   }
 
   const goToLogin = (e)=>{
@@ -108,6 +132,36 @@ function Comments({videoId}){
     }
   };
 
+  //deleting a comment, this function is used in dropBox components which is below in this same file
+  const deleteCommentHandler = async (commentId) => {
+    let prevComments;
+
+    try {
+      setComments(prev => {
+        prevComments = prev;
+
+        const updated = prev.filter(c => c._id !== commentId);
+
+        // if last comment on page removed, go back a page
+        if (updated.length === 0 && page > 1) {
+          setPage(p => p - 1);
+        }
+
+        return updated;
+      });
+
+      setTotalComments(prev => prev - 1);
+
+      await api.delete(`comments/c/${commentId}`);
+      toast.success("Comment deleted");
+    } catch (error) {
+      // rollback
+      setComments(prevComments);
+      setTotalComments(prev => prev + 1);
+      toast.error("Failed to delete comment");
+    }
+  };
+
 
 
   return (
@@ -120,18 +174,19 @@ function Comments({videoId}){
 
     {/*add comment*/}
     {user? (
-      <form onSubmit={addComment} className="ml-8 flex p-1">
+      <form onSubmit={addComment} className="ml-8 flex p-1 w-full">
         <img 
           src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`)} 
           alt="user-avatar" 
           className="w-9 h-9"
         />
 
-        <div>
+        <div className="flex gap-2 w-full">
           <input 
-            type="text" placeholder="Add comment" id="your comment" 
+            type="text" placeholder="Add comment" id="your comment" value={newComment} onChange={(e) => setNewComment(e.target.value)}
             className="text-white m-2"
           />
+          <button className="text-gray-800 bg-stone-200 rounded-xl size-min mt-1.5 px-1.5 cursor-pointer"> add </button>
         </div>
       </form>
     ):(
@@ -147,18 +202,21 @@ function Comments({videoId}){
       <div key={c._id} className="mb-4 flex">
         <div>
           <img 
-            src= {getAvatarUrl(c.owner.avatar || `https://ui-avatars.com/api/?name=${c.owner.username}&background=0f172a&color=fff`)} 
-            alt={c.owner.username}
+            src= {getAvatarUrl(c.owner?.avatar || `https://ui-avatars.com/api/?name=${c.owner?.username}&background=0f172a&color=fff`)} 
+            alt={c.owner?.username}
             className="w-10 h-10 rounded-full flex-shrink-0" 
           />
         </div>
         
         <div className="ml-2.5 flex-1 min-w-0">
           <h1 className="text-blue-400 text-md font-medium">
-          {c.owner.username}
+          {c.owner?.username}
         </h1>
         
-        <CommentContent content={c.content} />
+        <div className="flex justify-between">
+          <CommentContent content={c.content} />
+          <DropDown user={user} owner={c.owner} id={c._id} deleteCommentHandler={deleteCommentHandler}/>
+        </div>
         
         {/*comment likes */}
         <div className="text-gray-500 ml-2 text-sm flex gap-2 items-center">
@@ -251,5 +309,87 @@ const CommentContent = ({ content }) => {
     </div>
   );
 };
+
+
+const DropDown = ({ user, owner, id, deleteCommentHandler}) => {
+  const [dropBox, setDropBox] = useState(false);
+  const dropDownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropDownRef.current &&
+        !dropDownRef.current.contains(event.target)
+      ) {
+        setDropBox(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const deleteComment = async () => {
+    setDropBox(false);
+    deleteCommentHandler(id);
+  };
+  
+
+  return (
+    <div className="relative text-white" ref={dropDownRef}>
+      <button
+        className="cursor-pointer"
+        onClick={() => setDropBox((prev) => !prev)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="1.5"
+          stroke="currentColor"
+          className="size-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+          />
+        </svg>
+      </button>
+
+      {dropBox && (
+        <div className="absolute right-0 mt-2 z-10 bg-gray-700 rounded-2xl shadow-lg">
+          <ul className="p-2 text-sm font-medium">
+            {user._id === owner._id ? (
+              <>
+                <li>
+                  <button className="inline-flex w-full p-2 hover:bg-gray-600 rounded cursor-pointer">
+                    Update
+                  </button>
+                </li>
+                <li>
+                  <button className="inline-flex w-full p-2 hover:bg-gray-600 rounded cursor-pointer" onClick={deleteComment}>
+                    Delete
+                  </button>
+                </li>
+              </>
+            ) : (
+              <li>
+                <button className="inline-flex w-full p-2 hover:bg-gray-600 rounded cursor-pointer">
+                  Report
+                </button>
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
 
 export default Comments;

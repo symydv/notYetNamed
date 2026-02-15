@@ -6,7 +6,6 @@ import { useState } from "react";
 import { getAvatarUrl } from "../utils/cloudinary";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
-import { timeAgo } from "../utils/timeAgo.js";
 import Comments from "./Comments.jsx";
 
 function Player(){
@@ -104,8 +103,8 @@ function Player(){
   }
   
   return (
-  <div className="w-full px-6 py-4 flex justify-start">
-    <div className="w-full max-w-6xl">
+  <div className="w-full px-6 py-2 grid grid-cols-9">
+    <div className="w-full max-w-6xl col-span-7">
       {/* Video */}
       <div className="aspect-video bg-black rounded-2xl overflow-hidden">
         <video
@@ -170,24 +169,39 @@ function Player(){
             className={`
               flex items-center gap-2 px-4 py-2 rounded-full
               transition-all duration-200
-              ${isLiked
-                ? "bg-blue-100 text-blue-600"
-                : "bg-stone-800 text-white hover:bg-stone-700"}
+              "bg-stone-800 text-white hover:bg-stone-700"
               active:scale-95
               ${likeLoading ? "opacity-60 cursor-not-allowed" : ""}
             `}
           >
-            <svg
-              viewBox="0 0 24 24"
-              className="w-5 h-5"
-              fill={isLiked ? "currentColor" : "none"}
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M7 11v10M15 21H9a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2h6l1-4a2 2 0 0 0-2-2h-1" />
-            </svg>
+            {!isLiked ? (
+              // NOT LIKED → hollow
+              <svg
+                className="w-6 h-6"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ transform: "scaleX(-1)" }}
+              >
+                <path d="M1 21h4V9H1v12z" />
+                <path d="M23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
+              </svg>
+            ) : (
+              // LIKED → filled white
+                <svg
+                  className="w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="white"
+                  style={{ transform: "scaleX(-1)" }}
+                >
+                  <path d="M1 21h4V9H1v12zM23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
+                </svg>
+            )}
             <span className="text-sm font-medium">{likeCount}</span>
           </button>
 
