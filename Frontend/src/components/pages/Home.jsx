@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import api from "../api/axios.js";
-import { getAvatarUrl } from "../utils/cloudinary.js";
-import { timeAgo } from "../utils/timeAgo.js";
+import api from "../../api/axios.js";
+import { getAvatarUrl } from "../../utils/cloudinary.js";
+import { timeAgo } from "../../utils/timeAgo.js";
 
 
 

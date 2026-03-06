@@ -1,12 +1,12 @@
 import React, { useRef } from "react";
 import { useEffect } from "react";
 import { isSession, useParams } from "react-router-dom";
-import api from "../api/axios";
+import api from "../../api/axios.js";
 import { useState } from "react";
-import { getAvatarUrl } from "../utils/cloudinary";
-import { useAuth } from "../context/AuthContext";
+import { getAvatarUrl } from "../../utils/cloudinary.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 import toast from "react-hot-toast";
-import Comments from "./Comments.jsx";
+import Comments from "../compo/Comments.jsx";
 
 function Player(){
   const {videoId} = useParams()
@@ -168,7 +168,7 @@ function Player(){
             onClick={likeHandler}
             className={`
               flex items-center gap-2 px-4 py-2 rounded-full
-              transition-all duration-200
+              transition-all duration-200 cursor-pointer
               "bg-stone-800 text-white hover:bg-stone-700"
               active:scale-95
               ${likeLoading ? "opacity-60 cursor-not-allowed" : ""}
@@ -210,7 +210,7 @@ function Player(){
             disabled={subLoading}
             onClick={subscriptionHandler}
             className={`
-              px-4 py-2 rounded-full font-medium transition
+              px-4 py-2 rounded-full font-medium transition cursor-pointer
               ${isSubscribed
                 ? "bg-slate-700 text-stone-400"
                 : "bg-white text-black"}

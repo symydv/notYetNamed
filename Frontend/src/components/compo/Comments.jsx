@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import api from "../api/axios";
-import { getAvatarUrl } from "../utils/cloudinary";
-import { useAuth } from "../context/AuthContext";
-import { useAsyncError, useLocation, useNavigate } from "react-router-dom";
+import api from "../../api/axios";
+import { getAvatarUrl } from "../../utils/cloudinary";
+import { useAuth } from "../../context/AuthContext";
+import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 
@@ -15,6 +15,8 @@ function Comments({videoId}){
 
   const [newComment, setNewComment] = useState("")
   const [isClicked, setIsClicked] = useState(false)
+
+  const [editingComment, setEditingComment] = useState(null);
 
   const triggerRef = useRef(null);
 
@@ -58,7 +60,7 @@ function Comments({videoId}){
     if(!hasMore) return;
 
     fetchComments()
-  }, [page, videoId])
+  }, [page, videoId, fetchComments])
 
   //add new comment.
   const addComment = async(e)=>{
@@ -74,8 +76,6 @@ function Comments({videoId}){
       setComments(prev => [res.data.data, ...prev]);
       setNewComment("")
       setTotalComments(prev => prev + 1);
-      setPage(1);
-      setHasMore(true);
     } catch (error) {
       toast.error("something went wrong")
     }finally{
@@ -134,12 +134,10 @@ function Comments({videoId}){
 
   //deleting a comment, this function is used in dropBox components which is below in this same file
   const deleteCommentHandler = async (commentId) => {
-    let prevComments;
+    const prevComments = comments;
 
     try {
       setComments(prev => {
-        prevComments = prev;
-
         const updated = prev.filter(c => c._id !== commentId);
 
         // if last comment on page removed, go back a page
@@ -159,6 +157,29 @@ function Comments({videoId}){
       setComments(prevComments);
       setTotalComments(prev => prev + 1);
       toast.error("Failed to delete comment");
+    }
+  };
+
+  
+  const updateCommentHandler = (commentId) => {
+    const comment = comments.find(c => c._id === commentId);
+    setEditingComment({ id: commentId, content: comment.content });
+  };
+
+  const submitUpdate = async (commentId, newContent) => {
+    const prev = comments.find(c => c._id === commentId);
+    
+    // optimistic update
+    setComments(p => p.map(c => c._id === commentId ? { ...c, content: newContent } : c));
+    setEditingComment(null);
+
+    try {
+      await api.patch(`comments/c/${commentId}`, { newContent: newContent });
+      toast.success("Comment updated");
+    } catch {
+      // rollback
+      setComments(p => p.map(c => c._id === commentId ? { ...c, content: prev.content } : c));
+      toast.error("Failed to update");
     }
   };
 
@@ -215,7 +236,13 @@ function Comments({videoId}){
         
         <div className="flex justify-between">
           <CommentContent content={c.content} />
-          <DropDown user={user} owner={c.owner} id={c._id} deleteCommentHandler={deleteCommentHandler}/>
+          <DropDown 
+            user={user} 
+            owner={c.owner} 
+            id={c._id} 
+            deleteCommentHandler={deleteCommentHandler} 
+            updateCommentHandler={updateCommentHandler}
+          />
         </div>
         
         {/*comment likes */}
@@ -268,12 +295,20 @@ function Comments({videoId}){
         Load more
       </button>
     )}
+
+    {/* to show a update model when user wants to update a comment */}
+    {editingComment && (
+      <UpdateModal
+        initialContent={editingComment.content}
+        onSave={(newContent) => submitUpdate(editingComment.id, newContent)}
+        onClose={() => setEditingComment(null)}
+      />
+    )}
   </div>
   )
 }
 
 //comment content logic
-
 const CommentContent = ({ content }) => {
   const [expanded, setExpanded] = useState(false);
   const [showMore, setShowMore] = useState(false);
@@ -311,7 +346,8 @@ const CommentContent = ({ content }) => {
 };
 
 
-const DropDown = ({ user, owner, id, deleteCommentHandler}) => {
+//drop down box which appears after the comment.
+const DropDown = ({ user, owner, id, deleteCommentHandler, updateCommentHandler}) => {
   const [dropBox, setDropBox] = useState(false);
   const dropDownRef = useRef(null);
 
@@ -337,6 +373,11 @@ const DropDown = ({ user, owner, id, deleteCommentHandler}) => {
     setDropBox(false);
     deleteCommentHandler(id);
   };
+
+  const updateComment = async()=>{
+    setDropBox(false);
+    updateCommentHandler(id);
+  }
   
 
   return (
@@ -364,10 +405,13 @@ const DropDown = ({ user, owner, id, deleteCommentHandler}) => {
       {dropBox && (
         <div className="absolute right-0 mt-2 z-10 bg-gray-700 rounded-2xl shadow-lg">
           <ul className="p-2 text-sm font-medium">
-            {user._id === owner._id ? (
+            {user?._id === owner?._id ? (
               <>
                 <li>
-                  <button className="inline-flex w-full p-2 hover:bg-gray-600 rounded cursor-pointer">
+                  <button 
+                    className="inline-flex w-full p-2 hover:bg-gray-600 rounded cursor-pointer"
+                    onClick={updateComment}
+                  >
                     Update
                   </button>
                 </li>
@@ -391,5 +435,52 @@ const DropDown = ({ user, owner, id, deleteCommentHandler}) => {
   );
 };
 
+const UpdateModal = ({ initialContent, onSave, onClose }) => {
+  const [text, setText] = useState(initialContent);
+
+  useEffect(() => { // for closing the model on pressing Esc
+    const handleEsc = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [onClose]);
+
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/60"
+      onClick={onClose}
+    >
+      <div
+        className="bg-[#1a1a1a] rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl"
+        onClick={e => e.stopPropagation()}
+      >
+        <h2 className="text-white text-xl font-bold mb-1">Edit Comment</h2>
+
+        <textarea
+          className="w-full bg-[#111] text-white rounded-xl p-3 resize-none focus:outline-none text-sm leading-relaxed"
+          rows={3}
+          value={text}
+          onChange={e => setText(e.target.value)}
+          autoFocus
+        />
+
+        <div className="flex justify-end gap-3 mt-5">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-xl bg-[#2e2e2e] text-gray-300 hover:bg-[#3a3a3a] text-sm font-medium transition"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => { if (text.trim()) onSave(text.trim()); }}
+            className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-medium transition"
+          >
+            Update
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default Comments;
