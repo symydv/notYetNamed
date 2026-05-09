@@ -21,7 +21,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     const sortOrder = sortType === "desc" ? -1:1 ;
 
     const filter = {};
-    // 👇 If a userId is provided in query, filter by it
+    //  If a userId is provided in query, filter by it
     if (userId) {
         const ownerId = userId?.trim();
 
@@ -32,7 +32,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
         filter.owner= new mongoose.Types.ObjectId(ownerId)
     }
 
-    // 👇 If a search query is provided, add case-insensitive title match
+    //  If a search query is provided, add case-insensitive title match
     if (search) {
     filter.title = { $regex: search, $options: "i" }; // 'i' = case-insensitive
     }
@@ -51,7 +51,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 
     const total = await Video.countDocuments(filter); //this line counts the total number of documents in our databse that matches the filter.
-
+    
     // return res.status(200).json(new ApiResponse(200, videos, "videos fetched successfully"))
     return res.status(200).json({
     success: true,
