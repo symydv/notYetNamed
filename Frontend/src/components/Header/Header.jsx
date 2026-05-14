@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { getAvatarUrl } from "../../utils/cloudinary.js";
+import {MdOutlineAddCircle} from 'react-icons/md'
 
 function Header() {
   const [search, setSearch] = useState("")
@@ -38,6 +39,12 @@ function Header() {
     setShowLogoutModal(false)
     navigate("/")
   }
+  
+  const goHome = async(e) =>{
+    e.preventDefault();
+    window.scrollTo(0, 0);
+    navigate("/")
+  }
 
 
 
@@ -47,7 +54,7 @@ function Header() {
       <div className="relative flex items-center px-4">
         
         {/* Left */}
-        <div className="font-bold text-white">
+        <div className="font-bold text-white cursor-pointer hover:text-stone-300 " onClick={goHome}>
           Header
         </div>
 
@@ -88,7 +95,6 @@ function Header() {
           </div>
         </form>
 
-
         <div className="ml-auto">
           {!user ? (
             <button className="flex px-4 py-1.5 bg-gray-800 text-white rounded-full hover:bg-gray-600">
@@ -97,7 +103,15 @@ function Header() {
               <div onClick={goToSignUp} className="hover:text-black">SignUp</div>
             </button>
           ) : (
-            <div className="flex gap-1">
+            <div className="flex items-center gap-3">
+              <div 
+                className="flex items-center bg-black text-white rounded-2xl gap-0.5 p-1.5 text-sm cursor-pointer hover:bg-gray-700 " 
+                onClick={() => navigate("/upload")}
+              >
+                Upload
+                <MdOutlineAddCircle className=" text-white text-xl hover:text-gray-300"/>
+              </div>
+          
               <img
                 loading="lazy"
                 src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`)}  //this function is to resize the avatar image for optimization, not neccesary
@@ -110,7 +124,7 @@ function Header() {
           )}
         </div>
       </div>
-
+      
         {/* for logout conformation */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -146,8 +160,9 @@ function Header() {
           </div>
         </div>
       )}
+
     </div>
   );
 }
 
-export { Header };
+export {Header}

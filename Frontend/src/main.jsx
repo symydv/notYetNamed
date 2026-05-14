@@ -9,6 +9,7 @@ import { AuthProvider } from './context/AuthContext.jsx'
 import { Signup } from './components/auth/Signup.jsx'
 import { AuthLayout } from './AuthLayout.jsx'
 import { GuestRoute } from './GuestRoute.jsx'
+import { Upload } from './components/pages/Upload.jsx'
 
 
 const router = createBrowserRouter([
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: "player/:videoId",
         element: <Player/>
+      },
+      {
+        path: "upload",
+        element: <Upload/>
       }
     ]
   },
