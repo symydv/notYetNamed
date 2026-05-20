@@ -68,8 +68,10 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description} = req.body
+    console.log(req.body);
+    
     // TODO: get video, upload to cloudinary, create video
-    if(!title?.trim()){
+    if(!title.trim()){
         throw new ApiError(400, "Video title is required")
     }
     if(!description){
@@ -212,7 +214,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Video not found.");
     }
 
-    // ✅ Ownership check
+    //  Ownership check
     if (video.owner.toString() !== req.user._id.toString()) {
         throw new ApiError(403, "You are not allowed to delete someone else's video.");
     }

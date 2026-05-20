@@ -8,9 +8,9 @@ import { Login } from './components/auth/Login.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { Signup } from './components/auth/Signup.jsx'
 import { AuthLayout } from './AuthLayout.jsx'
-import { GuestRoute } from './GuestRoute.jsx'
+import { GuestRoute } from './routeUtils/GuestRoute.jsx'
 import { Upload } from './components/pages/Upload.jsx'
-
+import ProtectedRoute from './routeUtils/ProtectedRoute.jsx'
 
 const router = createBrowserRouter([
   {
@@ -27,7 +27,11 @@ const router = createBrowserRouter([
       },
       {
         path: "upload",
-        element: <Upload/>
+        element: (
+          <ProtectedRoute>
+            <Upload/>
+          </ProtectedRoute>
+        )
       }
     ]
   },

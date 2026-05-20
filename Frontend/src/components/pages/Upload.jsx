@@ -1,5 +1,8 @@
 import React from 'react'
 import { useState } from 'react'
+import api from '../../api/axios';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export function Upload() {
   const [title, setTitle] = useState("");
@@ -7,7 +10,44 @@ export function Upload() {
   const [videoFile, setVideoFile] = useState(null);
   const [thumbnail, setThumbnail] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
+  const navigate = useNavigate(); 
+
+  const uploadHandler = async(e) => {
+    e.preventDefault();
+    if (!title.trim() || !description.trim() || !videoFile || !thumbnail) {
+        toast.error("Please fill all fields");
+        return;
+    }
+    try {
+      setLoading(true)
+      const formData = new FormData();
+      formData.append("title", title)
+      formData.append("description", description)
+      formData.append("videoFile", videoFile)
+      formData.append("thumbnail", thumbnail)
+
+      const res = await api.post(
+        "/videos",
+        formData,
+        {
+          withCredentials: true,
+          onUploadProgress: (e) => {
+            const precent = Math.round((e.loaded*100)/e.total);
+            setProgress(precent)
+          }
+        }
+      )
+      console.log(res.data);
+      toast.success("video uploaded successfully")
+      navigate(`/player/${res.data.data._id}`);
+    } catch (error) {
+      toast.error("Something went wrong", {id: "upload error"})
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <div className="min-h-screen bg-zinc-950 text-white px-4 py-10">
       <div className="max-w-3xl mx-auto">
@@ -18,10 +58,7 @@ export function Upload() {
             Share your content with the world.
           </p>
         </div>
-
-        {/* Upload Card */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl p-8 space-y-8">
-          {/* Video Upload */}
+        <form onSubmit={uploadHandler} className="bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl p-8 space-y-8" >
           <div>
             <h2 className="text-lg font-semibold mb-3">Video File</h2>
 
@@ -42,12 +79,18 @@ export function Upload() {
               className="hidden"
               accept="video/*"
               onChange={(e) =>{
-                const file = e.target.files
+                const file = e.target.files?.[0]
                 if(file){
                   setVideoFile(file);
                 }
               }}
             />
+            
+            {videoFile && <div className='text-white'>
+                <p>file name : {videoFile.name}</p>
+                <p>size: {(videoFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+                <p>Type: {videoFile.type}</p>
+              </div>}
           </div>
 
           {/* Thumbnail Upload */}
@@ -71,12 +114,18 @@ export function Upload() {
               className="hidden"
               accept="image/*"
               onChange={(e) =>{
-                const file = e.target.files
+                const file = e.target.files?.[0];
                 if(file){
                   setThumbnail(file);
                 }
               }}
             />
+            {thumbnail && <div className='text-white'>
+                <img src={URL.createObjectURL(thumbnail)} className="mt-2 rounded-xl h-32 object-cover" />
+                <p>file name : {thumbnail.name}</p>
+                <p>size: {(thumbnail.size/1024).toFixed(2)} KB</p>
+                <p>Type: {thumbnail.type}</p>
+              </div>}
           </div>
 
           {/* Title */}
@@ -85,6 +134,8 @@ export function Upload() {
             <input
               type="text"
               placeholder="Enter video title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 outline-none focus:border-red-500 transition"
             />
           </div>
@@ -95,19 +146,42 @@ export function Upload() {
             <textarea
               rows={5}
               placeholder="Tell viewers about your video"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 outline-none resize-none focus:border-red-500 transition"
             />
           </div>
-
+          
           {/* Submit Button */}
           <div className="flex justify-end">
             <button
+              type='submit'
               className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-xl font-semibold transition"
+              disabled = {loading}
             >
-              Publish Video
+              {loading ? "Uploading..." : "Publish Video"}
             </button>
           </div>
-        </div>
+
+          {loading && (
+              <div className="mt-2 space-y-2">
+                  <div className="flex justify-between text-sm text-zinc-400">
+                      <span>{progress < 100 ? "Uploading..." : "Processing..."}</span>
+                      <span>{progress}%</span>
+                  </div>
+                  <div className="w-full bg-zinc-700 rounded-full h-1.5">
+                      <div
+                          className="bg-red-500 h-1.5 rounded-full transition-all duration-300"
+                          style={{ width: `${progress}%` }}
+                      />
+                  </div>
+              </div>
+          )}
+
+          {!loading && progress === 100 && (
+              <p className="text-green-400 text-sm text-center">✓ Uploaded successfully</p>
+          )}
+        </form>
       </div>
     </div>
   )

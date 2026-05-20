@@ -88,6 +88,10 @@ function Player(){
       toast("sign in to subscribe", {id: "login required"})
       return;
     }
+    if(user._id === video.owner._id){
+      toast.error("you can not subscribe yourself")
+      return;
+    }
 
     if(subLoading) return;
 
