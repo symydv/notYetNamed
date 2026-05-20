@@ -187,123 +187,150 @@ function Comments({videoId}){
 
   return (
   <div className="mt-6 ml-3">
-    <h2 className="text-white text-lg font-semibold mb-4">
+    <hr className="border-zinc-700" />
+    {/*add comment*/}
+    {user ? (
+      <form onSubmit={addComment} className="flex items-start gap-2 px-2 py-1">
+          <img
+              src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`}
+              alt="avatar"
+              className="w-8 h-8 rounded-full mt-1 flex-shrink-0"
+          />
+          <div className="flex items-end gap-2 flex-1 bg-zinc-800 border border-zinc-700 rounded-2xl px-3 py-2">
+              <textarea
+                  placeholder="Add a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          addComment(e);
+                      }
+                  }}
+                  rows={1}
+                  className="flex-1 bg-transparent text-white text-sm outline-none resize-none overflow-hidden leading-5"
+                  style={{ maxHeight: "120px" }}
+                  ref={(el) => {
+                      if (el) {
+                          el.style.height = "auto";
+                          el.style.height = el.scrollHeight + "px";
+                      }
+                  }}
+              />
+              <button
+                  type="submit"
+                  disabled={!newComment.trim()}
+                  className="text-xs text-white bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed px-3 py-1 rounded-xl transition flex-shrink-0"
+              >
+                  Post
+              </button>
+          </div>
+      </form>
+    ) : (
+        <div className="flex items-center gap-2 px-2 py-1 text-sm text-zinc-400">
+            <button onClick={goToLogin} className="text-white border border-zinc-600 hover:border-zinc-400 px-3 py-1 rounded-full transition text-xs">
+                Log in
+            </button>
+            to add a comment
+        </div>
+    )}
+    <hr className="border-zinc-700" />
+
+    <h2 className="text-white text-lg font-semibold mb-4 p-2">
       {totalComments} {totalComments>1? "Comments":"Comment"}
     </h2>
 
     <div ref={triggerRef}></div>
-
-    {/*add comment*/}
-    {user? (
-      <form onSubmit={addComment} className="ml-8 flex p-1 w-full">
-        <img 
-          src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`)} 
-          alt="user-avatar" 
-          className="w-9 h-9"
-        />
-
-        <div className="flex gap-2 w-full">
-          <input 
-            type="text" placeholder="Add comment" id="your comment" value={newComment} onChange={(e) => setNewComment(e.target.value)}
-            className="text-white m-2"
-          />
-          <button className="text-gray-800 bg-stone-200 rounded-xl size-min mt-1.5 px-1.5 cursor-pointer"> add </button>
-        </div>
-      </form>
-    ):(
-      <div className="ml-8 text-white mb-2">
-        <button onClick={goToLogin} className="bg-red-950 p-1 border-0.5 outline-amber-50 outline-1 rounded-2xl">Login</button>
-        <span> </span>
-        to add comment
-      </div>
-    )}
     
-
-    {comments.map(c => (
-      <div key={c._id} className="mb-4 flex">
-        <div>
-          <img 
-            src= {getAvatarUrl(c.owner?.avatar || `https://ui-avatars.com/api/?name=${c.owner?.username}&background=0f172a&color=fff`)} 
-            alt={c.owner?.username}
-            className="w-10 h-10 rounded-full flex-shrink-0" 
-          />
-        </div>
-        
-        <div className="ml-2.5 flex-1 min-w-0">
-          <h1 className="text-blue-400 text-md font-medium">
-          {c.owner?.username}
-        </h1>
-        
-        <div className="flex justify-between">
-          <CommentContent content={c.content} />
-          <DropDown 
-            user={user} 
-            owner={c.owner} 
-            id={c._id} 
-            deleteCommentHandler={deleteCommentHandler} 
-            updateCommentHandler={updateCommentHandler}
-          />
-        </div>
-        
-        {/*comment likes */}
-        <div className="text-gray-500 ml-2 text-sm flex gap-2 items-center">
-          {c.likeCount}
-          <button onClick={()=>likeHandler(c._id)} className="cursor-pointer hover:opacity-80 p-1">
-            {!c.isLiked ? (
-              // NOT LIKED → hollow
-              <svg
-                className="w-3 h-3"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="white"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ transform: "scaleX(-1)" }}
-              >
-                <path d="M1 21h4V9H1v12z" />
-                <path d="M23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
-              </svg>
-            ) : (
-              // LIKED → filled white
+    <div className=" border border-gray-700 rounded-2xl p-2 bg-gray-900">
+      {comments.map(c => (
+        <div key={c._id} className="mb-4 flex p-3">
+          <div>
+            <img 
+              src= {getAvatarUrl(c.owner?.avatar || `https://ui-avatars.com/api/?name=${c.owner?.username}&background=0f172a&color=fff`)} 
+              alt={c.owner?.username}
+              className="w-10 h-10 rounded-full flex-shrink-0" 
+            />
+          </div>
+          
+          <div className="ml-2.5 flex-1 min-w-0">
+            <h1 className="text-blue-400 text-md font-medium">
+            {c.owner?.username}
+          </h1>
+          
+          <div className="flex justify-between">
+            <CommentContent content={c.content} />
+            <DropDown 
+              user={user} 
+              owner={c.owner} 
+              id={c._id} 
+              deleteCommentHandler={deleteCommentHandler} 
+              updateCommentHandler={updateCommentHandler}
+            />
+          </div>
+          
+          {/*comment likes */}
+          <div className="text-gray-500 ml-2 text-sm flex gap-2 items-center">
+            {c.likeCount}
+            <button onClick={()=>likeHandler(c._id)} className="cursor-pointer hover:opacity-80 p-1">
+              {!c.isLiked ? (
+                // NOT LIKED → hollow
                 <svg
                   className="w-3 h-3"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="white"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   style={{ transform: "scaleX(-1)" }}
                 >
-                  <path d="M1 21h4V9H1v12zM23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
+                  <path d="M1 21h4V9H1v12z" />
+                  <path d="M23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
                 </svg>
-            )}
-          </button>
+              ) : (
+                // LIKED → filled white
+                  <svg
+                    className="w-3 h-3"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="white"
+                    style={{ transform: "scaleX(-1)" }}
+                  >
+                    <path d="M1 21h4V9H1v12zM23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
+                  </svg>
+              )}
+            </button>
+          </div>
+          </div>
         </div>
-        </div>
-      </div>
-    ))}
+        
+      ))}
 
-    {loading && (
-      <p className="text-stone-400 text-sm">Loading comments…</p>
-    )}
+      {loading && (
+        <p className="text-stone-400 text-sm">Loading comments…</p>
+      )}
 
-    {hasMore && !loading && (
-      <button
-        onClick={() => setPage(p => p + 1)}
-        className="text-sm text-stone-300 hover:text-white"
-      >
-        Load more
-      </button>
-    )}
+      {hasMore && !loading && (
+        <button
+          onClick={() => setPage(p => p + 1)}
+          className="text-sm text-stone-300 hover:text-white"
+        >
+          Load more
+        </button>
+      )}
 
-    {/* to show a update model when user wants to update a comment */}
-    {editingComment && (
-      <UpdateModal
-        initialContent={editingComment.content}
-        onSave={(newContent) => submitUpdate(editingComment.id, newContent)}
-        onClose={() => setEditingComment(null)}
-      />
-    )}
+      {/* to show a update model when user wants to update a comment */}
+      {editingComment && (
+        <UpdateModal
+          initialContent={editingComment.content}
+          onSave={(newContent) => submitUpdate(editingComment.id, newContent)}
+          onClose={() => setEditingComment(null)}
+        />
+      )}
+    </div>
+    
   </div>
   )
 }
