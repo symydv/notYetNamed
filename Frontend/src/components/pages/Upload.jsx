@@ -10,6 +10,7 @@ export function Upload() {
   const [videoFile, setVideoFile] = useState(null);
   const [thumbnail, setThumbnail] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [phase, setPhase] = useState("idle"); // "idle" | "uploading" | "processing" | "done"
   const [progress, setProgress] = useState(0);
 
   const navigate = useNavigate(); 
@@ -17,30 +18,30 @@ export function Upload() {
   const uploadHandler = async(e) => {
     e.preventDefault();
     if (!title.trim() || !description.trim() || !videoFile || !thumbnail) {
-        toast.error("Please fill all fields");
+        toast.error("Please fill all fields", {id: "provide all credentials"});
         return;
     }
     try {
-      setLoading(true)
+      setLoading(true);
       const formData = new FormData();
       formData.append("title", title)
       formData.append("description", description)
       formData.append("videoFile", videoFile)
       formData.append("thumbnail", thumbnail)
+      setPhase("uploading");
+      setProgress(0);
 
-      const res = await api.post(
-        "/videos",
-        formData,
-        {
-          withCredentials: true,
-          onUploadProgress: (e) => {
-            const precent = Math.round((e.loaded*100)/e.total);
-            setProgress(precent)
-          }
-        }
-      )
-      console.log(res.data);
-      toast.success("video uploaded successfully")
+      const res = await api.post("/videos", formData, {
+        withCredentials: true,
+        onUploadProgress: (e) => {
+          const percent = Math.round((e.loaded * 100) / e.total);
+          setProgress(percent);
+          if (percent === 100) setPhase("processing"); // switch phase here
+        },
+      });
+
+      setPhase("done");
+      toast.success("Video uploaded successfully");
       navigate(`/player/${res.data.data._id}`);
     } catch (error) {
       toast.error("Something went wrong", {id: "upload error"})
@@ -59,9 +60,11 @@ export function Upload() {
           </p>
         </div>
         <form onSubmit={uploadHandler} className="bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl p-8 space-y-8" >
+
+          {/* Video Upload */}
           <div>
             <h2 className="text-lg font-semibold mb-3">Video File</h2>
-
+            
             <label
               htmlFor="videoUpload"
               className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-700 rounded-2xl h-56 cursor-pointer hover:border-red-500 hover:bg-zinc-800/50 transition"
@@ -163,23 +166,36 @@ export function Upload() {
             </button>
           </div>
 
+          {/*Progress bar and processing info */}
           {loading && (
-              <div className="mt-2 space-y-2">
-                  <div className="flex justify-between text-sm text-zinc-400">
-                      <span>{progress < 100 ? "Uploading..." : "Processing..."}</span>
-                      <span>{progress}%</span>
-                  </div>
-                  <div className="w-full bg-zinc-700 rounded-full h-1.5">
-                      <div
-                          className="bg-red-500 h-1.5 rounded-full transition-all duration-300"
-                          style={{ width: `${progress}%` }}
-                      />
-                  </div>
+            <div className="mt-2 space-y-2">
+              <div className="flex justify-between text-sm text-zinc-400">
+                <span>
+                  {phase === "uploading" ? `Uploading... ${progress}%` : "Processing on server..."}
+                </span>
               </div>
+
+              {/* Upload progress bar */}
+              {phase === "uploading" && (
+                <div className="w-full bg-zinc-700 rounded-full h-1.5">
+                  <div
+                    className="bg-red-500 h-1.5 rounded-full transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              )}
+
+              {/* Indeterminate spinner for server processing */}
+              {phase === "processing" && (
+                <div className="w-full bg-zinc-700 rounded-full h-1.5 overflow-hidden">
+                  <div className="bg-yellow-400 h-1.5 rounded-full animate-pulse w-full" />
+                </div>
+              )}
+            </div>
           )}
 
-          {!loading && progress === 100 && (
-              <p className="text-green-400 text-sm text-center">✓ Uploaded successfully</p>
+          {phase === "done" && (
+            <p className="text-green-400 text-sm text-center">✓ Uploaded successfully</p>
           )}
         </form>
       </div>
