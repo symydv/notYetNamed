@@ -4,7 +4,7 @@ import { getAvatarUrl } from "../../utils/cloudinary";
 import { useAuth } from "../../context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
+import { timeAgo } from "../../utils/timeAgo";
 
 function Comments({videoId}){
   const [comments, setComments] = useState([]);
@@ -242,7 +242,7 @@ function Comments({videoId}){
 
     <div ref={triggerRef}></div>
     
-    <div className=" border border-gray-700 rounded-2xl p-2 bg-gray-900">
+    <div className=" border border-gray-700 rounded-2xl p-2 bg-black">
       {comments.map(c => (
         <div key={c._id} className="mb-4 flex p-3">
           <div>
@@ -254,9 +254,15 @@ function Comments({videoId}){
           </div>
           
           <div className="ml-2.5 flex-1 min-w-0">
-            <h1 className="text-blue-400 text-md font-medium">
-            {c.owner?.username}
-          </h1>
+            <div className="flex gap-2 items-baseline">
+              <h1 className="text-blue-400 text-md font-medium">
+                {c.owner?.username}
+              </h1>
+              <div className="text-gray-500  text-xs">
+                {timeAgo(c.createdAt)}
+              </div>
+            </div>
+            
           
           <div className="flex justify-between">
             <CommentContent content={c.content} />
@@ -353,7 +359,7 @@ const CommentContent = ({ content }) => {
     <div>
       <p
         ref={textRef}
-        className={`text-gray-300 text-md font-normal leading-relaxed break-words overflow-wrap-anywhere ${
+        className={`text-gray-300 text-sm font-normal leading-relaxed break-words overflow-wrap-anywhere ${
           !expanded ? "line-clamp-3" : ""
         }`}
       >

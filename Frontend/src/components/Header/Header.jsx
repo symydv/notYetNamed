@@ -118,7 +118,7 @@ function Header() {
                 alt="profile"
                 className="w-10 h-10 rounded-full cursor-pointer"
               />
-              <button className="bg-gray-700 text-white rounded-2xl p-1 hover:bg-gray-600 cursor-pointer" onClick={()=> setShowLogoutModal(true)}>Logout</button>
+              <button className="bg-gray-700 text-white rounded-2xl p-1 hover:bg-gray-600 cursor-pointer " onClick={()=> setShowLogoutModal(true)}>Logout</button>
             </div>
             
           )}

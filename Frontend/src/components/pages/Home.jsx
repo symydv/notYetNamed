@@ -46,12 +46,12 @@ function Home() {
   if (loading) return <p className="text-white">Loading...</p>;
 
   return (
-    <div className="grid grid-cols-3 gap-4.5 p-4">
+    <div className="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4.5 p-4">
       {videos.length === 0 && (
         <p className="text-white">No videos found</p>
       )}
       {videos.map((video) => (
-        <div onClick={()=>play(video._id)} key={video._id} className="rounded-2xl hover:bg-gray-700 px-1 py-2 ">
+        <div onClick={()=>play(video._id)} key={video._id} className="rounded-2xl hover:bg-gray-700 px-1 py-2 relative">
           <div className="relative aspect-video">
             <img
               className="rounded-2xl w-full"
@@ -81,7 +81,7 @@ function Home() {
                 <h5 className="text-white">{video.views} views(approx)</h5>
                 <div className="text-white font-extralight"> •</div>
                 <div className="text-white">{timeAgo(video.createdAt)}</div> {/**timeAgo function created in utils. */}
-              </div>
+              </div>  
             </div>
             
           </div>
