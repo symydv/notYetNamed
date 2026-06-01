@@ -49,7 +49,7 @@ function Header() {
 
 
   return (
-    <div className="fixed top-0 left-0 w-full py-2 bg-gray-500 z-50">
+    <div className="fixed top-0 left-0 w-full py-2 bg-zinc-900 z-50">
       
       <div className="relative flex items-center px-4">
         
@@ -60,8 +60,8 @@ function Header() {
 
         {/* Center */}
         
-        <form onSubmit={handleSubmit } className="absolute left-1/2 -translate-x-1/2 flex items-center ">
-          <div className="hidden sm:flex items-center h-10 border border-gray-500 rounded-full overflow-hidden bg-gray-300 sm:w-sm  md:w-md lg:w-full">
+        <form onSubmit={handleSubmit } className="absolute left-1/2 -translate-x-1/2 flex items-center">
+          <div className="w-48 sm:w-64 md:w-80 lg:w-120 sm:flex items-center h-9 border border-gray-700 rounded-full overflow-hidden bg-black text-gray-100 text-sm">
 
             <input
               type="text"
@@ -74,7 +74,7 @@ function Header() {
 
             <button
               type="submit"
-              className="h-full px-5 bg-white hover:bg-gray-300 border-l border-gray-400"
+              className="h-full px-5 bg-zinc-800 hover:bg-zinc-700 border-l border-zinc-800"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +82,7 @@ function Header() {
                 viewBox="0 0 24 24"
                 strokeWidth={3}
                 stroke="currentColor"
-                className="w-5 h-5 text-gray-700"
+                className="w-5 h-5 text-white"
               >
                 <path
                   strokeLinecap="round"
@@ -95,9 +95,9 @@ function Header() {
           </div>
         </form>
 
-        <div className="ml-auto">
+        <div className="ml-auto text-xs sm:text-sm md:text-md">
           {!user ? (
-            <button className="flex px-4 py-1.5 bg-gray-800 text-white rounded-full hover:bg-gray-600">
+            <button className=" flex px-4 py-1.5 bg-gray-800 text-white rounded-full hover:bg-gray-600">
               <div onClick={goToLogin} className="hover:text-black">Login</div>
               /
               <div onClick={goToSignUp} className="hover:text-black">SignUp</div>
@@ -105,7 +105,7 @@ function Header() {
           ) : (
             <div className="flex items-center gap-3">
               <div 
-                className="flex items-center bg-black text-white rounded-2xl gap-0.5 p-1.5 text-sm cursor-pointer hover:bg-gray-700 " 
+                className="flex items-center bg-zinc-800 text-white rounded-2xl gap-0.5 p-1.5 text-sm cursor-pointer hover:bg-zinc-700 border border-zinc-700 " 
                 onClick={() => navigate("/upload")}
               >
                 Upload
@@ -116,9 +116,9 @@ function Header() {
                 loading="lazy"
                 src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`)}  //this function is to resize the avatar image for optimization, not neccesary
                 alt="profile"
-                className="w-10 h-10 rounded-full cursor-pointer"
+                className="w-10 h-10 rounded-full cursor-pointer border border-zinc-700"
               />
-              <button className="bg-gray-700 text-white rounded-2xl p-1 hover:bg-gray-600 cursor-pointer " onClick={()=> setShowLogoutModal(true)}>Logout</button>
+              <button className="bg-zinc-800 text-white rounded-2xl p-1 hover:bg-zinc-600 cursor-pointer border border-zinc-700" onClick={()=> setShowLogoutModal(true)}>Logout</button>
             </div>
             
           )}

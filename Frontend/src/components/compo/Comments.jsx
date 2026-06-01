@@ -76,6 +76,7 @@ function Comments({videoId}){
       setComments(prev => [res.data.data, ...prev]);
       setNewComment("")
       setTotalComments(prev => prev + 1);
+      toast.success("comment added")
     } catch (error) {
       toast.error("something went wrong")
     }finally{
@@ -236,7 +237,7 @@ function Comments({videoId}){
     )}
     <hr className="border-zinc-700" />
 
-    <h2 className="text-white text-lg font-semibold mb-4 p-2">
+    <h2 className="text-white text-lg font-semibold mb-2 mt-2 p-2">
       {totalComments} {totalComments>1? "Comments":"Comment"}
     </h2>
 
@@ -249,7 +250,7 @@ function Comments({videoId}){
             <img 
               src= {getAvatarUrl(c.owner?.avatar || `https://ui-avatars.com/api/?name=${c.owner?.username}&background=0f172a&color=fff`)} 
               alt={c.owner?.username}
-              className="w-10 h-10 rounded-full flex-shrink-0" 
+              className="w-10 h-10 rounded-full border border-zinc-700 flex-shrink-0" 
             />
           </div>
           
