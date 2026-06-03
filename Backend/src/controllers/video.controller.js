@@ -14,7 +14,7 @@ import { Subscription } from "../models/subscription.model.js"
 //TODO : After completion of whole code write aggregation pipelines to connect more things.as you need many user details like user's avatar and username , subscribers , views, likes aling with video. 
 
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10, search, sortBy, sortType, userId } = req.query
+    const { page = 1, limit = 12, search, sortBy, sortType, userId } = req.query
     //TODO: get all videos based on query, sort, pagination
     const pageNumber = parseInt(page)
     const limitNumber = parseInt(limit)
@@ -68,51 +68,80 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description} = req.body
-    console.log(req.body);
     
-    // TODO: get video, upload to cloudinary, create video
-    if(!title.trim()){
+    // Validate title and description
+    if(!title || !title.trim()){
         throw new ApiError(400, "Video title is required")
     }
-    if(!description){
+    if(!description || !description.trim()){
         throw new ApiError(400, "Video description is required")
     }
-    
-    if (!req.files?.videoFile[0]?.mimetype.startsWith("video/")) {
-        throw new ApiError(400, "Invalid video file")
+
+    // Validate files presence
+    if (!req.files) {
+        throw new ApiError(400, "No files received. Make sure you're sending videoFile and optional thumbnail")
+    }
+    if (!req.files.videoFile) {
+        throw new ApiError(400, "Video file is required")
     }
 
-    const localVideoPath = req.files?.videoFile[0]?.path;
-    const localThumbnailPath = req.files?.thumbnail[0]?.path;
+    const videoFileArray = req.files.videoFile;
+    if (!Array.isArray(videoFileArray) || videoFileArray.length === 0) {
+        throw new ApiError(400, "Invalid video file format")
+    }
+
+    const videoFile = videoFileArray[0];
+    if (!videoFile.mimetype || !videoFile.mimetype.startsWith("video/")) {
+        throw new ApiError(400, "Invalid video file - must be a video type")
+    }
+
+    const localVideoPath = videoFile.path;
     if(!localVideoPath){
         throw new ApiError(400, "video is required.")
     }
-    if(!localThumbnailPath){
-        throw new ApiError(400, "Thumbnail is required.")
-    }
 
-    const uploadedVideo = await uploadOnCloudinary(localVideoPath)
+    const uploadedVideo = await uploadOnCloudinary(localVideoPath, "video")
     if (!uploadedVideo) {
         throw new ApiError(400, "video not uploaded")
     }
-   
-    
-    
-    const duration = uploadedVideo.duration; // in seconds
-    // console.log("duration: ",duration);
-    
 
+    let thumbnailUrl;
+    const localThumbnailPath = req.files?.thumbnail?.length ? req.files.thumbnail?.[0].path : null;
 
-    const uploadedThumbnail = await uploadOnCloudinary(localThumbnailPath)
-    if (!uploadedThumbnail) {
-        throw new ApiError(400, "Thumbnail not uploaded")
+    if (localThumbnailPath) {
+        // User provided a thumbnail — upload it normally
+        const uploadedThumbnail = await uploadOnCloudinary(localThumbnailPath, "image");
+        if (!uploadedThumbnail) throw new ApiError(400, "Thumbnail not uploaded");
+        thumbnailUrl = uploadedThumbnail.url;
+    } else {
+        // No thumbnail provided — generate transformation URL
+        try {
+            thumbnailUrl = cloudinary.url(uploadedVideo.public_id, {
+                resource_type: "video",
+                format: "jpg",
+                quality: "auto",
+                fetch_format: "auto",
+                transformation: [
+                    { width: 1280, height: 720, crop: "fill", quality: "auto", delay: "5" }
+                ]
+            });
+        } catch (error) {
+            // Fallback: derive jpg URL from secure_url
+            thumbnailUrl = uploadedVideo.secure_url ? `${uploadedVideo.secure_url.replace(/\.[^/.]+$/, "")}.jpg` : null;
+        }
     }
+
+    if (!thumbnailUrl || thumbnailUrl.trim() === "") {
+        throw new ApiError(400, "Failed to generate or upload thumbnail");
+    }
+
+    const duration = uploadedVideo.duration; // in seconds
 
     const finalVideo = await Video.create({
         title,
         description,
-        videoFile : uploadedVideo?.url || "",
-        thumbnail : uploadedThumbnail?.url || "",
+        videoFile : uploadedVideo?.secure_url || uploadedVideo?.url || "",
+        thumbnail : thumbnailUrl,
         owner: req.user._id,
         isPublished: true,
         views: 0,
@@ -122,7 +151,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     return res
     .status(201)
     .json(new ApiResponse(200, finalVideo, "Video uploaded successfully."))
-    
+
 })
 
 

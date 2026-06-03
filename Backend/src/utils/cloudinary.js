@@ -11,14 +11,21 @@ cloudinary.config({
     });
 
 //making a function named "uploadOnCloudinary()"
-const uploadOnCloudinary = async (LocalFilePath) => {
+const uploadOnCloudinary = async (LocalFilePath, resourceType = "auto") => {
     try {
         if(!LocalFilePath) return null
+        
+        // Determine folder based on resource type
+        let folder = "Image";
+        if (resourceType === "video") {
+            folder = "Video";
+        }
+        
         //upload the file on cloudinary.
         const response = await cloudinary.uploader.upload(LocalFilePath, {
             //read cloudinary documentation to know about more options.
-            folder: "Image",
-            resource_type: "auto"  //means which type of file you want to upload eg: image, video etc.
+            folder: folder,
+            resource_type: resourceType  //means which type of file you want to upload eg: image, video etc.
         })
         //file has been uploaded successfully
         // console.log("file is uploaded on cloudinary ", response.url);

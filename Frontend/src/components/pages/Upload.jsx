@@ -17,7 +17,7 @@ export function Upload() {
 
   const uploadHandler = async(e) => {
     e.preventDefault();
-    if (!title.trim() || !description.trim() || !videoFile || !thumbnail) {
+    if (!title.trim() || !description.trim() || !videoFile) {
         toast.error("Please fill all fields", {id: "provide all credentials"});
         return;
     }
@@ -27,7 +27,11 @@ export function Upload() {
       formData.append("title", title)
       formData.append("description", description)
       formData.append("videoFile", videoFile)
-      formData.append("thumbnail", thumbnail)
+      if (thumbnail) {
+        formData.append("thumbnail", thumbnail) // only send if user picked one
+      }
+      
+      
       setPhase("uploading");
       setProgress(0);
 
@@ -44,6 +48,7 @@ export function Upload() {
       toast.success("Video uploaded successfully");
       navigate(`/player/${res.data.data._id}`);
     } catch (error) {
+      console.log("upload error:", error.response?.data)
       toast.error("Something went wrong", {id: "upload error"})
     } finally {
       setLoading(false);

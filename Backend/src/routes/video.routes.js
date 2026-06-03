@@ -14,12 +14,11 @@ import { optionalAuth } from '../middlewares/optionalAuth.middleware.js';
 
 const router = Router();
 // router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file, we dont need it here because we are allowing to get video without loggin
-
 router
     .route("/")
     .get(getAllVideos) //if "get" request comes at "videos/" then "getAllVideos"
     .post(             // if "post" request comes at "videos/" then first comes upload field from "multer" to collect files from user then "publishVideo"
-        verifyJWT,    
+        verifyJWT,
         upload.fields([
             {
                 name: "videoFile",

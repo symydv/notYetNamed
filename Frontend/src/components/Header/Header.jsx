@@ -14,7 +14,10 @@ function Header() {
   const handleSubmit = (e)=>{
     e.preventDefault()   
 
-    if(!search.trim()) return;
+    if(!search.trim()){
+      navigate('/')
+      return;
+    } 
 
     //navigate to home with search query (our backend supports)
     navigate(`/?search=${encodeURIComponent(search)}`)
@@ -59,7 +62,6 @@ function Header() {
         </div>
 
         {/* Center */}
-        
         <form onSubmit={handleSubmit } className="absolute left-1/2 -translate-x-1/2 flex items-center">
           <div className="w-48 sm:w-64 md:w-80 lg:w-120 sm:flex items-center h-9 border border-gray-700 rounded-full overflow-hidden bg-black text-gray-100 text-sm">
 
@@ -74,7 +76,7 @@ function Header() {
 
             <button
               type="submit"
-              className="h-full px-5 bg-zinc-800 hover:bg-zinc-700 border-l border-zinc-800"
+              className="h-full px-5 bg-zinc-800 hover:bg-zinc-700 border-l border-zinc-800 cursor-pointer"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

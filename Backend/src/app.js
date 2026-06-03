@@ -4,7 +4,6 @@ import cookieParser from "cookie-parser"   //cookie-parser: Middleware to parse 
 
 
 const app = express()
-
 //app.use() , this is used for all the middlewares and configurations.
 app.use(cors({
     origin: "http://localhost:5173", // frontend URL
