@@ -14,11 +14,11 @@ import { Subscription } from "../models/subscription.model.js"
 //TODO : After completion of whole code write aggregation pipelines to connect more things.as you need many user details like user's avatar and username , subscribers , views, likes aling with video. 
 
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 12, search, sortBy, sortType, userId } = req.query
+    const { page = 1, limit = 12, search, sortBy = "createdAt", sortType = "desc", userId } = req.query
     //TODO: get all videos based on query, sort, pagination
     const pageNumber = parseInt(page)
     const limitNumber = parseInt(limit)
-    const sortOrder = sortType === "desc" ? -1:1 ;
+    const sortOrder = sortType === "desc" ? -1 : 1;
 
     const filter = {};
     //  If a userId is provided in query, filter by it
@@ -54,14 +54,14 @@ const getAllVideos = asyncHandler(async (req, res) => {
     
     // return res.status(200).json(new ApiResponse(200, videos, "videos fetched successfully"))
     return res.status(200).json({
-    success: true,
-    data: videos,
-    pagination: {
-        total,
-        page: pageNumber,
-        limit: limitNumber,
-        totalPages: Math.ceil(total / limitNumber)
-    }
+        success: true,
+        data: videos,
+        pagination: {
+            total,
+            page: pageNumber,
+            limit: limitNumber,
+            totalPages: Math.ceil(total / limitNumber)
+        }
     });
 
 })
