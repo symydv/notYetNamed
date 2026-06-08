@@ -103,7 +103,7 @@ function Home() {
 
   return (
     <>
-      <div className="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4.5 p-4">
+      <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4.5 p-4">
         {videos.length === 0 && (
           <p className="text-white">No videos found</p>
         )}
@@ -111,9 +111,11 @@ function Home() {
           <div onClick={()=>play(video._id)} key={video._id} className="rounded-2xl hover:bg-gray-700 px-1 py-2 relative">
             <div className="relative aspect-video">
               <img
-                className="rounded-2xl w-full"
+                className="rounded-2xl w-full h-full object-cover"
                 src={video.thumbnail}
                 alt={video.title}
+                loading="lazy" //load the thumbnail only when needed
+                decoding="async" // Load and decode the image without blocking page rendering.
               />
               {/* Duration badge */}
               <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">

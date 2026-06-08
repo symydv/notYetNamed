@@ -112,7 +112,19 @@ const publishAVideo = asyncHandler(async (req, res) => {
         // User provided a thumbnail — upload it normally
         const uploadedThumbnail = await uploadOnCloudinary(localThumbnailPath, "image");
         if (!uploadedThumbnail) throw new ApiError(400, "Thumbnail not uploaded");
-        thumbnailUrl = uploadedThumbnail.url;
+        thumbnailUrl = cloudinary.url(uploadedThumbnail.public_id, {
+            resource_type: "image",
+            transformation: [
+                {
+                    width: 1280,
+                    height: 720,
+                    crop: "fill",
+                    gravity: "auto",
+                    quality: "auto",
+                    fetch_format: "auto"
+                }
+            ]
+        });
     } else {
         // No thumbnail provided — generate transformation URL
         try {
