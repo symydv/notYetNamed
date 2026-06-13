@@ -13,7 +13,7 @@ export const optionalAuth = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    req.user = await User.findById(decoded._id).select("_id");
+    req.user = {_id: decoded._id};
   } catch (err) {
     req.user = null;
   }

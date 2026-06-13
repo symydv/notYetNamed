@@ -3,6 +3,9 @@ import { useState } from 'react'
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import {Video as V, FileImage} from "lucide-react"
+// eslint-disable-next-line no-unused-vars
+import {motion} from "framer-motion"
 
 export function Upload() {
   const [title, setTitle] = useState("");
@@ -64,8 +67,8 @@ export function Upload() {
             Share your content with the world.
           </p>
         </div>
-        <form onSubmit={uploadHandler} className="bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl p-8 space-y-8" >
 
+        <form onSubmit={uploadHandler} className="bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl p-8 space-y-8" >
           {/* Video Upload */}
           <div>
             <h2 className="text-lg font-semibold mb-3">Video File</h2>
@@ -74,7 +77,9 @@ export function Upload() {
               htmlFor="videoUpload"
               className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-700 rounded-2xl h-56 cursor-pointer hover:border-red-500 hover:bg-zinc-800/50 transition"
             >
-              <div className="text-5xl mb-4">🎥</div>
+              <div className="text-5xl mb-4">
+                <V className='size-15'/>
+              </div>
               <p className="text-lg font-medium">Choose a video to upload</p>
               <p className="text-sm text-zinc-400 mt-1">
                 MP4, MOV, AVI supported
@@ -109,7 +114,9 @@ export function Upload() {
               htmlFor="thumbnailUpload"
               className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-700 rounded-2xl h-44 cursor-pointer hover:border-blue-500 hover:bg-zinc-800/50 transition"
             >
-              <div className="text-4xl mb-3">🖼️</div>
+              <div className="text-4xl mb-3 ">
+                <FileImage className='font-light size-15'/>
+              </div>
               <p className="font-medium">Upload thumbnail</p>
               <p className="text-sm text-zinc-400 mt-1">
                 JPG, PNG supported
@@ -162,13 +169,13 @@ export function Upload() {
           
           {/* Submit Button */}
           <div className="flex justify-end">
-            <button
+            <motion.button
               type='submit'
-              className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-xl font-semibold transition"
+              className="bg-linear-to-r from-red-500 to-pink-600 text-white shadow-lg hover:from-red-600 hover:to-pink-700 px-6 py-3 rounded-xl font-semibold transition"
               disabled = {loading}
             >
               {loading ? "Uploading..." : "Publish Video"}
-            </button>
+            </motion.button>
           </div>
 
           {/*Progress bar and processing info */}
@@ -203,6 +210,7 @@ export function Upload() {
             <p className="text-green-400 text-sm text-center">✓ Uploaded successfully</p>
           )}
         </form>
+
       </div>
     </div>
   )

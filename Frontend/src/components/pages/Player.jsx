@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useEffect } from "react";
-import { isSession, useParams } from "react-router-dom";
+import {useParams } from "react-router-dom";
 import api from "../../api/axios.js";
 import { useState } from "react";
 import { getAvatarUrl } from "../../utils/cloudinary.js";
@@ -76,6 +76,7 @@ function Player(){
       setIsLiked(res.data.data.isLiked);
       setLikeCount(res.data.data.likeCount)
     } catch (error) {
+      console.log(error)
       toast.error("Something went wrong");
     }finally{
       setLikeLoading(false)
@@ -100,6 +101,7 @@ function Player(){
       const res = await api.patch(`/subscriptions/${video.owner._id}`)
       setIsSubscribed(res.data.data.isSubscribed)
     } catch (error) {
+      console.log(error)
       toast.error("Something went wrong")
     }finally{
       setSubLoading(false)

@@ -83,12 +83,8 @@ const registerUser = asyncHandler( async(req, res) => {
     // path:
     // This is the location (on disk or in temp storage) where the uploaded file is saved.
 
-    // const coverImageLocalPath = req.files?.coverImage[0]?.path;
-    //or  //check on AI why we used below method.
-    let coverImageLocalPath;
-    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
-        coverImageLocalPath = req.files.coverImage[0].path;
-    }
+    const coverImageLocalPath = req.files?.coverImage?.[0]?.path;;
+    
     
     //5.
     const avatar = await uploadOnCloudinary(avatarLocalPath) //you have to wait till this process is finished.
@@ -107,7 +103,7 @@ const registerUser = asyncHandler( async(req, res) => {
 
     //7. and 8.
     const createdUser = await User.findById(user._id).select(
-        "-password -refreshToken" // '-' ke baad jo bhi likha hai wo hame nahi chahiye hota hai to wo database me show nahi hoga
+        "-password -refreshToken" // '-' ke baad jo bhi likha hai wo hame nahi chahiye hota hai to wo response me show nahi hoga
     ) 
     //db automatically creates "_id" for each data block
 
@@ -216,9 +212,9 @@ const logoutUser = asyncHandler(async(req, res) => {
 
 // some points about our below function "refreshAccessToken"
 
-// ❌ The backend route does not run by itself.
+//  The backend route does not run by itself.
 
-// ✅ The frontend must explicitly call it when it detects:
+//  The frontend must explicitly call it when it detects:
 
 // should call when accessToken has expired (usually via 401 response).
 
@@ -284,7 +280,7 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
     }
 
     user.password = newPassword //new password will automatically bcrypt as we have written code for it in usermodel.
-    await user.save({validateBeforeSave: false})
+    await user.save({validateBeforeSave: false}) //dont use findByIdAndUpdate because it does not calls save so our pre("save") will not work, so what I have used here is correct.
 
     return res
     .status(200)
