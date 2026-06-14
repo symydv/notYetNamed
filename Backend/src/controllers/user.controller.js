@@ -6,6 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 import { v2 as cloudinary} from "cloudinary"
+import { useOptimistic } from "react";
 
 
 //for later use in the code.
@@ -29,12 +30,10 @@ const registerUser = asyncHandler( async(req, res) => {
     //1. get user details from frontend. (using postman we can get user details instead of frontend using our "user models")
     //2. validation - not empty
     //3. check if user already exists.(using username, email)
-    //4. check for images, check for avatar.
-    //5. upload them t0 cloudinary, avatar check if it gets uploaded or not
-    //6. create user object - create entry in db.
-    //7. remove password and refresh token field from response.
-    //8. check for user creation , it happened or not
-    //9. return res
+    //4. create user object - create entry in db.
+    //5. remove password and refresh token field from response.
+    //6. check for user creation , it happened or not
+    //7. return res
 
     //1.
     const {fullName, email, username, password} = req.body
@@ -43,7 +42,7 @@ const registerUser = asyncHandler( async(req, res) => {
     //2.
     if (
         //.some() goes through the array and checks if at least one of the fields meets the condition:
-        [fullName, email, username, password].some((field) => field?.trim() === "") 
+        [fullName, email, username, password].some((field) => !field || field?.trim() === "") 
         //field might be undefined, so we use optional chaining (?.) to avoid errors.
         // .trim() removes any leading/trailing spaces, so " " becomes "".
         //ye code pehle to sabhi field leta hai out of four fields we have provided then it checks that if the field is empty if so it returns true.{use AI to understand}, if we have not used this method we could have directly checked them using if( fullname === "" ) and so for all the fields separately
@@ -65,43 +64,16 @@ const registerUser = asyncHandler( async(req, res) => {
     // console.log(req.files); //just to check what is this 
     // console.log(req.body); //just to check what is this 
     
-
     //4.
-    const avatarLocalPath = req.files?.avatar[0]?.path; //This line safely gets the file path of the uploaded avatar image, if it exists.
-    // req.files:
-    // This is an object that contains files uploaded by the user (usually when using a middleware like multer for handling multipart/form-data).
-
-    // ?. (optional chaining):
-    // This checks if the property exists before trying to access it, preventing errors if something is undefined or null.
-
-    // avatar:
-    // This is the field name for the uploaded file (e.g., <input type="file" name="avatar" /> in your frontend form).
-
-    // [0]:
-    // If multiple files are uploaded under the same field, they are stored as an array. [0] gets the first file.
-
-    // path:
-    // This is the location (on disk or in temp storage) where the uploaded file is saved.
-
-    const coverImageLocalPath = req.files?.coverImage?.[0]?.path;;
-    
-    
-    //5.
-    const avatar = await uploadOnCloudinary(avatarLocalPath) //you have to wait till this process is finished.
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
-
-    //6.
     const user = await User.create({ //Used to insert a new document into a MongoDB collection (database)
         fullName,
-        avatar: avatar?.url || null,
-        coverImage: coverImage?.url || null, //as we have not checked that coverImage is provided or not
         email,
         password,
         username: username.toLowerCase()
     })
     
 
-    //7. and 8.
+    //5. and 6.
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken" // '-' ke baad jo bhi likha hai wo hame nahi chahiye hota hai to wo response me show nahi hoga
     ) 
@@ -111,17 +83,13 @@ const registerUser = asyncHandler( async(req, res) => {
         throw new ApiError(500, "Something went wrong while registering a user.")
     }
 
-    //9.
+    //7.
     return res.status(201).json(
         new ApiResponse(200, createdUser, "User Registered successfully")
     )
 
-
-
-
-
-
     })
+
 
 const loginUser = asyncHandler( async(req, res) => {
     //ToDos.
@@ -332,35 +300,33 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
         throw new ApiError(400, "Avatar file is missing.")
     }
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath)
-
-    if(!avatar.url){
-        throw new ApiError(400, "Error while uploading on avatar.")
-    }
-
     const userOld = await User.findById(req.user?._id)
     if (!userOld) {
         throw new ApiError(404, "user not found")
     }
 
-    if(userOld.avatar){
-        const segments = userOld.avatar.split("/")
-        const fileWithExt = segments.at(-1)
-        const folder = segments.at(-2)
-        const publicId = `${folder}/${fileWithExt.split(".")[0]}`
-        await cloudinary.uploader.destroy(publicId)
+    const avatar = await uploadOnCloudinary(avatarLocalPath)
+
+    if(!avatar?.url){
+        throw new ApiError(400, "Error while uploading on avatar.")
     }
     
     const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set:{
-                avatar: avatar.url
+                avatar:{
+                    url: avatar.url,
+                    public_id: avatar.public_id
+                }
             }
         },
         {new: true}
     ).select("-password")
-     
+
+    if(userOld.avatar?.public_id){
+        await cloudinary.uploader.destroy(userOld.avatar.public_id); //delete the previous avatar from cloudinary
+    }
 
     return res
     .status(200)
@@ -373,34 +339,33 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
         throw new ApiError(400, "coverImage file is missing.")
     }
 
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
-
-    if(!coverImage.url){
-        throw new ApiError(400, "Error while uploading on coverImage.")
-    }
-
     const userOld = await User.findById(req.user?._id)
     if (!userOld) {
         throw new ApiError(404, "user not found")
     }
 
-    if(userOld.coverImage){
-        const segments = userOld.coverImage.split("/")
-        const fileWithExt = segments.at(-1)
-        const folder = segments.at(-2)
-        const publicId = `${folder}/${fileWithExt.split(".")[0]}`
-        await cloudinary.uploader.destroy(publicId)
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+
+    if(!coverImage?.url){
+        throw new ApiError(400, "Error while uploading on coverImage.")
     }
 
     const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set:{
-                coverImage: coverImage.url
+                coverImage:{
+                    url: coverImage.url,
+                    public_id: coverImage.public_id
+                }
             }
         },
         {new: true}
     ).select("-password")
+
+    if(userOld.coverImage?.public_id){
+        await cloudinary.uploader.destroy(userOld.coverImage.public_id)
+    }
 
     return res
     .status(200)

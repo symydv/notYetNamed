@@ -32,20 +32,29 @@ const userschema = new Schema(
     fullName: {
         type: String,
         required: true,
-        lowercase: true,
         trim: true,
         index: true
     },
     avatar: {
-        type: String, //cloudinary url
+        url: { //cloudinary url
+            type: String
+        },
+        public_id: {
+            type: String
+        } 
     },
     coverImage: {
-        type: String //cloudinary url
+        url: { //cloudinary url
+            type: String
+        },
+        public_id: {
+            type: String
+        } 
     },
     password: {
         type: String,
         required: [true, "password is required"],
-        // select:false      // so that on any call of "User" password field is not returned.but right now we are not adding it because we have to change our login (baad me karenge.)
+        //select:false      // so that on any call of "User" password field is not returned.
     },
     subscriberCount:{     //added later on 13/01/26, used in toggel subscription to increase and decrease it there and shown on player page.
         type: Number,
@@ -54,21 +63,21 @@ const userschema = new Schema(
     refreshToken: {
         type: String
     },
-    createdAt: {
-        type: Date
-    },
-    updatedAt: {
-        type: Date
-    },
     isEmailVerified:{
         type: Boolean,
         default: false
     },
     emailVerificationToken:{
-        type: String
+        type: String,
+        select: false,
+        index:true // makes it faster to search by this field, which we will do when user clicks on verification link.
     },
     emailVerificationExpiry:{
-        type: Date
+        type: Date,
+        index:{
+            expireAfterSeconds: 0 // This will make MongoDB automatically delete the document after 0 seconds past expiry time.
+        },
+        select: false
     }
     },
     {
