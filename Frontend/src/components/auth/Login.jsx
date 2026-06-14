@@ -29,6 +29,7 @@ export const Login = () => {
       
       navigate(from, { replace: true });  // redirect after login
     } catch (err) {
+      console.log(err);
       setError("Invalid credentials");
     } finally {
       setLoading(false);

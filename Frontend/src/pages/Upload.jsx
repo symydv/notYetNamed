@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
-import api from '../../api/axios';
+import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import {Video as V, FileImage} from "lucide-react"
@@ -68,7 +68,7 @@ export function Upload() {
           </p>
         </div>
 
-        <form onSubmit={uploadHandler} className="bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl p-8 space-y-8" >
+        <form onSubmit={uploadHandler} className="bg-zinc-900 border border-zinc-500 rounded-2xl shadow-2xl p-8 space-y-8" >
           {/* Video Upload */}
           <div>
             <h2 className="text-lg font-semibold mb-3">Video File</h2>
@@ -171,7 +171,7 @@ export function Upload() {
           <div className="flex justify-end">
             <motion.button
               type='submit'
-              className="bg-linear-to-r from-red-500 to-pink-600 text-white shadow-lg hover:from-red-600 hover:to-pink-700 px-6 py-3 rounded-xl font-semibold transition"
+              className="bg-linear-to-r from-red-500 to-pink-600 text-white shadow-lg hover:from-red-600 hover:to-pink-700 px-6 py-3 rounded-xl font-semibold transition cursor-pointer"
               disabled = {loading}
             >
               {loading ? "Uploading..." : "Publish Video"}

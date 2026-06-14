@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 import { useCallback, useEffect, useRef, useState } from "react";
-import api from "../../api/axios";
-import { getAvatarUrl } from "../../utils/cloudinary";
-import { useAuth } from "../../context/AuthContext";
+import api from "../api/axios";
+import { getAvatarUrl } from "../utils/cloudinary";
+import { useAuth } from "../context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { timeAgo } from "../../utils/timeAgo";
+import { timeAgo } from "../utils/timeAgo";
 
 function Comments({videoId}){
   const [comments, setComments] = useState([]);

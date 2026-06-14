@@ -1,7 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../../api/axios"
-
 
 // right now the sign up is not completed as we are not verifying emails and just letting them register. handle it later.
 

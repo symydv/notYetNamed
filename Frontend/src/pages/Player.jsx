@@ -1,12 +1,12 @@
 import React, { useRef } from "react";
 import { useEffect } from "react";
 import {useParams } from "react-router-dom";
-import api from "../../api/axios.js";
+import api from "../api/axios.js";
 import { useState } from "react";
-import { getAvatarUrl } from "../../utils/cloudinary.js";
-import { useAuth } from "../../context/AuthContext.jsx";
+import { getAvatarUrl } from "../utils/cloudinary.js";
+import { useAuth } from "../context/AuthContext.jsx";
 import toast from "react-hot-toast";
-import Comments from "../compo/Comments.jsx";
+import Comments from "../components/Comments.jsx";
 
 function Player(){
   const {videoId} = useParams()

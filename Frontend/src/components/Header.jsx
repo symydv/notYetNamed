@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { getAvatarUrl } from "../../utils/cloudinary.js";
+import { useAuth } from "../context/AuthContext.jsx";
+import { getAvatarUrl } from "../utils/cloudinary.js";
 import {MdOutlineAddCircle} from 'react-icons/md'
 
 function Header() {
@@ -24,7 +24,7 @@ function Header() {
 
   }
 
-  const {user, loading, logout} = useAuth()
+  const {user, logout} = useAuth()
 
   const goToLogin = (e)=>{
     e.preventDefault()
@@ -36,7 +36,7 @@ function Header() {
     navigate("/signup")
   }
 
-  const logoutHandler = async(e)=>{
+  const logoutHandler = async()=>{
     // e.preventDefault() //we need preventDefault only for forms and links (Preventing form submission, Preventing anchor navigation, Preventing page reload)
     await logout()
     setShowLogoutModal(false)
@@ -120,7 +120,7 @@ function Header() {
                 alt="profile"
                 className="w-10 h-10 rounded-full cursor-pointer border border-zinc-700"
               />
-              <button className="bg-zinc-800 text-white rounded-2xl p-1 hover:bg-zinc-600 cursor-pointer border border-zinc-700" onClick={()=> setShowLogoutModal(true)}>Logout</button>
+              <button className="bg-zinc-800 text-white rounded-2xl p-2 hover:bg-zinc-600 cursor-pointer border border-zinc-700" onClick={()=> setShowLogoutModal(true)}>Logout</button>
             </div>
             
           )}
