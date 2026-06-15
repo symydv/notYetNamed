@@ -11,6 +11,7 @@ import { AuthLayout } from './AuthLayout.jsx'
 import { GuestRoute } from './routeUtils/GuestRoute.jsx'
 import { Upload } from './pages/Upload.jsx'
 import ProtectedRoute from './routeUtils/ProtectedRoute.jsx'
+import VerifyEmailRoute from './routeUtils/VerifyEmailRoute.jsx'
 import VerifyEmail from './pages/auth/VerifyEmail.jsx'
 
 const router = createBrowserRouter([
@@ -59,7 +60,9 @@ const router = createBrowserRouter([
       {
         path: "verify-email",
         element: (
-          <VerifyEmail/>
+          <VerifyEmailRoute>
+            <VerifyEmail/>
+          </VerifyEmailRoute>
         )
       }
     ]

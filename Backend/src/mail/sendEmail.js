@@ -7,7 +7,7 @@ export const sendEmail = async(email, subject, templet) => {
       to: email,
       subject,
       text: "This is an account notification email.",
-      html: template
+      html: templet
     })
     console.log("Mail sent successFully");
   } catch (error) {

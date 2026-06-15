@@ -1,12 +1,43 @@
 import React from 'react'
 import {useState} from "react"
+import toast from "react-hot-toast"
+import {useNavigate, useLocation} from "react-router-dom"
+import api from "../../api/axios"
 function VerifyEmail() {
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [code, setCode] = useState("");
+  
+  const email = location.state?.email;// we sent email from signup page using state. so getting it here. if someone directly comes to this page then its better to show empty string rather than undefined.
+
   const handleSubmit = async(e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
+    if(!email){
+      setError("Can not access email")
+      setLoading(false);
+      return
+    }
+    if(!code){
+      setError("Code is required")
+      setLoading(false);
+      return
+    }
+    try {
+      await api.post("/users/verify-email", {email,verificationToken:code});
+      navigate("/login", {replace:true});//remove verify email page from history
+      toast.success("Email verified successfully");
+    } catch (error) {
+      setError(error.response?.data?.message || "Verification failed")
+    }finally{
+      setLoading(false);
+    }
+
   }
   return (
     <div className="min-h-screen flex items-center justify-center text-white px-4 ">
@@ -22,7 +53,11 @@ function VerifyEmail() {
         </h2>
         <input
           type="text"
+          inputMode='numeric'
           className="w-full px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none mb-6 text-light"
+          value={code}
+          maxLength={6}
+          onChange={(e) => setCode(e.target.value.replace(/\D/g,""))}
         />
         {/* Error */}
         {error && (

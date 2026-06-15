@@ -68,6 +68,9 @@ const registerUser = asyncHandler( async(req, res) => {
         if(existedUser.isEmailVerified){
             throw new ApiError(409, "User with email or username already exists")
         }else{
+            existedUser.username = username.toLowerCase();
+            existedUser.password = password;
+            existedUser.fullName = fullName;
             const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
             existedUser.emailVerificationToken = verificationToken;
             existedUser.emailVerificationExpiry = Date.now() +  1*60*60*1000; // 1hour from now
@@ -76,7 +79,8 @@ const registerUser = asyncHandler( async(req, res) => {
                 await existedUser.save({validateBeforeSave:false}); 
                 return res.status(200).json(new ApiResponse(200, {email: existedUser.email}, " Verification code sent again"))
             } catch (error) {
-                throw new ApiError(500, "Something went wrong while sending verification email. Please try again later.")
+                console.log("1")
+                throw new ApiError(500, "Something went wrong while sending verification email. Please try again lateer.")
             }
             
         }
@@ -101,7 +105,8 @@ const registerUser = asyncHandler( async(req, res) => {
         await sendEmail(user.email, "verify your email", verificationTemplate(verificationToken)) //sending email to user for verification.
     } catch (error) {
         await User.findByIdAndDelete(user._id) //if email sending fails then we will delete the created user from database as email verification is must for our app.
-        throw new ApiError(500, "Something went wrong while sending verification email. Please try again later.")
+        console.log("2")
+        throw new ApiError(500, "Something went wrong while sending verification email. Please try again laterr.")
     }
     
     //5.
@@ -124,7 +129,7 @@ const verifyEmail = asyncHandler(async(req, res) => {
         })
 
         if(!user){
-            throw new ApiError(400, "Invalid verification token or email")
+            throw new ApiError(400, "Invalid or expired verification token")
         }
 
         user.isEmailVerified = true;
@@ -555,6 +560,7 @@ const getWatchHistory = asyncHandler(async(req, res) => {
 
 export {
     registerUser,
+    verifyEmail,
     loginUser,
     logoutUser,
     refreshAccessToken,

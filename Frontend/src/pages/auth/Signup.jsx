@@ -35,7 +35,9 @@ export const Signup = ()=>{
 
     try {
       const res = await api.post("/users/register", {email, username, password, fullName})
-      navigate("/login")
+      navigate("/verify-email", {
+        state: {email} // we can also send email in query but its not good to send such data in url. so using state.
+      })
     } catch (err) {
       setError(err.response?.data.message);
     }finally{

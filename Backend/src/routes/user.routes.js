@@ -7,7 +7,8 @@ import {
     loginUser, 
     logoutUser, 
     refreshAccessToken, 
-    registerUser, 
+    registerUser,
+    verifyEmail, 
     updateAccountDetails, 
     updateUserAvatar, 
     updateUserCoverImage 
@@ -33,6 +34,7 @@ router.route("/register").post(
     registerUser
 )
 
+router.route("/verify-email").post(verifyEmail)
 
 router.route("/login").post(loginUser)
 
@@ -74,6 +76,7 @@ router.route("/c/:username").get(verifyJWT, getUserChannelProfile) //because we 
 // It uses JWT middleware for protected access and a controller that performs an aggregation query to fetch user metadata along with subscription data from related collections.
 
 router.route("/history").get(verifyJWT, getWatchHistory)
+
 
 
 export default router
