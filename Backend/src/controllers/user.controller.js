@@ -111,6 +111,33 @@ const registerUser = asyncHandler( async(req, res) => {
 
 })
 
+const verifyEmail = asyncHandler(async(req, res) => {
+    const {email, verificationToken} = req.body
+    if(!email || !verificationToken){
+        throw new ApiError(400, "Email and verification token are required")
+    }
+    try {
+        const user = await User.findOne({
+            email: email.toLowerCase(),
+            emailVerificationToken: verificationToken,
+            emailVerificationExpiry: {$gt: Date.now()} //to check that token is not expired.
+        })
+
+        if(!user){
+            throw new ApiError(400, "Invalid verification token or email")
+        }
+
+        user.isEmailVerified = true;
+        user.emailVerificationToken = undefined;
+        user.emailVerificationExpiry = undefined;
+        await user.save({validateBeforeSave:false});
+        return res.status(200).json(new ApiResponse(200, {email: user.email}, "Email verified successfully"))
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while verifying email. Please try again later.")  
+    }
+    
+})
+
 
 const loginUser = asyncHandler( async(req, res) => {
     //ToDos.

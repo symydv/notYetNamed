@@ -4,13 +4,14 @@ import App from './App.jsx'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import { Home } from './pages/Home.jsx'
 import { Player } from './pages/Player.jsx'
-import { Login } from './components/auth/Login.jsx'
+import { Login } from './pages/auth/Login.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
-import { Signup } from './components/auth/Signup.jsx'
+import { Signup } from './pages/auth/Signup.jsx'
 import { AuthLayout } from './AuthLayout.jsx'
 import { GuestRoute } from './routeUtils/GuestRoute.jsx'
 import { Upload } from './pages/Upload.jsx'
 import ProtectedRoute from './routeUtils/ProtectedRoute.jsx'
+import VerifyEmail from './pages/auth/VerifyEmail.jsx'
 
 const router = createBrowserRouter([
   {
@@ -36,7 +37,7 @@ const router = createBrowserRouter([
     ]
   },
   {
-    path: "/",              //we have put these two separately under authlayout because we dont want header on these two.
+    path: "/",              //we have put these separately under authlayout because we dont want header on them.
     element: <AuthLayout/>,
     children: [
       {
@@ -54,6 +55,12 @@ const router = createBrowserRouter([
             <Signup/>
           </GuestRoute>
         ) 
+      },
+      {
+        path: "verify-email",
+        element: (
+          <VerifyEmail/>
+        )
       }
     ]
   }
