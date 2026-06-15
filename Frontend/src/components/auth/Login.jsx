@@ -18,10 +18,18 @@ export const Login = () => {
     e.preventDefault(); // prevent page reload
     setError("");
     setLoading(true);
+    let email = null;
+    let username = null;
+    if(emailOrUsername.includes("@")) {
+      email = emailOrUsername;
+    }else{
+      username = emailOrUsername;
+    }
 
     try {
       await login({
-        email: emailOrUsername,  //only email login is possible for now.
+        email,
+        username,
         password
       });
 
@@ -29,8 +37,7 @@ export const Login = () => {
       
       navigate(from, { replace: true });  // redirect after login
     } catch (err) {
-      console.log(err);
-      setError("Invalid credentials");
+      setError(err.response?.data.message || "Login failed");
     } finally {
       setLoading(false);
     }

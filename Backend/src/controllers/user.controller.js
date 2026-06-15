@@ -6,7 +6,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 import { v2 as cloudinary} from "cloudinary"
-import { useOptimistic } from "react";
+import { sendEmail } from "../mail/sendEmail.js";
+import { verificationTemplate } from "../mail/emailTemplets.js";
 
 
 //for later use in the code.
@@ -29,11 +30,9 @@ const generateAccessAndRefreshTokens = async(userId) => {
 const registerUser = asyncHandler( async(req, res) => {
     //1. get user details from frontend. (using postman we can get user details instead of frontend using our "user models")
     //2. validation - not empty
-    //3. check if user already exists.(using username, email)
-    //4. create user object - create entry in db.
-    //5. remove password and refresh token field from response.
-    //6. check for user creation , it happened or not
-    //7. return res
+    //3. check if user already exists.(using username, email) and is he verified or not, if not verified send verification token again.
+    //4. create user object - create entry in db and send verification email.
+    //5. return res
 
     //1.
     const {fullName, email, username, password} = req.body
@@ -49,15 +48,38 @@ const registerUser = asyncHandler( async(req, res) => {
     ) {
         throw new ApiError(400, `All fields are required`) //using our already created function for Error handling.
     }
+    if (username.includes("@")) {
+        throw new ApiError(400, "Username cannot contain @")
+    }
     
     //3.
     const existedUser = await User.findOne({ //This is a Mongoose method that searches for a single user in the database.
-        $or: [{ username }, { email }]  //$or is a MongoDB operator that allows you to specify multiple conditions.It returns documents that match at least one of the conditions.
+        $or: [{ username: username.toLowerCase() }, { email: email.toLowerCase() }]  //$or is a MongoDB operator that allows you to specify multiple conditions.It returns documents that match at least one of the conditions.
         //Find a user where the username matches the provided username OR the email matches the provided email.
     })
 
     if (existedUser) {
-        throw new ApiError(409, "User with email or username already exists")
+        if(existedUser.email.toLowerCase() !== email.toLowerCase()){
+            throw new ApiError(
+                409,
+                "Username already taken"
+            );
+        }
+        if(existedUser.isEmailVerified){
+            throw new ApiError(409, "User with email or username already exists")
+        }else{
+            const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+            existedUser.emailVerificationToken = verificationToken;
+            existedUser.emailVerificationExpiry = Date.now() +  1*60*60*1000; // 1hour from now
+            try {
+                await sendEmail(existedUser.email, "verify your email", verificationTemplate(verificationToken))
+                await existedUser.save({validateBeforeSave:false}); 
+                return res.status(200).json(new ApiResponse(200, {email: existedUser.email}, " Verification code sent again"))
+            } catch (error) {
+                throw new ApiError(500, "Something went wrong while sending verification email. Please try again later.")
+            }
+            
+        }
     }
 
 
@@ -65,30 +87,29 @@ const registerUser = asyncHandler( async(req, res) => {
     // console.log(req.body); //just to check what is this 
     
     //4.
+    const verificationToken = Math.floor(100000 + Math.random() * 900000).toString(); //generating random 6 digit number as verification token.
     const user = await User.create({ //Used to insert a new document into a MongoDB collection (database)
         fullName,
-        email,
+        email: email.toLowerCase(),
         password,
-        username: username.toLowerCase()
+        username: username.toLowerCase(),
+        emailVerificationToken: verificationToken,
+        emailVerificationExpiry: Date.now() + 1*60*60*1000 // 1hour from now
     })
     
-
-    //5. and 6.
-    const createdUser = await User.findById(user._id).select(
-        "-password -refreshToken" // '-' ke baad jo bhi likha hai wo hame nahi chahiye hota hai to wo response me show nahi hoga
-    ) 
-    //db automatically creates "_id" for each data block
-
-    if (!createdUser) {
-        throw new ApiError(500, "Something went wrong while registering a user.")
+    try {
+        await sendEmail(user.email, "verify your email", verificationTemplate(verificationToken)) //sending email to user for verification.
+    } catch (error) {
+        await User.findByIdAndDelete(user._id) //if email sending fails then we will delete the created user from database as email verification is must for our app.
+        throw new ApiError(500, "Something went wrong while sending verification email. Please try again later.")
     }
-
-    //7.
+    
+    //5.
     return res.status(201).json(
-        new ApiResponse(200, createdUser, "User Registered successfully")
+        new ApiResponse(201, {email: user.email}, "User Registered successfully")
     )
 
-    })
+})
 
 
 const loginUser = asyncHandler( async(req, res) => {
@@ -109,23 +130,29 @@ const loginUser = asyncHandler( async(req, res) => {
 
     //2.
     const user  = await User.findOne({ //find first document with same username or password saved , which we wanted.
-        $or: [{username}, {email}]
+        $or: [{username: username?.toLowerCase()}, {email: email?.toLowerCase()}]
     })
 
     if (!user) {
         throw new ApiError(404, "user does not exists")
     }
 
-    //3.
+    //3
     const isPasswordValid = await user.isPasswordCorrect(password)
     if (!isPasswordValid) {
         throw new ApiError(401, "Invalid user credentials")
     }
 
+    if(!user.isEmailVerified){
+        throw new ApiError(401, "Email not verified. Please verify your email to login.")
+    }
+
     //4.
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
     
-    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")  //optional step
+    const loggedInUser = user.toObject();
+    delete loggedInUser.password;
+    delete loggedInUser.refreshToken;
 
     const option = {
         httpOnly: true,

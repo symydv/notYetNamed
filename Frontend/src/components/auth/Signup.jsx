@@ -22,6 +22,11 @@ export const Signup = ()=>{
     e.preventDefault()
     setError("");
     setLoading(true);
+    if (username.includes("@")) {
+      setError("Username cannot contain @")
+      setLoading(false);
+      return;
+    }
     if(password !== confirmPassword){
       setError("password should be same in both the fields")
       setLoading(false);
@@ -67,7 +72,7 @@ export const Signup = ()=>{
             Email 
           </label>
           <input
-            type="text"
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required

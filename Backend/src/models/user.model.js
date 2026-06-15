@@ -1,7 +1,6 @@
 import mongoose, {Schema} from "mongoose";  //Schema isliye taki baar baar mongoose.Schema na likhna pade.
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
-import { type } from "os";
 
 
 
@@ -20,7 +19,11 @@ const userschema = new Schema(
         unique: true,
         lowercase: true,
         trim: true,
-        index: true
+        index: true,
+        validate: {
+            validator: (value) => !value.includes("@"),
+            message: "Username cannot contain @"
+        }
     },
     email: {
         type: String,
