@@ -6,7 +6,8 @@ import { useState } from "react";
 import { getAvatarUrl } from "../utils/cloudinary.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import toast from "react-hot-toast";
-import Comments from "../components/Comments.jsx";
+import Comments from "../features/Comments.jsx";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 
 function Player(){
   const {videoId} = useParams()
@@ -59,7 +60,7 @@ function Player(){
   }, [video?.description])
 
   if (loading) {
-    return <p className="text-white p-4">Loading...</p>;
+    return <LoadingSpinner/>;
   }
 
   const likeHandler  = async()=>{

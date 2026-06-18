@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { Loader } from "lucide-react"
 import api from "../../api/axios"
 
-// right now the sign up is not completed as we are not verifying emails and just letting them register. handle it later.
 
 export const Signup = ()=>{
   const navigate = useNavigate()
@@ -18,6 +18,7 @@ export const Signup = ()=>{
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
+  //checks if it is email or username and then after registering user will be redirected to verify email page with email in state.
   const handleSubmit = async(e)=>{
     e.preventDefault()
     setError("");
@@ -97,7 +98,7 @@ export const Signup = ()=>{
         {/* Password */}
         <div>
           <label className="block text-sm text-gray-400 mb-1">
-            password
+            Password
           </label>
         </div>
         <div className="relative mb-4">
@@ -120,7 +121,7 @@ export const Signup = ()=>{
         {/* confirm password */}
         <div className="mb-6">
           <label className="block text-sm text-gray-400 mb-1">
-            confirm password
+            Confirm password
           </label>
           <div className="flex relative">
             <input
@@ -153,18 +154,18 @@ export const Signup = ()=>{
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:opacity-60 transition"
+          className="w-full py-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:opacity-60 transition cursor-pointer"
         >
-          {loading ? "Signing up..." : "register"}
+          {loading ? <Loader className="mx-auto animate-spin"/> : "register"}
         </button>
 
         <p className="text-sm text-gray-400 text-center mt-6">
-          already have an account?{" "}
+          Already have an account?{" "}
           <span
             className="text-red-500 hover:underline cursor-pointer"
             onClick={() => navigate("/login")}
           >
-            login
+            Login
           </span>
         </p>
       </form>

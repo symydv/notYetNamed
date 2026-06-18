@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { getAvatarUrl } from "../utils/cloudinary.js";
@@ -167,4 +167,4 @@ function Header() {
   );
 }
 
-export {Header}
+export default Header

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Loader } from "lucide-react";
 
 export const Login = () => {
   const { login } = useAuth();
@@ -94,7 +95,7 @@ export const Login = () => {
           disabled={loading}
           className="w-full py-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:opacity-60 transition"
         >
-          {loading ? "Signing in..." : "Sign in"}
+          {loading ? <Loader className = "mx-auto animate-spin"/> : "Sign in"}
         </button>
 
         <p className="text-sm text-gray-400 text-center mt-6">

@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import api from "../api/axios.js";
 import { getAvatarUrl } from "../utils/cloudinary.js";
 import { timeAgo } from "../utils/timeAgo.js";
-
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 
 
 function Home() {
@@ -17,10 +17,6 @@ function Home() {
   const search = searchParams.get("search");
   const loaderRef = useRef(null);
   const [isFetching, setIsFetching] = useState(false);
-
-  function play(videoId){
-    navigate(`/player/${videoId}`)
-  }
 
   function formatDuration(seconds) {
     const m = Math.floor(seconds / 60);
@@ -95,11 +91,10 @@ function Home() {
     setHasMore(true);
     setIsFetching(false);
     setQuery(search);
-
     setpage(1);
   }, [search]);
 
-  if (loading && page===1) return <p className="text-white">Loading...</p>;
+  if (loading && page===1) return <LoadingSpinner/>;
 
   return (
     <>
@@ -108,10 +103,12 @@ function Home() {
           <p className="text-white">No videos found</p>
         )}
         {videos.map((video) => (
-          <div onClick={()=>play(video._id)} key={video._id} className="rounded-2xl hover:bg-gray-700 px-1 py-2 relative">
+          // Link enables native browser actions (open in new tab, copy link, etc.)
+          <Link to={`/player/${video._id}`} key={video._id} className="rounded-2xl hover:bg-gray-700 px-1 py-2 relative">
             <div className="relative aspect-video">
               <img
-                className="rounded-2xl w-full h-full object-cover"
+                className="rounded-2xl w-full h-full object-cover pointer-events-none select-none cursor-pointer" //pointer event none to hide image/thumbnail url
+                draggable="false"
                 src={video.thumbnail}
                 alt={video.title}
                 loading="lazy" //load the thumbnail only when needed
@@ -144,9 +141,7 @@ function Home() {
               </div>
               
             </div>
-            
-            
-          </div>
+          </Link >
         ))}
       </div>
       {/* Loader element at the bottom */}
