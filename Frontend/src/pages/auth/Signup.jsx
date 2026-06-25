@@ -3,7 +3,8 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Loader } from "lucide-react"
 import api from "../../api/axios"
-
+import Input from "../../components/Input"
+import {Lock, Mail, User} from "lucide-react"
 
 export const Signup = ()=>{
   const navigate = useNavigate()
@@ -35,7 +36,12 @@ export const Signup = ()=>{
     }
 
     try {
-      const res = await api.post("/users/register", {email, username, password, fullName})
+      const res = await api.post("/users/register", {
+        email: email.trim(),
+        username: username.trim(),
+        password,
+        fullName: fullName.trim()
+      })
       navigate("/verify-email", {
         state: {email} // we can also send email in query but its not good to send such data in url. so using state.
       })
@@ -61,12 +67,12 @@ export const Signup = ()=>{
           <label className="block text-sm text-gray-400 mb-1">
             Full name 
           </label>
-          <input
+          <Input
+            icon={User}
             type="text"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
-            className="w-full px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none"
           />
         </div>
         {/* Email / Username */}
@@ -74,24 +80,24 @@ export const Signup = ()=>{
           <label className="block text-sm text-gray-400 mb-1">
             Email 
           </label>
-          <input
+          <Input
+            icon={Mail}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none"
           />
         </div>
         <div className="mb-4">
           <label className="block text-sm text-gray-400 mb-1">
             Username 
           </label>
-          <input
+          <Input
+            icon={User}
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            className="w-full px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none"
           />
         </div>
 
@@ -102,14 +108,13 @@ export const Signup = ()=>{
           </label>
         </div>
         <div className="relative mb-4">
-          <input
+          <Input
+            icon={Lock}
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full px-4 py-2 pr-12 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none"
+            required  
           />
-
           <button
             type="button"
             onClick={() => setShowPassword(prev => !prev)}
@@ -123,15 +128,14 @@ export const Signup = ()=>{
           <label className="block text-sm text-gray-400 mb-1">
             Confirm password
           </label>
-          <div className="flex relative">
-            <input
+          <div className="relative">
+            <Input
+              icon={Lock}
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none"
             />
-
             <button
               type="button"
               onClick={() => setShowConfirmPassword(prev => !prev)}

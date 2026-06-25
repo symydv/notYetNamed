@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Loader } from "lucide-react";
+import { Loader, Lock, User} from "lucide-react";
+import Input from "../../components/Input";
 
 export const Login = () => {
   const { login } = useAuth();
@@ -51,7 +52,7 @@ export const Login = () => {
         className="w-full max-w-md bg-zinc-900 rounded-2xl p-8"
       >
         <h1 className="text-2xl font-semibold text-center mb-6">
-          Sign in
+          Log in
         </h1>
 
         {/* Email / Username */}
@@ -59,26 +60,27 @@ export const Login = () => {
           <label className="block text-sm text-gray-400 mb-1">
             Email or Username
           </label>
-          <input
+          <Input
+            icon={User}
             type="text"
             value={emailOrUsername}
             onChange={(e) => setEmailOrUsername(e.target.value)}
             required
-            className="w-full px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none"
           />
         </div>
+        
 
         {/* Password */}
         <div className="mb-6">
           <label className="block text-sm text-gray-400 mb-1">
             Password
           </label>
-          <input
+          <Input
+            icon={Lock}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full px-4 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:ring-2 focus:ring-white outline-none"
           />
         </div>
 
@@ -95,7 +97,7 @@ export const Login = () => {
           disabled={loading}
           className="w-full py-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:opacity-60 transition"
         >
-          {loading ? <Loader className = "mx-auto animate-spin"/> : "Sign in"}
+          {loading ? <Loader className = "mx-auto animate-spin"/> : "Login"}
         </button>
 
         <p className="text-sm text-gray-400 text-center mt-6">
