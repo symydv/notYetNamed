@@ -1,10 +1,10 @@
-/* eslint-disable no-unused-vars */
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Loader } from "lucide-react"
 import api from "../../api/axios"
 import Input from "../../components/Input"
 import {Lock, Mail, User} from "lucide-react"
+import Button from "../../components/Button"
 
 export const Signup = ()=>{
   const navigate = useNavigate()
@@ -155,13 +155,12 @@ export const Signup = ()=>{
         )}
 
         {/* Button */}
-        <button
+        <Button
+          loading={loading}
           type="submit"
-          disabled={loading}
-          className="w-full py-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:opacity-60 transition cursor-pointer"
         >
-          {loading ? <Loader className="mx-auto animate-spin"/> : "register"}
-        </button>
+          Register
+        </Button>
 
         <p className="text-sm text-gray-400 text-center mt-6">
           Already have an account?{" "}

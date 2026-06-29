@@ -13,6 +13,8 @@ import { Upload } from './pages/Upload.jsx'
 import ProtectedRoute from './routeUtils/ProtectedRoute.jsx'
 import VerifyEmailRoute from './routeUtils/VerifyEmailRoute.jsx'
 import VerifyEmail from './pages/auth/VerifyEmail.jsx'
+import ForgotPassword from './pages/auth/ForgotPassword.jsx'
+import ResetPassword from './pages/auth/ResetPassword.jsx'
 
 const router = createBrowserRouter([
   {
@@ -63,6 +65,22 @@ const router = createBrowserRouter([
           <VerifyEmailRoute>
             <VerifyEmail/>
           </VerifyEmailRoute>
+        )
+      },
+      {
+        path: "forgot-password",
+        element: (
+          <GuestRoute>
+            <ForgotPassword/>
+          </GuestRoute>
+        )
+      },
+      {
+        path: "reset-password/:token",
+        element: (
+          <GuestRoute>
+            <ResetPassword/>
+          </GuestRoute>
         )
       }
     ]

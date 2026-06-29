@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { Loader, Lock, User} from "lucide-react";
 import Input from "../../components/Input";
+import Button from "../../components/Button";
 
 export const Login = () => {
   const { login } = useAuth();
@@ -84,6 +85,12 @@ export const Login = () => {
           />
         </div>
 
+        <div className="flex items-center mb-6">
+          <Link to="/forgot-password" className="text-sm text-gray-400 hover:text-gray-200 hover:underline">
+            Forgot Password?
+          </Link>
+        </div>
+
         {/* Error */}
         {error && (
           <p className="text-red-500 text-sm mb-4 text-center">
@@ -92,13 +99,12 @@ export const Login = () => {
         )}
 
         {/* Button */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:opacity-60 transition"
+        <Button
+          type = "submit"
+          loading={loading}
         >
-          {loading ? <Loader className = "mx-auto animate-spin"/> : "Login"}
-        </button>
+          Login
+        </Button>
 
         <p className="text-sm text-gray-400 text-center mt-6">
           Don’t have an account?{" "}
