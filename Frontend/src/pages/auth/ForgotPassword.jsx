@@ -4,6 +4,7 @@ import Input from '../../components/Input'
 import { User, ArrowLeft} from 'lucide-react'
 import Button from '../../components/Button';
 import api from '../../api/axios'
+import toast from 'react-hot-toast';
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -15,9 +16,11 @@ function ForgotPassword() {
     setLoading(true);
     setError(null);
     try {
-      // const res = await api.post("/users/forgot-password", {email});
+      const res = await api.post("/users/forgot-password", {email});
+      toast.success("Email sent successfully");
       setIsSubmitted(true);
     } catch (error) {
+      setIsSubmitted(false);
       setError(error.response.data.message);
     }finally{
       setLoading(false);
@@ -74,7 +77,7 @@ function ForgotPassword() {
         <div className="px-8 py-4 flex justify-center">
           <Link
             to="/login"
-            className="text-sm text-green-400 hover:underline flex items-center"
+            className="text-sm text-gray-400 hover:underline flex items-center"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Login

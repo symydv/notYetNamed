@@ -7,8 +7,8 @@ import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 import { v2 as cloudinary} from "cloudinary"
 import { sendEmail } from "../mail/sendEmail.js";
-import { verificationTemplate } from "../mail/emailTemplets.js";
-
+import { verificationTemplate, PASSWORD_RESET_TEMPLATE} from "../mail/emailTemplets.js";
+import crypto from "crypto"
 
 //for later use in the code.
 const generateAccessAndRefreshTokens = async(userId) => {
@@ -295,24 +295,58 @@ const refreshAccessToken = asyncHandler(async(req, res) => {
     }
 })
 
-
-const changeCurrentPassword = asyncHandler(async(req, res) => {
-    const {oldPassword, newPassword} = req.body
-
-    const user = await User.findById(req.user?._id)  //we are able to use req.user because we are using verfyJWT middleware in routes.
-    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword) //retruns true/false
-
-    if (!isPasswordCorrect) {
-        throw new ApiError(400, "Invalid old Password")
+const forgotPassword = asyncHandler(async(req, res) => {
+    const {email} = req.body;
+    const user = await User.findOne({email: email.toLowerCase()});
+    if(!user){
+        throw new ApiError(404, "User not found");
     }
 
-    user.password = newPassword //new password will automatically bcrypt as we have written code for it in usermodel.
-    await user.save({validateBeforeSave: false}) //dont use findByIdAndUpdate because it does not calls save so our pre("save") will not work, so what I have used here is correct.
+    const resetPasswordToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto
+    .createHash("sha256")
+    .update(resetPasswordToken)
+    .digest("hex");
+    const resetPasswordExpiresAt = Date.now() + 1*60*60*1000; //1hour
+
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpires = resetPasswordExpiresAt;
+    await user.save();
+
+    try {
+        await sendEmail(user.email, "Reset password", PASSWORD_RESET_TEMPLATE(`${process.env.CLIENT_URL}/reset-password/${resetPasswordToken}`)); //reset url
+    } catch (err) {
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+        
+        throw new ApiError(500, "Couldn't send reset email");
+    }
 
     return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Password changed successFully"))
+    .json(new ApiResponse(200, {}, "Password reset link sent to your email"))
+})
 
+const resetPassword = asyncHandler(async(req, res) => {
+    const {password} = req.body;
+    const {token} = req.params;
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+        resetPasswordToken : hashedToken,
+        resetPasswordExpires: {$gt: Date.now()}
+    })
+    if(!user){
+        throw new ApiError(400, "Invalid or expired token");
+    }
+
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    return res.status(200).json(new ApiResponse(200, {}, "Password reset successfully."))
 })
 
 
@@ -564,7 +598,8 @@ export {
     loginUser,
     logoutUser,
     refreshAccessToken,
-    changeCurrentPassword,
+    forgotPassword,
+    resetPassword,
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,

@@ -1,6 +1,5 @@
 import { Router } from "express";
-import { 
-    changeCurrentPassword, 
+import {
     getCurrentUser, 
     getUserChannelProfile, 
     getWatchHistory, 
@@ -11,7 +10,9 @@ import {
     verifyEmail, 
     updateAccountDetails, 
     updateUserAvatar, 
-    updateUserCoverImage 
+    updateUserCoverImage,
+    forgotPassword,
+    resetPassword 
 } from "../controllers/user.controller.js";
 
 import {upload} from "../middlewares/multer.middleware.js"
@@ -45,7 +46,8 @@ router.route("/logout").post(verifyJWT, logoutUser) // verifyJWT is a middleware
 
 router.route("/refresh-token").post(refreshAccessToken)
 
-router.route("/change-password").post(verifyJWT, changeCurrentPassword)
+router.route("/forgot-password").post(forgotPassword)
+router.route("/reset-password/:token").post(resetPassword)
 // "post" is used when:
 // You're creating new data (e.g., registering a user).
 // Or submitting sensitive data like passwords, even if nothing is created.
