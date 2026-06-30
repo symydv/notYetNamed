@@ -38,6 +38,10 @@ const userschema = new Schema(
         trim: true,
         index: true
     },
+    role: {
+        type: String,
+        default: "user"
+    },
     avatar: {
         url: { //cloudinary url
             type: String
@@ -123,7 +127,8 @@ userschema.methods.generateAccessToken = function(){
             _id: this._id,
             email: this.email,
             username: this.username,
-            fullName: this.fullName
+            fullName: this.fullName,
+            role: this.role
         },
         //2. accesse token
         process.env.ACCESS_TOKEN_SECRET,

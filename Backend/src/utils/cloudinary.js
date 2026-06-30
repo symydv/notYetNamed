@@ -39,27 +39,4 @@ const uploadOnCloudinary = async (LocalFilePath, resourceType = "auto") => {
     }
 }
 
-
-
-
 export {uploadOnCloudinary}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    

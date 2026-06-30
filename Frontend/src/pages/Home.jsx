@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import api from "../api/axios.js";
-import { getAvatarUrl } from "../utils/cloudinary.js";
+import { getAvatarUrl, getThumbnailUrl } from "../utils/cloudinary.js";
 import { timeAgo } from "../utils/timeAgo.js";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 
@@ -109,7 +109,7 @@ function Home() {
               <img
                 className="rounded-2xl w-full h-full object-cover pointer-events-none select-none cursor-pointer" //pointer event none to hide image/thumbnail url
                 draggable="false"
-                src={video.thumbnail}
+                src={getThumbnailUrl(video.thumbnail)}
                 alt={video.title}
                 loading="lazy" //load the thumbnail only when needed
                 decoding="async" // Load and decode the image without blocking page rendering.
