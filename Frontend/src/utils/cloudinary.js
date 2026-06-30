@@ -10,7 +10,8 @@ export const getAvatarUrl = (url) => {
   );
 };
 
-export const getThumbnailUrl = (url) => {
+//to resize the thumbnail for faster loading.
+export const getThumbnailUrl = (url) => { 
   if (!url) return "";
 
   return url.replace(

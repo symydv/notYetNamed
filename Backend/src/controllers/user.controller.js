@@ -248,7 +248,7 @@ const logoutUser = asyncHandler(async(req, res) => {
 
 // Or, user is opening the app after a long time
 const refreshAccessToken = asyncHandler(async(req, res) => {
-    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+    const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken
 
     if (!incomingRefreshToken) {
         throw new ApiError(401, "unauthorized request")
@@ -277,16 +277,16 @@ const refreshAccessToken = asyncHandler(async(req, res) => {
         }
     
     
-        const {accessToken, newRefreshToken} = await generateAccessAndRefreshTokens(user._id) //to store in database.
+        const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id) //to store in database.
     
         return res
         .status(200)
         .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", newRefreshToken, options)
+        .cookie("refreshToken", refreshToken, options)
         .json(
             new ApiResponse(
                 200,
-                {accessToken, refreshToken: newRefreshToken},
+                {accessToken, refreshToken: refreshToken},
                 "Access token refreshed"
             )
         )

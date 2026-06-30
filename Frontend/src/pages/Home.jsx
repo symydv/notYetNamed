@@ -28,7 +28,7 @@ function Home() {
   // Fetch videos whenever page or search changes
   useEffect(() => {
     if (isFetching || !hasMore) return;
-    console.log(page);
+    // console.log(page);
     
     const fetchVideos = async () => {
       setIsFetching(true);
