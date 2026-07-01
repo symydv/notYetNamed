@@ -1,7 +1,5 @@
-import mongoose from "mongoose"
 import {Video} from "../models/video.model.js"
 import {Subscription} from "../models/subscription.model.js"
-import {Like} from "../models/like.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
@@ -9,38 +7,18 @@ import { User } from "../models/user.model.js"
 
 const getChannelStats = asyncHandler(async (req, res) => {
     // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
-    const userDetails = await User.aggregate([
-        {
-            $match: {_id: new mongoose.Types.ObjectId(req.user._id)}
-        },
-        {
-            $lookup: {
-                from: "videos",
-                localField: "_id",
-                foreignField: "owner",
-                as: "userVideos"
-            }
-        },
-        {
-            $lookup:{
-                from: "subscriptions",
-                localField:"_id",
-                foreignField:"channel",
-                as: "subscriptions"
-            }
-        },
-        {
-            $project: {
-                totalVideos: {$size: "$userVideos"},
-                subscribers: {$size: "$subscriptions"}
-            }
-        }
-    ])
+    const username = req.params.username;
+    const user = await User.findOne({ username });
+    if (!user) {
+        throw new ApiError(404, "Channel not found");
+    }
+    
+    const totalVideos = await Video.countDocuments({owner: user._id, isPublished: true});
 
     const totalLikesViews = await Video.aggregate([
         {
             $match: {
-            owner: new mongoose.Types.ObjectId(req.user._id) // Only videos uploaded by this user
+                owner: user._id // Only videos uploaded by this user
             }
         },
         {
@@ -64,22 +42,41 @@ const getChannelStats = asyncHandler(async (req, res) => {
             }
         }
     ]);
+    let isSubscribed = false;
 
-    const channelStats = userDetails[0] || { totalVideos: 0, subscribers: 0 };
+    if (req.user) {
+        isSubscribed = !!(await Subscription.exists({
+            subscriber: req.user._id,
+            channel: user._id
+        }));
+    }
+    const isOwner = req.user && user._id.equals(req.user._id);
+
     const stats = totalLikesViews[0] || { totalLikes: 0, totalViews: 0 };
     return res
     .status(200)
     .json(new ApiResponse(200, {
-        subscribers:channelStats.subscribers, 
-        totalVideos: channelStats.totalVideos,
+        subscribers: user.subscriberCount, 
+        totalVideos: totalVideos,
         likes: stats.totalLikes,
-        views: stats.totalViews
+        views: stats.totalViews,
+        avatar: user.avatar,
+        coverImage: user.coverImage,
+        fullName: user.fullName,
+        description: user.description,
+        username: user.username,
+        isSubscribed: isSubscribed,
+        isOwner: isOwner,
     }, "channel states fetched successFully."))
 })
 
 const getChannelVideos = asyncHandler(async (req, res) => {
     // TODO: Get all the videos uploaded by the channel
-
+    const username = req.params.username;
+    const user = await User.findOne({ username });
+    if (!user) {
+        throw new ApiError(404, "Channel not found");
+    }
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1)*limit ;
@@ -87,7 +84,8 @@ const getChannelVideos = asyncHandler(async (req, res) => {
     const channelVideos = await Video.aggregate([
         {
             $match: {
-                owner: new mongoose.Types.ObjectId(req.user._id)
+                owner: user._id,
+                isPublished: true
             }
         },
         {
@@ -113,7 +111,7 @@ const getChannelVideos = asyncHandler(async (req, res) => {
         }
     ])
 
-    const totalVideos = await Video.countDocuments({ owner: req.user._id });
+    const totalVideos = await Video.countDocuments({ owner: user._id });
 
     return res.status(200).json(
         new ApiResponse(200, {

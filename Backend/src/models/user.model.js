@@ -67,6 +67,25 @@ const userschema = new Schema(
         type: Number,
         default:0
     },
+    description: { //added later on 13/01/26, discription of channel.
+        type: String,
+        trim: true
+    },
+    subscribers: {
+        type: [Schema.Types.ObjectId],
+        ref: "User",
+        default: []
+    },
+    subscriptions: {
+        type: [Schema.Types.ObjectId],
+        ref: "User",
+        default: []
+    },
+    tokens: {
+        type: [String],
+        default: []
+
+    },
     refreshToken: {
         type: String
     },

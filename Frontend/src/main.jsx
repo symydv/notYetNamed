@@ -15,6 +15,7 @@ import VerifyEmailRoute from './routeUtils/VerifyEmailRoute.jsx'
 import VerifyEmail from './pages/auth/VerifyEmail.jsx'
 import ForgotPassword from './pages/auth/ForgotPassword.jsx'
 import ResetPassword from './pages/auth/ResetPassword.jsx'
+import Channel from './pages/Channel.jsx'
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
             <Upload/>
           </ProtectedRoute>
         )
+      },
+      {
+        path: "channel/:username",
+        element: <Channel/>
       }
     ]
   },
