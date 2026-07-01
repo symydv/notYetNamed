@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import {useState, useEffect} from "react"
 import {useParams} from "react-router-dom"
 import {useAuth} from "../context/AuthContext"
 import api from "../api/axios"
+import LoadingSpinner from "../components/LoadingSpinner"
+import ChannelBanner from '../components/channelComponents/ChannelBanner'
+import ChannelInfo from '../components/channelComponents/ChannelInfo'
 function Channel() {
   const username = useParams().username;
-  console.log(username)
   const {user} = useAuth();
-  const [channel, setChannel] = useState("");
+  const [channel, setChannel] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,18 +24,22 @@ function Channel() {
       }finally {
         setLoading(false);
       }
+      
     };
     fetchChannel();
   }, [username]);
-  
+
+  if(loading) return <LoadingSpinner />
   return (
-    <div className='pl-8 pr-8'>
-      <div className='max-h-full rounded-2xl bg-black'>
-        <div className="h-40 bg-linear-to-r from-blue-500 to-red-500 rounded-xl" />
-      </div>
-      <div className='max-h-full bg-amber-300'>
-        header
-      </div>
+    <div className='flex flex-col pl-2 pr-2 sm:pl-15 sm:pr-15 md:pl-20 md:pr-20'>
+      <ChannelBanner 
+        coverImage={channel.coverImage} 
+        username={username}
+      />
+      <ChannelInfo 
+        username={username}
+        channel={channel}
+      />
       <div className='max-h-full bg-amber-300'>
         Tabs
       </div>
