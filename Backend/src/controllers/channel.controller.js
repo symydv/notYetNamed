@@ -67,6 +67,8 @@ const getChannelStats = asyncHandler(async (req, res) => {
         username: user.username,
         isSubscribed: isSubscribed,
         isOwner: isOwner,
+        _id: user._id,
+        createdAt: user.createdAt,
     }, "channel states fetched successFully."))
 })
 

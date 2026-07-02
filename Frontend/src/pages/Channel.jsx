@@ -39,6 +39,7 @@ function Channel() {
       <ChannelInfo 
         username={username}
         channel={channel}
+        user={user}
       />
       <div className='max-h-full bg-amber-300'>
         Tabs

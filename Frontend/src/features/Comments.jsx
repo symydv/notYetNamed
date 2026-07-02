@@ -200,6 +200,7 @@ function Comments({videoId}){
               <textarea
                   placeholder="Add a comment..."
                   value={newComment}
+                  key={user._id}
                   onChange={(e) => setNewComment(e.target.value)}
                   onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {

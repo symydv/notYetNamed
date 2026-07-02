@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import toast from "react-hot-toast";
 import Comments from "../features/Comments.jsx";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
+import SubscribeButton from "../components/SubscribeButton.jsx";
 
 function Player(){
   const {videoId} = useParams()
@@ -15,10 +16,9 @@ function Player(){
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
-  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [initialSubscribed, setInitialSubscribed] = useState(false);
 
   const [likeLoading, setLikeLoading] = useState(false);
-  const [subLoading, setSubLoading] = useState(false);
 
   const [expanded, setExpanded] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
@@ -45,7 +45,7 @@ function Player(){
       // console.log(res.data.data.isLiked);
       setLikeCount(res.data.data.video.likeCount);
       // console.log(res.data.data.isSubscribed);
-      setIsSubscribed(res.data.data.isSubscribed)
+      setInitialSubscribed(res.data.data.isSubscribed)
       
       setLoading(false)
     }
@@ -85,29 +85,6 @@ function Player(){
     
   }
 
-  const subscriptionHandler = async()=>{
-    if(!user){
-      toast("sign in to subscribe", {id: "login required"})
-      return;
-    }
-    if(user._id === video.owner._id){
-      toast.error("you can not subscribe yourself")
-      return;
-    }
-
-    if(subLoading) return;
-
-    try {
-      setSubLoading(true)
-      const res = await api.patch(`/subscriptions/${video.owner._id}`)
-      setIsSubscribed(res.data.data.isSubscribed)
-    } catch (error) {
-      console.log(error)
-      toast.error("Something went wrong")
-    }finally{
-      setSubLoading(false)
-    }
-  }
   
   return (
   <div className="w-full px-6 py-2 grid grid-cols-9">
@@ -216,27 +193,7 @@ function Player(){
           </button>
 
           {/* Subscribe */}
-          <button
-            disabled={subLoading}
-            onClick={subscriptionHandler}
-            className={`
-              px-4 py-2 rounded-full font-medium transition cursor-pointer
-              ${isSubscribed
-                ? "bg-slate-700 text-stone-400"
-                : "bg-white text-black"}
-              ${
-                subLoading
-                  ? "opacity-60 cursor-not-allowed"
-                  : "hover:bg-slate-500 hover:text-stone-200"
-              }
-            `}
-          >
-            {subLoading
-              ? "Processing..."
-              : isSubscribed
-              ? "Subscribed"
-              : "Subscribe"}
-          </button>
+          <SubscribeButton channel={video.owner} initialSubscribed={initialSubscribed}/>
         </div>
       </div>
 
