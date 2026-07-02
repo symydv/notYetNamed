@@ -104,10 +104,10 @@ function Home() {
         )}
         {videos.map((video) => (
           // Link enables native browser actions (open in new tab, copy link, etc.)
-          <Link to={`/player/${video._id}`} key={video._id} className="rounded-2xl hover:bg-gray-700 px-1 py-2 relative">
+          <div onClick={() => navigate(`/player/${video._id}`)} key={video._id} className="rounded-2xl hover:brightness-110 hover:bg-zinc-800 px-1 py-2 relative">
             <div className="relative aspect-video">
               <img
-                className="rounded-2xl w-full h-full object-cover pointer-events-none select-none cursor-pointer" //pointer event none to hide image/thumbnail url
+                className="rounded-2xl w-full h-full object-cover pointer-events-none select-none cursor-pointer " //pointer event none to hide image/thumbnail url
                 draggable="false"
                 src={getThumbnailUrl(video.thumbnail)}
                 alt={video.title}
@@ -132,16 +132,16 @@ function Home() {
               </div>
               <div>
                 <h3 className="text-stone-100 font-semibold ">{video.title}</h3>  {/**make changes to it later. */}
-                <h4 className="text-stone-100 font-light">{video.owner.username}</h4>
+                <Link to={`/channel/${video.owner.username}`} onClick={(e) => e.stopPropagation()} className="text-sm text-zinc-300 hover:text-white font-light">{video.owner.fullName}</Link>
                 <div className="flex gap-1">
-                  <h5 className="text-white text-sm">{video.views} views(approx)</h5>
-                  <div className="text-white font-extralight"> •</div>
-                  <div className="text-white text-sm">{timeAgo(video.createdAt)}</div> {/**timeAgo function created in utils. */}
+                  <h5 className="text-zinc-300 text-sm">{video.views} views(approx)</h5>
+                  <div className="text-zinc-300 font-extralight"> •</div>
+                  <div className="text-zinc-300 text-sm">{timeAgo(video.createdAt)}</div> {/**timeAgo function created in utils. */}
                 </div>  
               </div>
               
             </div>
-          </Link >
+          </div >
         ))}
       </div>
       {/* Loader element at the bottom */}

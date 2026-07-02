@@ -190,7 +190,7 @@ function Comments({videoId}){
     <hr className="border-zinc-700" />
     {/*add comment*/}
     {user ? (
-      <form onSubmit={addComment} className="flex items-start gap-2 px-2 py-1">
+      <form onSubmit={addComment} className="flex items-start gap-2 px-2 py-1" id="addAComment">
           <img
               src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`}
               alt="avatar"

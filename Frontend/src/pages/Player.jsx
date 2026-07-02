@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useEffect } from "react";
-import {useParams } from "react-router-dom";
+import {Link, useParams } from "react-router-dom";
 import api from "../api/axios.js";
 import { useState } from "react";
 import { getAvatarUrl } from "../utils/cloudinary.js";
@@ -158,9 +158,12 @@ function Player(){
           </div>
 
           <div>
-            <div className="text-stone-100 font-medium leading-tight cursor-pointer">
+            <Link 
+              className="text-stone-100 font-medium leading-tight cursor-pointer"
+              to={`/channel/${video.owner.username}`}
+            >
               {video.owner.username}
-            </div>
+            </Link>
             <div className="text-stone-400 text-sm">
               {video.owner.subscriberCount} subscribers
             </div>

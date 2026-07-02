@@ -1,5 +1,5 @@
 import React, {useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { getAvatarUrl } from "../utils/cloudinary.js";
 import {MdOutlineAddCircle} from 'react-icons/md'
@@ -52,7 +52,7 @@ function Header() {
 
 
   return (
-    <div className="fixed top-0 left-0 w-full py-2 bg-zinc-900 z-50">
+    <div className="fixed top-0 left-0 w-full py-2 bg-zinc-900  z-50">
       
       <div className="relative flex items-center px-4">
         
@@ -113,13 +113,14 @@ function Header() {
                 Upload
                 <MdOutlineAddCircle className=" text-white text-xl hover:text-gray-300"/>
               </div>
-          
-              <img
-                loading="lazy"
-                src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`)}  //this function is to resize the avatar image for optimization, not neccesary
-                alt="profile"
-                className="w-10 h-10 rounded-full cursor-pointer border border-zinc-700"
-              />
+              <Link to={`/channel/${user.username}`}>
+                <img
+                  loading="lazy"
+                  src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`)}  //this function is to resize the avatar image for optimization, not neccesary
+                  alt="profile"
+                  className="w-10 h-10 rounded-full cursor-pointer border border-zinc-700"
+                />
+              </Link>
               <button className="bg-zinc-800 text-white rounded-2xl p-2 hover:bg-zinc-600 cursor-pointer border border-zinc-700" onClick={()=> setShowLogoutModal(true)}>Logout</button>
             </div>
             
