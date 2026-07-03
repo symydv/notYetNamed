@@ -6,11 +6,13 @@ import api from "../api/axios"
 import LoadingSpinner from "../components/LoadingSpinner"
 import ChannelBanner from '../components/channelComponents/ChannelBanner'
 import ChannelInfo from '../components/channelComponents/ChannelInfo'
+import ChannelTabs from '../components/channelComponents/ChannelTabs'
 function Channel() {
   const username = useParams().username;
   const {user} = useAuth();
   const [channel, setChannel] = useState({});
   const [loading, setLoading] = useState(true);
+  const [currentTab, setCurrentTab] = useState("Videos");
 
   useEffect(() => {
     const fetchChannel = async () => {
@@ -36,14 +38,17 @@ function Channel() {
         coverImage={channel.coverImage} 
         username={username}
       />
+
       <ChannelInfo 
         username={username}
         channel={channel}
         user={user}
       />
-      <div className='max-h-full bg-amber-300'>
-        Tabs
-      </div>
+
+      <ChannelTabs
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
+      />
     </div>
   )
 }

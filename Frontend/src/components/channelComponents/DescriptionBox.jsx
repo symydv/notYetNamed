@@ -58,7 +58,7 @@ function DescriptionBox({channel, setDescriptionBox, user, description, setDescr
       <div className="border border-zinc-700 rounded-xl min-h-20 mb-4 p-2">
         <div className="flex justify-between items-center mb-2">
           <h2 className="font-semibold">Description</h2>
-
+          
           {isOwner && !editMode && (
             <button
               onClick={() => setEditMode(true)}
@@ -107,6 +107,7 @@ function DescriptionBox({channel, setDescriptionBox, user, description, setDescr
             )}
           </p>
         )}
+
       </div>
       
       <h2 className='font-semibold mb-2'>More info</h2>
