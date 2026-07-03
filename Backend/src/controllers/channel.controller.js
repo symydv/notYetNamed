@@ -124,7 +124,38 @@ const getChannelVideos = asyncHandler(async (req, res) => {
         }, "User videos fetched successfully."))
 })
 
+const addDescription = asyncHandler(async (req, res) => {
+    const { description } = req.body;
+    const { username } = req.params;
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    // Only the channel owner can update
+    if (!req.user || !user._id.equals(req.user._id)) {
+        throw new ApiError(
+            403,
+            "You cannot update another user's channel description."
+        );
+    }
+
+    user.description = description;
+    await user.save();
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            { description: user.description },
+            "Description updated successfully."
+        )
+    );
+});
+
 export {
     getChannelStats, 
-    getChannelVideos
-    }
+    getChannelVideos,
+    addDescription,
+}

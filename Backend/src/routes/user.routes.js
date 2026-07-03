@@ -1,7 +1,6 @@
 import { Router } from "express";
 import {
-    getCurrentUser, 
-    getUserChannelProfile, 
+    getCurrentUser,
     getWatchHistory, 
     loginUser, 
     logoutUser, 
@@ -71,11 +70,6 @@ router.route("/avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvat
 // → Extracts the uploaded file from the field named "avatar" and stores it (locally or in memory).
 
 router.route("/cover-image").patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage)
-
-router.route("/c/:username").get(verifyJWT, getUserChannelProfile) //because we are taking data from req.params //browser me colon(":") lagane ki jarurat nhi hai.
-// This route is part of the user profile or channel system.
-// It’s defined as a dynamic route /c/:username — similar to how YouTube uses /c/channelName.
-// It uses JWT middleware for protected access and a controller that performs an aggregation query to fetch user metadata along with subscription data from related collections.
 
 router.route("/history").get(verifyJWT, getWatchHistory)
 

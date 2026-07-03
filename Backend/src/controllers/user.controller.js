@@ -465,82 +465,6 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, user, "coverImage Updated successfully"))
 })
 
-const getUserChannelProfile = asyncHandler(async(req, res) => {
-    const {username} = req.params //req.params is a property provided by Express.js that contains route parameters — these are parts of the URL defined in your route path using
-
-    if (!username?.trim()) {
-        throw new ApiError(400, "username is missing")
-    }
-
-    const channel = await User.aggregate([
-        {
-            $match: {
-                username: username?.toLowerCase()
-            }
-        }, //till these pipeline we have sorted out the users/user with required username now the next pipeline will be applied on those/that filtered users/user.
-        {
-            //to look for who subscribe me.
-            $lookup: {
-                //remember models me export pe sab lowercase and plural ho jata hai
-                from: "subscriptions" , // Name of the collection to join.
-                localField: "_id",       // Field from input documents which is "User" here
-                foreignField: "channel",   // Field from 'from' collection
-                as: "subscribers"    // Name of the new array field to add
-            }
-        },
-        {
-            // to look for, whom i subscribed.
-            $lookup: {
-                from: "subscriptions",
-                localField: "_id",
-                foreignField: "subscriber",
-                as: "subscribedTo"
-            }
-        },
-        {
-            //add new fields .
-            $addFields: {
-                subscribersCount: {
-                    $size: "$subscribers" //use "$" signs for fields
-                },
-                channelsSubscribedToCount: {
-                    $size: "$subscribedTo"
-                },
-                isSubscribed: {
-                    $cond: {
-                        if: {$in: [req.user?._id, "$subscribers.subscriber"]}, // Checks if req.user._id exists in the subscribers.subscriber array
-                        then: true,
-                        else: false
-                    }
-                }
-            }
-        },
-        {
-            $project: { //which things to show.
-                fullName: 1,
-                username: 1,
-                subscribersCount: 1,
-                channelsSubscribedToCount: 1,
-                isSubscribed: 1,
-                avatar: 1,
-                coverImage: 1,
-                email: 1
-            }
-        }
-    ])
-
-    //channel will be an array
-
-    if (!channel || channel.length === 0) {
-        throw new ApiError(404, "channel does not exists")
-    }
-
-    return res
-    .status(200)
-    .json( new ApiResponse(200, channel[0], "user channel fetched successfully."))
-})
-
-
 const getWatchHistory = asyncHandler(async(req, res) => {
     const user = await User.aggregate([
         {
@@ -604,6 +528,5 @@ export {
     updateAccountDetails,
     updateUserAvatar,
     updateUserCoverImage,
-    getUserChannelProfile,
     getWatchHistory
 }
