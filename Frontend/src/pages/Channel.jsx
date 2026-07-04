@@ -7,6 +7,8 @@ import LoadingSpinner from "../components/LoadingSpinner"
 import ChannelBanner from '../components/channelComponents/ChannelBanner'
 import ChannelInfo from '../components/channelComponents/ChannelInfo'
 import ChannelTabs from '../components/channelComponents/ChannelTabs'
+import ChannelContent from '../components/channelComponents/ChannelContent'
+
 function Channel() {
   const username = useParams().username;
   const {user} = useAuth();
@@ -48,6 +50,11 @@ function Channel() {
       <ChannelTabs
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
+      />
+
+      <ChannelContent 
+        currentTab={currentTab}
+        channel={channel}
       />
     </div>
   )

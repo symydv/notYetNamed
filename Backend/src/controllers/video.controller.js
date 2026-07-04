@@ -20,13 +20,15 @@ const getAllVideos = asyncHandler(async (req, res) => {
     const limitNumber = parseInt(limit)
     const sortOrder = sortType === "desc" ? -1 : 1;
 
-    const filter = {};
+    const filter = {
+        isPublished: true,
+    };
     //  If a userId is provided in query, filter by it
     if (userId) {
         const ownerId = userId?.trim();
 
         if (!mongoose.Types.ObjectId.isValid(ownerId)) {
-        throw new Error("Invalid userId"); // or return 400 response
+            throw new ApiError(400, "Invalid userId"); // or return 400 response
         }
 
         filter.owner= new mongoose.Types.ObjectId(ownerId)
@@ -34,7 +36,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
     //  If a search query is provided, add case-insensitive title match
     if (search) {
-    filter.title = { $regex: search, $options: "i" }; // 'i' = case-insensitive
+        filter.title = { $regex: search, $options: "i" }; // 'i' = case-insensitive
     }
     // filter.title	You're building a MongoDB query object to match documents where the title field...
     // { $regex: search }	...matches a regular expression pattern (basically a flexible search) based on the search string sent by the user
