@@ -72,57 +72,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
     }, "channel states fetched successFully."))
 })
 
-const getChannelVideos = asyncHandler(async (req, res) => {
-    // TODO: Get all the videos uploaded by the channel
-    const username = req.params.username;
-    const user = await User.findOne({ username });
-    if (!user) {
-        throw new ApiError(404, "Channel not found");
-    }
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1)*limit ;
 
-    const channelVideos = await Video.aggregate([
-        {
-            $match: {
-                owner: user._id,
-                isPublished: true
-            }
-        },
-        {
-            $sort: { createdAt: -1 } // newest first
-        },
-        {
-            $skip: skip
-        },
-        {
-            $limit: limit
-        },
-        {
-            $project:{
-                _id:1,
-                title:1,
-                description:1,
-                videoFile:1,
-                thumbnail:1,
-                views:1,
-                owner:1,
-                createdAt: 1
-            }
-        }
-    ])
-
-    const totalVideos = await Video.countDocuments({ owner: user._id });
-
-    return res.status(200).json(
-        new ApiResponse(200, {
-            videos: channelVideos,
-            totalVideos,
-            totalPages: Math.ceil(totalVideos / limit),
-            currentPage: page
-        }, "User videos fetched successfully."))
-})
 
 const addDescription = asyncHandler(async (req, res) => {
     const { description } = req.body;
@@ -156,6 +106,5 @@ const addDescription = asyncHandler(async (req, res) => {
 
 export {
     getChannelStats, 
-    getChannelVideos,
     addDescription,
 }

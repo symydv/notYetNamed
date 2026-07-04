@@ -8,7 +8,7 @@ function ChannelInfo({channel, username, user}) {
   const [description, setDescription] = useState(channel.description);
 
   return (
-    <div className='max-h-full p-1 sm:p-2 md:p-3 lg:p-4 flex flex-row'>
+    <div className='max-h-full p-1 sm:p-2 md:p-3 lg:p-4 flex flex-row mb-4'>
       <img
         src={getAvatarUrl(channel.avatar || `https://ui-avatars.com/api/?name=${username}&background=0f172a&color=ffffff`)}
         className="size-15 sm:size-24 md:size-28 lg:size-32 rounded-full border border-gray-700 object-cover mr-2"

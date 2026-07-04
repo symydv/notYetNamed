@@ -29,7 +29,7 @@ function ChannelVideos({channel}) {
     }
     fetchVideos();
   },[channel._id])
-
+  if(loading) return <LoadingSpinner />
   return (
     <VideoGrid videos={videos}/>
   )
