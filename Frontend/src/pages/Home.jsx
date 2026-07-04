@@ -4,6 +4,7 @@ import api from "../api/axios.js";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import VideoCard from "../components/VideoCard.jsx";
 import VideoGrid from "../components/VideoGrid.jsx";
+import {LoaderCircle } from "lucide-react";
 
 function Home() {
   const [videos, setVideos] = useState([]);
@@ -90,20 +91,13 @@ function Home() {
 
   return (
     <>
-      {/* <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4.5 p-4">
-        {videos.length === 0 && (
-          <p className="text-white">No videos found</p>
-        )}
-        {videos.map((video) => (
-          <VideoCard video={video} key={video._id}/>
-        ))}
-      </div> */}
+
       <VideoGrid videos={videos}/>
 
       {/* Loader element at the bottom */}
       <div ref={loaderRef} className="h-10"></div>
       {isFetching  && page > 1 && (
-        <div className="text-center py-4 text-white">Loading more videos...</div>
+        <div className="flex items-center justify-center py-4 text-white"><LoaderCircle className="animate-spin"/></div>
       )}
     </>
     

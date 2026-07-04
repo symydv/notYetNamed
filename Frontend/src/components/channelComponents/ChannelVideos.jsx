@@ -1,8 +1,8 @@
 import VideoGrid from '../VideoGrid'
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
-import LoadingSpinner from '../LoadingSpinner'
 import toast from 'react-hot-toast';
+import { LoaderCircle } from 'lucide-react';
 
 function ChannelVideos({channel}) {
   const [videos, setVideos] = useState([]);
@@ -29,7 +29,8 @@ function ChannelVideos({channel}) {
     }
     fetchVideos();
   },[channel._id])
-  if(loading) return <LoadingSpinner />
+
+  if(loading) return <div className='flex justify-center mt-10'> <LoaderCircle className='animate-spin text-white'/> </div>
   return (
     <VideoGrid videos={videos} showOwner={false}/>
   )

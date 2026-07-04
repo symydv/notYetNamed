@@ -57,10 +57,10 @@ function VideoCard({video, showOwner=true}) { //we dont need to show owner info 
               {video.owner.fullName}
             </Link>
           )}
-          <div className="flex gap-1">
-            <h5 className="text-zinc-300 text-sm">{video.views} views(approx)</h5>
-            <div className="text-zinc-300 font-extralight"> •</div>
-            <div className="text-zinc-300 text-sm">{timeAgo(video.createdAt)}</div> {/**timeAgo function created in utils. */}
+          <div className="flex gap-1 text-xs font-semibold text-zinc-400">
+            <h5>{video.views} views</h5>
+            <div> •</div>
+            <div>{timeAgo(video.createdAt)}</div> {/**timeAgo function created in utils. */}
           </div>  
         </div>
         

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-function ChannelBanner({coverImage, username, avatar}) {
+function ChannelBanner({coverImage, username}) {
 
   //to get random colors for cover according to username.
   const gradient = useMemo(() => {
@@ -52,11 +52,11 @@ function ChannelBanner({coverImage, username, avatar}) {
 
   return (
     <div className="mb-2">
-      <div className='realtive max-h-full rounded-xl bg-black '>
+      <div className='realative max-h-full rounded-xl overflow-hidden border border-zinc-700'>
         {coverImage? (
-          <img src={coverImage} alt="Channel Cover" className="w-full h-15 sm:h-20 md:h-30 lg:h-45 object-cover rounded-xl border border-amber-400" />
+          <img src={coverImage} alt="Channel Cover" className="w-full h-15 sm:h-20 md:h-30 lg:h-45 object-cover"/>
         ):(
-          <div className={`h-15 sm:h-25 md:h-30 lg:h-45 bg-linear-to-r ${gradient} rounded-2xl object-cover`} />
+          <div className={`h-15 sm:h-25 md:h-30 lg:h-45 bg-linear-to-r ${gradient} object-cover`} />
         )}
       </div>
     </div>
