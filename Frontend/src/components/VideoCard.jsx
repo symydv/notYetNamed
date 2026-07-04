@@ -3,7 +3,7 @@ import { timeAgo } from '../utils/timeAgo'
 import { getThumbnailUrl, getAvatarUrl } from '../utils/cloudinary'
 import { useNavigate, Link} from 'react-router-dom'
 
-function VideoCard({video}) {
+function VideoCard({video, showOwner=true}) { //we dont need to show owner info on channel page.
   const navigate = useNavigate();
   function formatDuration(seconds) {
     const m = Math.floor(seconds / 60);
@@ -28,30 +28,35 @@ function VideoCard({video}) {
         </div>
       </Link>
       <div className="flex relative gap-2 p-1.5">
-        <div className=" text-black">
-          <Link
-            to={`/channel/${video.owner.username}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-          <div className="top-0 rounded-2xl bg-white  size-8">
-            <img 
-              className="w-8 h-8 rounded-full cursor-pointer"
-              src={getAvatarUrl(video.owner.avatar || `https://ui-avatars.com/api/?name=${video.owner.username}&background=0f172a&color=fff`)} 
-              alt="Profile" 
-            />
+        {showOwner && (
+          <div className=" text-black">
+            <Link
+              to={`/channel/${video.owner.username}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="top-0 rounded-2xl bg-white  size-8">
+                <img 
+                  className="w-8 h-8 rounded-full cursor-pointer"
+                  src={getAvatarUrl(video.owner.avatar || `https://ui-avatars.com/api/?name=${video.owner.username}&background=0f172a&color=fff`)} 
+                  alt="Profile" 
+                />
+              </div>
+            </Link>
+            
           </div>
-          </Link>
-          
-        </div>
+        )}
+        
         <div>
           <h3 className="text-stone-100 font-semibold ">{video.title}</h3>  {/**make changes to it later. */}
-          <Link 
-            to={`/channel/${video.owner.username}`} 
-            onClick={(e) => e.stopPropagation()} 
-            className="text-sm text-zinc-300 hover:text-white font-light"
-          >
-            {video.owner.fullName}
-          </Link>
+          {showOwner && (
+            <Link 
+              to={`/channel/${video.owner.username}`} 
+              onClick={(e) => e.stopPropagation()} 
+              className="text-sm text-zinc-300 hover:text-white font-light"
+            >
+              {video.owner.fullName}
+            </Link>
+          )}
           <div className="flex gap-1">
             <h5 className="text-zinc-300 text-sm">{video.views} views(approx)</h5>
             <div className="text-zinc-300 font-extralight"> •</div>
