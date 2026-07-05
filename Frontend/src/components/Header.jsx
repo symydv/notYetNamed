@@ -125,7 +125,7 @@ function Header() {
                   className="w-10 h-10 rounded-full cursor-pointer border border-zinc-700"
                 />
               ):(
-                <div className="w-10 h-10 text-white flex items-center justify-center rounded-full cursor-pointer border border-zinc-700 " onClick={()=> setShowUserMenu(false)}><X/></div>
+                <div className="w-10 h-10 z-50 text-white flex items-center justify-center rounded-full border cursor-pointer border-zinc-700 " onClick={()=> setShowUserMenu(false)}><X/></div>
               )}
               <UserMenu showUserMenu={showUserMenu} setShowUserMenu={setShowUserMenu} user={user}/>
             </div>

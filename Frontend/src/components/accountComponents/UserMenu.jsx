@@ -1,5 +1,6 @@
-import { getAvatarUrl } from "../../utils/cloudinary"
 import { Link } from "react-router-dom"
+import { UserCircle, LogOutIcon, TvMinimalPlayIcon} from "lucide-react"
+import { getAvatarUrl } from "../../utils/cloudinary"
 
 function UserMenu({showUserMenu, setShowUserMenu, user}) {
   return (
@@ -21,7 +22,6 @@ function UserMenu({showUserMenu, setShowUserMenu, user}) {
                   loading="lazy"
                   src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`)}  //this function is to resize the avatar image for optimization, not neccesary
                   alt="profile"
-                  onClick={() =>setShowUserMenu(true)}
                   className="w-10 h-10 rounded-full border border-zinc-700"
                 />
                 <div>
@@ -34,9 +34,35 @@ function UserMenu({showUserMenu, setShowUserMenu, user}) {
                   </Link>
                 </div>
               </div>
-              <div className=" border-b border-zinc-700"></div>
-              <div>
-                
+              <div className=" border-b border-zinc-700 mb-3"></div>
+              <div className="flex flex-col gap-2">
+
+                <Link
+                  to={`/you`}
+                  onClick={() => setShowUserMenu(false)}
+                  className="flex items-center p-2 hover:bg-zinc-700 rounded-2xl"
+                >
+                  <UserCircle className="size-5 mr-3" />
+                  <span className="text-sm font-semibold">You</span>
+                </Link>
+
+                <Link
+                  to="/subscriptions"
+                  onClick={() => setShowUserMenu(false)}
+                  className="flex items-center p-2 hover:bg-zinc-700 rounded-2xl"
+                >
+                  <TvMinimalPlayIcon className="size-5 mr-3" />
+                  <span className="text-sm font-semibold">Subscriptions</span>
+                </Link>
+
+                <button
+                  type="button"
+                  className="flex items-center w-full p-2 hover:bg-zinc-700 rounded-2xl cursor-pointer"
+                >
+                  <LogOutIcon className="size-5 mr-3" />
+                  <span className="text-sm font-semibold">Logout</span>
+                </button>
+
               </div>
             </div>
           </div>
@@ -45,5 +71,6 @@ function UserMenu({showUserMenu, setShowUserMenu, user}) {
     </div>
   )
 }
+
 
 export default UserMenu

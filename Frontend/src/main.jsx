@@ -16,6 +16,7 @@ import VerifyEmail from './pages/auth/VerifyEmail.jsx'
 import ForgotPassword from './pages/auth/ForgotPassword.jsx'
 import ResetPassword from './pages/auth/ResetPassword.jsx'
 import Channel from './pages/Channel.jsx'
+import You from './pages/You.jsx'
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,14 @@ const router = createBrowserRouter([
       {
         path: "channel/:username",
         element: <Channel/>
+      },
+      {
+        path: "you",
+        element: (
+          <ProtectedRoute>
+            <You/>
+          </ProtectedRoute>
+        )
       }
     ]
   },
