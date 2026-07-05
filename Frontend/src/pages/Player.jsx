@@ -33,7 +33,16 @@ function Player(){
     if (viewSentRef.current) return;
 
     viewSentRef.current = true;
-    await api.post(`/videos/${videoId}/view`);
+
+    try {
+      await api.post(`/videos/${videoId}/view`);
+
+      if (user) {
+        await api.patch(`/users/history/${videoId}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   useEffect(() => {

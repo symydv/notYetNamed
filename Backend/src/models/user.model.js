@@ -10,7 +10,7 @@ const userschema = new Schema(
     watchHistory:[ 
         {
         type: Schema.Types.ObjectId,
-        ref: "video"
+        ref: "Video"
         }
     ],
     username: {

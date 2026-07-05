@@ -11,7 +11,8 @@ import {
     updateUserAvatar, 
     updateUserCoverImage,
     forgotPassword,
-    resetPassword 
+    resetPassword ,
+    addToHistory
 } from "../controllers/user.controller.js";
 
 import {upload} from "../middlewares/multer.middleware.js"
@@ -72,6 +73,7 @@ router.route("/avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvat
 router.route("/cover-image").patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage)
 
 router.route("/history").get(verifyJWT, getWatchHistory)
+router.route("/history/:videoId").patch(verifyJWT, addToHistory);
 
 
 

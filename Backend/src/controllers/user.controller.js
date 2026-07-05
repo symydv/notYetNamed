@@ -9,6 +9,7 @@ import { v2 as cloudinary} from "cloudinary"
 import { sendEmail } from "../mail/sendEmail.js";
 import { verificationTemplate, PASSWORD_RESET_TEMPLATE} from "../mail/emailTemplets.js";
 import crypto from "crypto"
+import { Video } from "../models/video.model.js";
 
 //for later use in the code.
 const generateAccessAndRefreshTokens = async(userId) => {
@@ -466,54 +467,98 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
 })
 
 const getWatchHistory = asyncHandler(async(req, res) => {
-    const user = await User.aggregate([
-        {
-            $match: {
-                _id: new mongoose.Types.ObjectId(req.user._id) // we can not use req.user._id here in aggregation pipelines :-
-                //In MongoDB, the _id field is typically of type ObjectId, not a string.
-                // When using aggregation pipelines, MongoDB performs strict type matching — meaning:
-                // Even if the string value of req.user._id matches the document’s _id, MongoDB will not match unless both the value and type match. 
+    // const user = await User.aggregate([
+    //     {
+    //         $match: {
+    //             _id: new mongoose.Types.ObjectId(req.user._id) // we can not use req.user._id here in aggregation pipelines :-
+    //             //In MongoDB, the _id field is typically of type ObjectId, not a string.
+    //             // When using aggregation pipelines, MongoDB performs strict type matching — meaning:
+    //             // Even if the string value of req.user._id matches the document’s _id, MongoDB will not match unless both the value and type match. 
+    //         }
+    //     },
+    //     {
+    //         $lookup: {
+    //             from: "videos",
+    //             localField: "watchHistory",
+    //             foreignField: "_id",
+    //             as: "watchHistory",
+    //             pipeline: [  //can be used to apply pipelines inside other pipelines. as we are applying loop on videos so the next lookup will be on videos model
+    //                 {
+    //                     $lookup: {
+    //                         from: "users",
+    //                         localField: "owner",
+    //                         foreignField: "_id",
+    //                         as: "owner",
+    //                         pipeline: [
+    //                             {
+    //                                 $project: {
+    //                                     fullName: 1,
+    //                                     username: 1,
+    //                                     avatar: 1
+    //                                 }
+    //                             }
+    //                         ]
+    //                     }
+    //                 },
+    //                 {
+    //                     $addFields: {
+    //                         owner:{
+    //                             $first: "$owner"
+    //                         }
+    //                     }
+    //                 }
+    //             ]
+    //         }
+    //     }
+    // ])
+    const user = await User
+        .findById(req.user._id)
+        .populate({
+            path: "watchHistory",
+            populate: {
+                path: "owner",
+                select: "fullName username avatar"
             }
-        },
-        {
-            $lookup: {
-                from: "videos",
-                localField: "watchHistory",
-                foreignField: "_id",
-                as: "watchHistory",
-                pipeline: [  //can be used to apply pipelines inside other pipelines. as we are applying loop on videos so the next lookup will be on videos model
-                    {
-                        $lookup: {
-                            from: "users",
-                            localField: "owner",
-                            foreignField: "_id",
-                            as: "owner",
-                            pipeline: [
-                                {
-                                    $project: {
-                                        fullName: 1,
-                                        username: 1,
-                                        avatar: 1
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        $addFields: {
-                            owner:{
-                                $first: "$owner"
-                            }
-                        }
-                    }
-                ]
-            }
-        }
-    ])
+        })
 
     return res
     .status(200)
-    .json(new ApiResponse(200, user[0].watchHistory, "Watch history fetched successfully"))
+    .json(new ApiResponse(200, user.watchHistory, "Watch history fetched successfully"))
+})
+
+const addToHistory = asyncHandler(async(req, res) => {
+    const {videoId} = req.params;
+
+    const video = await Video.findById(videoId);
+    if(!video){
+        throw new ApiError(404, "Video not found");
+    }
+
+    // pull(remove) any previos instances of this video from history. 
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $pull:{
+                watchHistory: videoId
+            }
+        }
+    );
+
+    // push(add) this video to position 0 (front)
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $push:{
+                watchHistory:{
+                    $each : [videoId],
+                    $position: 0,
+                }
+            }
+        }
+    );
+    //TODO: Later implement both pull and push in single database operations.
+
+    return res.status(200).json(new ApiResponse(200, {}, "Video added to watch history"));
 })
 
 export {
@@ -528,5 +573,6 @@ export {
     updateAccountDetails,
     updateUserAvatar,
     updateUserCoverImage,
-    getWatchHistory
+    getWatchHistory,
+    addToHistory
 }
