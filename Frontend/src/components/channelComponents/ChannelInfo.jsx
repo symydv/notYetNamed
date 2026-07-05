@@ -31,9 +31,14 @@ function ChannelInfo({channel, username, user}) {
         ) : (
           <p onClick={()=>setDescriptionBox(true)} className='text-sm text-gray-400 cursor-pointer hover:text-slate-300'>No description</p>
         )}
-        <div className='relative mt-1'>
-          <SubscribeButton channel={channel} initialSubscribed={channel.isSubscribed}/>
-        </div>
+        {user?.username === username ? (
+          <p className='text-sm text-gray-400 cursor-pointer hover:text-slate-300'>Edit profile</p>
+        ):(
+          <div className='relative mt-1'>
+            <SubscribeButton channel={channel} initialSubscribed={channel.isSubscribed}/>
+          </div>
+        )}
+        
       </div>
 
       {descriptionBox && (

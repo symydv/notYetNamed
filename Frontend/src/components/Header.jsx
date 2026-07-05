@@ -3,10 +3,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { getAvatarUrl } from "../utils/cloudinary.js";
 import {MdOutlineAddCircle} from 'react-icons/md'
+import {X} from 'lucide-react'
+import UserMenu from "./accountComponents/UserMenu.jsx";
 
 function Header() {
   const [search, setSearch] = useState("")
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const navigate = useNavigate()
   const location = useLocation();
@@ -113,15 +116,18 @@ function Header() {
                 Upload
                 <MdOutlineAddCircle className=" text-white text-xl hover:text-gray-300"/>
               </div>
-              <Link to={`/channel/${user.username}`}>
+              {!showUserMenu? (
                 <img
                   loading="lazy"
                   src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`)}  //this function is to resize the avatar image for optimization, not neccesary
                   alt="profile"
+                  onClick={() =>setShowUserMenu(true)}
                   className="w-10 h-10 rounded-full cursor-pointer border border-zinc-700"
                 />
-              </Link>
-              <button className="bg-zinc-800 text-white rounded-2xl p-2 hover:bg-zinc-600 cursor-pointer border border-zinc-700" onClick={()=> setShowLogoutModal(true)}>Logout</button>
+              ):(
+                <div className="w-10 h-10 text-white flex items-center justify-center rounded-full cursor-pointer border border-zinc-700 " onClick={()=> setShowUserMenu(false)}><X/></div>
+              )}
+              <UserMenu showUserMenu={showUserMenu} setShowUserMenu={setShowUserMenu} user={user}/>
             </div>
             
           )}

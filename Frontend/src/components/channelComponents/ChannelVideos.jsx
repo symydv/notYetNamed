@@ -20,7 +20,6 @@ function ChannelVideos({channel}) {
           },
         });
         setVideos(res.data.data);
-        console.log(res.data.data)
       } catch (error) {
         toast.error("something went wrong");
       }finally {
