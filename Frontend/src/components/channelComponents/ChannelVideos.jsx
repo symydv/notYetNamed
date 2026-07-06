@@ -1,4 +1,4 @@
-import VideoGrid from '../VideoGrid'
+import VideoGrid from '../videoComponents/VideoGrid'
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import toast from 'react-hot-toast';

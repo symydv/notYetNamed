@@ -1,6 +1,5 @@
-import React from 'react'
-import { timeAgo } from '../utils/timeAgo'
-import { getThumbnailUrl, getAvatarUrl } from '../utils/cloudinary'
+import { timeAgo } from '../../utils/timeAgo';
+import { getThumbnailUrl, getAvatarUrl } from '../../utils/cloudinary';
 import { useNavigate, Link} from 'react-router-dom'
 
 function VideoCard({video, showOwner=true}) { //we dont need to show owner info on channel page.

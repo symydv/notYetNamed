@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import api from "../api/axios.js";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import VideoCard from "../components/VideoCard.jsx";
-import VideoGrid from "../components/VideoGrid.jsx";
+import VideoCard from "../components/videoComponents/VideoCard.jsx";
+import VideoGrid from "../components/videoComponents/VideoGrid.jsx";
 import {LoaderCircle } from "lucide-react";
 
 function Home() {
