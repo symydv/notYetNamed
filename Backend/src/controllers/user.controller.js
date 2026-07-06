@@ -561,6 +561,21 @@ const addToHistory = asyncHandler(async(req, res) => {
     return res.status(200).json(new ApiResponse(200, {}, "Video added to watch history"));
 })
 
+const deleteWatchHistory = asyncHandler(async(req, res) => {
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                watchHistory: []
+            }
+        }
+    )
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Watch history deleted successfully"))
+})
+
 export {
     registerUser,
     verifyEmail,
@@ -574,5 +589,6 @@ export {
     updateUserAvatar,
     updateUserCoverImage,
     getWatchHistory,
-    addToHistory
+    addToHistory,
+    deleteWatchHistory
 }

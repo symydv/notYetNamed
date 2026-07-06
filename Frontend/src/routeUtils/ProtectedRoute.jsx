@@ -2,16 +2,14 @@
 import React from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router-dom';
-
+import LoadingSpinner from '../components/LoadingSpinner';
 function ProtectedRoute({children}) {
 
   const  {user, loading} = useAuth(); 
   
   if(loading){
     return (
-      <div className="flex justify-center items-center h-screen text-white">
-        Loading...
-      </div>
+      <LoadingSpinner/>
     )
   }
 

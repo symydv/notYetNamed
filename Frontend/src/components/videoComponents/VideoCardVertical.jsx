@@ -1,5 +1,4 @@
 import {useState} from 'react'
-import { timeAgo } from '../../utils/timeAgo';
 import { getThumbnailUrl } from '../../utils/cloudinary';
 import { useNavigate, Link} from 'react-router-dom'
 import { MoreVerticalIcon } from 'lucide-react';
@@ -39,19 +38,19 @@ function VideoCardVertical({video, showOwner=true}) {
         
         <div>
           <h3 className="text-stone-100 font-semibold ">{video.title}</h3>  {/**make changes to it later. */}
-          {showOwner && (
-            <Link 
-              to={`/channel/${video.owner.username}`} 
-              onClick={(e) => e.stopPropagation()} 
-              className="text-sm text-zinc-300 hover:text-white font-light"
-            >
-              {video.owner.fullName}
-            </Link>
-          )}
-          <div className="flex gap-1 text-xs font-semibold text-zinc-400">
-            <h5>{video.views} views</h5>
+          
+          <div className="flex gap-1 text-xs items-center font-semibold text-zinc-400">
+            {showOwner && (
+              <Link 
+                to={`/channel/${video.owner.username}`} 
+                onClick={(e) => e.stopPropagation()} 
+                className="text-sm text-zinc-300 hover:text-white font-light"
+              >
+                {video.owner.fullName}
+              </Link>
+            )}
             <div> •</div>
-            <div>{timeAgo(video.createdAt)}</div> {/**timeAgo function created in utils. */}
+            <h5>{video.views} views</h5>
           </div>  
         </div>
         
