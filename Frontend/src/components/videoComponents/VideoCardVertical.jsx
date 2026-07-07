@@ -1,10 +1,9 @@
 import {useState} from 'react'
 import { getThumbnailUrl } from '../../utils/cloudinary';
 import { useNavigate, Link} from 'react-router-dom'
-import { MoreVerticalIcon } from 'lucide-react';
+import { MoreVerticalIcon, Trash2, Share2 } from 'lucide-react';
 import VideoActions from './VideoActions';
-function VideoCardVertical({video, showOwner=true}) {
-  const [openVideoActions, setOpenVideoActions] = useState(false);
+function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onToggleMenu }) {
   const navigate = useNavigate();
   function formatDuration(seconds) {
     const m = Math.floor(seconds / 60);
@@ -55,20 +54,25 @@ function VideoCardVertical({video, showOwner=true}) {
         </div>
         
       </div>
-      <div 
-        className='absolute z-10 right-2 top-2 flex hover:bg-gray-500 p-2 items-center  justify-center cursor-pointer text-white rounded-full'
-        onClick={(e) => {
-          e.stopPropagation()
-          setOpenVideoActions(!openVideoActions)
-        }}
-      >
-        <MoreVerticalIcon className='size-4'/>
-      </div>
-      {openVideoActions && (
-        <div>
-          <VideoActions openVideoActions={openVideoActions} setOpenVideoActions={setOpenVideoActions} video={video}/>
+      <div className="absolute right-2 top-2 z-10">
+        <div className='relative flex'>
+          <div
+            className="flex items-center justify-center rounded-full p-2 hover:bg-gray-500"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleMenu(video._id);
+            }}
+          >
+            <MoreVerticalIcon className='size-4'/>
+          </div>
+          <VideoActions
+            isOpen={isMenuOpen}
+            onClose={() => onToggleMenu(null)}
+            actions={actions}
+          />
         </div>
-      )}
+      </div>
+      
     </div >
   )
 }

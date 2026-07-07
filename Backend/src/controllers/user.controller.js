@@ -576,6 +576,27 @@ const deleteWatchHistory = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, {}, "Watch history deleted successfully"))
 })
 
+const removeFromWatchHistory = asyncHandler(async (req, res) => {
+    const { videoId } = req.params;
+    if (!mongoose.isValidObjectId(videoId)) {
+        throw new ApiError(400, "Invalid video id");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { $pull: { watchHistory: videoId } },
+        { new: true }
+    );
+
+    if (!updatedUser) {
+        throw new ApiError(404, "User not found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "Video removed from watch history"));
+});
+
 export {
     registerUser,
     verifyEmail,
@@ -590,5 +611,6 @@ export {
     updateUserCoverImage,
     getWatchHistory,
     addToHistory,
-    deleteWatchHistory
+    deleteWatchHistory,
+    removeFromWatchHistory
 }

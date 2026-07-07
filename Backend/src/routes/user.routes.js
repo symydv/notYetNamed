@@ -13,7 +13,8 @@ import {
     forgotPassword,
     resetPassword ,
     addToHistory,
-    deleteWatchHistory
+    deleteWatchHistory,
+    removeFromWatchHistory
 } from "../controllers/user.controller.js";
 
 import {upload} from "../middlewares/multer.middleware.js"
@@ -76,6 +77,6 @@ router.route("/cover-image").patch(verifyJWT, upload.single("coverImage"), updat
 router.route("/history").get(verifyJWT, getWatchHistory)
 router.route("/history/:videoId").patch(verifyJWT, addToHistory);
 router.route("/history/delete").delete(verifyJWT, deleteWatchHistory)
-
+router.route("/history/remove/:videoId").patch(verifyJWT, removeFromWatchHistory);
 
 export default router
