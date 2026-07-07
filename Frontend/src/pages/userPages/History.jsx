@@ -77,6 +77,7 @@ function History() {
                 <div key={video._id}>
                   <VideoCardVertical
                     video={video}
+                    vertical={false}
                     showOwner={true}
                     actions={[
                       shareAction(video), 

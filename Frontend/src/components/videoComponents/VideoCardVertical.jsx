@@ -3,7 +3,7 @@ import { getThumbnailUrl } from '../../utils/cloudinary';
 import { useNavigate, Link} from 'react-router-dom'
 import { MoreVerticalIcon, Trash2, Share2 } from 'lucide-react';
 import VideoActions from './VideoActions';
-function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onToggleMenu }) {
+function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onToggleMenu, vertical=true }) {
   const navigate = useNavigate();
   function formatDuration(seconds) {
     const m = Math.floor(seconds / 60);
@@ -13,9 +13,9 @@ function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onTog
   return (
     <div
       onClick={() => navigate(`/player/${video._id}`)} 
-      className=" flex flex-4 rounded-2xl hover:brightness-110 hover:bg-zinc-800 px-1 py-2 relative h-40 gap-2 cursor-pointer"
+      className={`flex ${vertical ? 'flex-col flex-4' : 'flex-row'} rounded-2xl hover:brightness-110 hover:bg-zinc-800 px-1 py-2 relative gap-2 cursor-pointer`}
     >
-      <div className="relative col-span-1 aspect-video">
+      <div className={`relative ${vertical ? "w-full aspect-video" : "w-72 aspect-video shrink-0"}`}>
         <Link to={`/player/${video._id}`} onClick={(e) => e.stopPropagation()} className="block relative aspect-video">
           <img
             className="rounded-2xl w-full h-full object-cover pointer-events-none select-none cursor-pointer" //pointer event none to hide image/thumbnail url
@@ -32,7 +32,7 @@ function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onTog
         </Link>
       </div>
       
-      <div className="flex relative col-span-3 gap-2 p-1.5">
+      <div className="flex relative gap-2 p-1.5">
         
         
         <div>
