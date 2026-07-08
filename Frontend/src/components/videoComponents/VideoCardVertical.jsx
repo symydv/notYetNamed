@@ -1,4 +1,3 @@
-import {useState} from 'react'
 import { getThumbnailUrl } from '../../utils/cloudinary';
 import { useNavigate, Link} from 'react-router-dom'
 import { MoreVerticalIcon, Trash2, Share2 } from 'lucide-react';

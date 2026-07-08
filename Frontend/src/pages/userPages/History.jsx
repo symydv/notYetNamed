@@ -7,10 +7,13 @@ import VideoCardVertical from "../../components/videoComponents/VideoCardVertica
 import VideoGrid from "../../components/videoComponents/VideoGrid";
 import toast from "react-hot-toast";
 import {shareAction, removeFromHistoryAction} from "../../hooks/useVideoActions.jsx";
+import { useHistory } from "../../hooks/queries/useHistory.js";
+import { useDeleteHistory } from "../../hooks/mutations/useDeleteHistory.js";
+
 function History() {
+  const {data:videos = [], isLoading} = useHistory();
+  const deleteHistoryMutation = useDeleteHistory();
   const {user} = useAuth();
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [deleteHistoryModal, setDeleteHistoryModal] = useState(false);
 
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -18,37 +21,11 @@ function History() {
     setOpenMenuId((prev) => (prev === id ? null : id));
   };
 
-
-  useEffect(() => {
-    const fetchHistory = async()=>{
-      try {
-        if(!user){
-          throw new Error("user not found");
-        }
-        setLoading(true);
-        const res = await api.get(`/users/history`);
-        setVideos(res.data.data)
-      } catch (error) {
-        console.log("something went wrong", error);
-      }finally{
-        setLoading(false);
-      }
-    }
-    fetchHistory();
-  },[user])
-
-  const deleteHistory = async() => {
-    try {
-      if(!user) return;
-      const res = await api.delete(`/users/history/delete`);
-      toast.success("History deleted");
-      setVideos([]);
-    } catch (error) {
-      console.log("something went wrong");
-    }
+  const handleDeleteHistory = () => {
+    deleteHistoryMutation.mutate();
   }
   
-  if(loading){
+  if(isLoading){
     return <LoadingSpinner/>
   }
   return (
@@ -81,9 +58,7 @@ function History() {
                     showOwner={true}
                     actions={[
                       shareAction(video), 
-                      removeFromHistoryAction(video, (id) =>
-                        setVideos((prev) => prev.filter((v) => v._id !== id))
-                      ),
+                      removeFromHistoryAction(video),
                     ]}
                     isMenuOpen={openMenuId === video._id}
                     onToggleMenu={toggleMenu}
@@ -131,7 +106,7 @@ function History() {
               <button
                 className="rounded-md bg-red-600 px-4 py-2 hover:bg-red-700 transition-colors cursor-pointer"
                 onClick={() => {
-                    deleteHistory();
+                    handleDeleteHistory();
                     setDeleteHistoryModal(false);
                   }
                 }

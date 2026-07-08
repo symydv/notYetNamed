@@ -9,8 +9,10 @@ import toast from "react-hot-toast";
 import Comments from "../features/Comments.jsx";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import SubscribeButton from "../components/SubscribeButton.jsx";
+import { useAddToHistory } from "../hooks/mutations/useAddToHistory.js";
 
 function Player(){
+  const addToHistoryMutation = useAddToHistory();
   const {videoId} = useParams()
   const [video, setVideo] = useState(null)
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ function Player(){
       await api.post(`/videos/${videoId}/view`);
 
       if (user) {
-        await api.patch(`/users/history/${videoId}`);
+        addToHistoryMutation.mutate(videoId);
       }
     } catch (error) {
       console.error(error);

@@ -18,6 +18,7 @@ import ResetPassword from './pages/auth/ResetPassword.jsx'
 import Channel from './pages/Channel.jsx'
 import You from './pages/userPages/You.jsx'
 import History from './pages/userPages/History.jsx'
+import { QueryProvider } from './providers/QueryProvider.jsx'
 
 const router = createBrowserRouter([
   {
@@ -113,7 +114,9 @@ const router = createBrowserRouter([
 
 
 createRoot(document.getElementById('root')).render(
-  <AuthProvider>
-    <RouterProvider router={router}/>
-  </AuthProvider>,
+  <QueryProvider>
+    <AuthProvider>
+      <RouterProvider router={router}/>
+    </AuthProvider>
+  </QueryProvider>
 )
