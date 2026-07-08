@@ -1,6 +1,5 @@
 import { Share2, Trash2, ListPlus } from "lucide-react";
 import toast from "react-hot-toast";
-import api from "../api/axios";
 
 export function shareAction(video) {
   return {
@@ -21,19 +20,13 @@ export function addToPlaylistAction(video, onOpenPlaylistModal) {
   };
 }
 
-export function removeFromHistoryAction(video, onRemoved) {
+export function removeFromHistoryAction(video, removeMutation) {
   return {
     icon: <Trash2 className="size-5" />,
     label: "Remove from history",
     danger: true,
-    onClick: async () => {
-      try {
-        await api.patch(`/users/history/remove/${video._id}`);
-        toast.success("Removed from history");
-        onRemoved?.(video._id);
-      } catch{
-        toast.error("Couldn't remove video");
-      }
+    onClick: () => {
+      removeMutation.mutate(video._id)
     },
   };
 }

@@ -1,19 +1,17 @@
-import { useAuth } from "../../context/AuthContext";
-import { useState, useEffect } from "react"
-import api from "../../api/axios"
+import { useState} from "react"
 import { Trash2, MoreVertical } from "lucide-react";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import VideoCardVertical from "../../components/videoComponents/VideoCardVertical";
 import VideoGrid from "../../components/videoComponents/VideoGrid";
-import toast from "react-hot-toast";
 import {shareAction, removeFromHistoryAction} from "../../hooks/useVideoActions.jsx";
 import { useHistory } from "../../hooks/queries/useHistory.js";
 import { useDeleteHistory } from "../../hooks/mutations/useDeleteHistory.js";
+import { useRemoveFromHistory } from "../../hooks/mutations/useRemoveFromHistory.js";
 
 function History() {
   const {data:videos = [], isLoading} = useHistory();
   const deleteHistoryMutation = useDeleteHistory();
-  const {user} = useAuth();
+  const removeFromHistoryMutation = useRemoveFromHistory();
   const [deleteHistoryModal, setDeleteHistoryModal] = useState(false);
 
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -58,7 +56,10 @@ function History() {
                     showOwner={true}
                     actions={[
                       shareAction(video), 
-                      removeFromHistoryAction(video),
+                      removeFromHistoryAction(
+                        video,
+                        removeFromHistoryMutation,
+                      ),
                     ]}
                     isMenuOpen={openMenuId === video._id}
                     onToggleMenu={toggleMenu}

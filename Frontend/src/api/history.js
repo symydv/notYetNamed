@@ -13,3 +13,7 @@ export const deleteHistory = async()=>{
 export const addToHistory = async(videoId)=>{
   await api.patch(`/users/history/${videoId}`);
 }
+
+export const removeFromHistory = async(videoId) => {
+  await api.patch(`/users/history/remove/${videoId}`);
+}
