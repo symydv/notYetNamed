@@ -48,14 +48,13 @@ function Header() {
   
   const goHome = async(e) =>{
     e.preventDefault();
-    window.scrollTo(0, 0);
     navigate("/")
   }
 
 
 
   return (
-    <div className="fixed top-0 left-0 w-full py-2 bg-zinc-900  z-50">
+    <div className="fixed top-0 left-0 h-16 w-full py-2 bg-zinc-900  z-50">
       
       <div className="relative flex items-center px-4">
         
