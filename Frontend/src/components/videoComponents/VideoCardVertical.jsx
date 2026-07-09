@@ -14,7 +14,7 @@ function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onTog
       onClick={() => navigate(`/player/${video._id}`)} 
       className={`flex ${vertical ? 'flex-col flex-4' : 'flex-row'} rounded-2xl hover:brightness-110 hover:bg-zinc-800 px-1 py-2 relative gap-2 cursor-pointer`}
     >
-      <div className={`relative ${vertical ? "w-full aspect-video" : "w-72 aspect-video shrink-0"}`}>
+      <div className={`relative ${vertical ? "w-72 aspect-video" : "w-72 aspect-video shrink-0"}`}>
         <Link to={`/player/${video._id}`} onClick={(e) => e.stopPropagation()} className="block relative aspect-video">
           <img
             className="rounded-2xl w-full h-full object-cover pointer-events-none select-none cursor-pointer" //pointer event none to hide image/thumbnail url
