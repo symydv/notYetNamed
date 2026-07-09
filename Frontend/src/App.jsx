@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast"; //used for messaging on p
 
 function App() {
 
-  
+  //scroll restoration
   const { pathname } = useLocation();
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
