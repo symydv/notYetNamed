@@ -116,72 +116,56 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const result = await User.aggregate([
-        {
-            $match: {
-                _id: new mongoose.Types.ObjectId(req.user._id)
-            }
-        },
-        {
-            $lookup: {
-                from: "likes",
-                localField: "_id",
-                foreignField: "likedBy",
-                as: "myLikes",
-                pipeline: [
-                    {  $match: { targetType: "video" } },
-                    {
-                        $lookup: {
-                            from: "videos",
-                            localField: "targetId",
-                            foreignField: "_id",
-                            as: "likedVideo"
-                        }
-                    },
-                    { $unwind: "$likedVideo" },
-                    {
-                        $lookup: {
-                            from: "users",
-                            localField: "likedVideo.owner",
-                            foreignField: "_id",
-                            as: "videoOwner"
-                        }
-                    },
-                    { $unwind: "$videoOwner" },
-                    {
-                        $project: {
-                            _id: 0,
-                            videoId: "$likedVideo._id",
-                            title: "$likedVideo.title",
-                            thumbnail: "$likedVideo.thumbnail",
-                            duration: "$likedVideo.duration",
-                            videoUrl: "$likedVideo.videoFile",
-                            owner: {
-                                _id: "$videoOwner._id",
-                                username: "$videoOwner.username",
-                                fullName: "$videoOwner.fullName",
-                                avatar: "$videoOwner.avatar"
+    const [videos, totalLikedVideos] = await Promise.all([
+        Like.aggregate([
+            { $match: { likedBy: new mongoose.Types.ObjectId(req.user._id), targetType: "video" } },
+            { $sort: { createdAt: -1 } },
+            { $skip: skip },
+            { $limit: limit },
+            {
+                $lookup: {
+                    from: "videos",
+                    localField: "targetId",
+                    foreignField: "_id",
+                    as: "video"
+                }
+            },
+            { $unwind: "$video" },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "video.owner",
+                    foreignField: "_id",
+                    as: "owner"
+                }
+            },
+            { $unwind: "$owner" },
+            {
+                $replaceRoot: {
+                    newRoot: {
+                        $mergeObjects: [
+                            "$video",
+                            {
+                                owner: {
+                                    _id: "$owner._id",
+                                    username: "$owner.username",
+                                    fullName: "$owner.fullName",
+                                    avatar: "$owner.avatar"
+                                }
                             }
-                        }
+                        ]
                     }
-                ]
+                }
             }
-        },
-        {
-            $project: {
-                totalLikes: { $size: "$myLikes" },
-                likedVideos: { $slice: ["$myLikes", skip, limit] }
-            }
-        }
+        ]),
+        Like.countDocuments({ likedBy: req.user._id, targetType: "video" })
     ]);
-
-    const data = result[0] || { totalLikes: 0, likedVideos: [] };
 
     return res.status(200).json(
         new ApiResponse(200, {
-            likedVideos: data.likedVideos,
-            totalLikedVideos: data.totalLikes,
-            totalPages: Math.ceil(data.totalLikes / limit),
+            videos,
+            totalLikedVideos,
+            totalPages: Math.ceil(totalLikedVideos / limit),
             currentPage: page
         }, "Liked videos fetched successfully.")
     );

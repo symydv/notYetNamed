@@ -12,7 +12,7 @@ function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onTog
   return (
     <div
       onClick={() => navigate(`/player/${video._id}`)} 
-      className={`flex ${vertical ? 'flex-col flex-4' : 'flex-row'} rounded-2xl hover:brightness-110 hover:bg-zinc-800 px-1 py-2 relative gap-2 cursor-pointer`}
+      className={`flex ${vertical ? 'flex-col flex-4' : 'flex-row'} w-full rounded-2xl hover:brightness-110 hover:bg-zinc-800 px-1 py-2 relative gap-2 cursor-pointer`}
     >
       <div className={`relative ${vertical ? "w-72 aspect-video" : "w-72 aspect-video shrink-0"}`}>
         <Link to={`/player/${video._id}`} onClick={(e) => e.stopPropagation()} className="block relative aspect-video">
@@ -31,9 +31,7 @@ function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onTog
         </Link>
       </div>
       
-      <div className="flex relative gap-2 p-1.5">
-        
-        
+      <div className="flex flex-1 relative gap-2 p-1.5">
         <div>
           <h3 className="text-stone-100 font-semibold ">{video.title}</h3>  {/**make changes to it later. */}
           

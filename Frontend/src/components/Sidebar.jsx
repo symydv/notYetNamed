@@ -3,7 +3,7 @@ import { Home, History, ListVideo, ThumbsUp, User } from "lucide-react";
 
 const links = [
   { to: "/", label: "Home", icon: Home },
-  { to: "/you", label: "You", icon: User },
+  // { to: "/you", label: "You", icon: User },
   { to: "/history", label: "History", icon: History },
   { to: "/playlists", label: "Playlists", icon: ListVideo },
   { to: "/liked", label: "Liked", icon: ThumbsUp },

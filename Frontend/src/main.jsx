@@ -18,6 +18,7 @@ import ResetPassword from './pages/auth/ResetPassword.jsx'
 import Channel from './pages/Channel.jsx'
 import You from './pages/userPages/You.jsx'
 import History from './pages/userPages/History.jsx'
+import Liked from './pages/userPages/Liked.jsx'
 import { QueryProvider } from './providers/QueryProvider.jsx'
 
 const router = createBrowserRouter([
@@ -58,6 +59,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <History/>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path:"liked",
+        element: (
+          <ProtectedRoute>
+            <Liked/>
           </ProtectedRoute>
         )
       }
