@@ -54,7 +54,7 @@ function Header() {
 
 
   return (
-    <div className="fixed top-0 left-0 h-16 w-full py-1 bg-zinc-900 z-50">
+    <div className="fixed top-0 left-0 h-16 w-full py-2 bg-zinc-900 z-50">
       
       <div className="relative flex items-center px-4">
         
@@ -126,7 +126,7 @@ function Header() {
               ):(
                 <div className="w-10 h-10 z-50 text-white flex items-center justify-center rounded-full border cursor-pointer border-zinc-700 " onClick={()=> setShowUserMenu(false)}><X/></div>
               )}
-              <UserMenu showUserMenu={showUserMenu} setShowUserMenu={setShowUserMenu} user={user}/>
+              <UserMenu showUserMenu={showUserMenu} setShowUserMenu={setShowUserMenu} setShowLogoutModal={setShowLogoutModal} user={user}/>
             </div>
             
           )}
@@ -147,19 +147,19 @@ function Header() {
           <div className="relative bg-zinc-900 text-white rounded-xl p-6 w-80 z-10">
             <h2 className="text-lg font-semibold mb-2">Log out?</h2>
             <p className="text-sm text-gray-400 mb-4">
-              सही में?!!
+              Do you want to logout ?
             </p>
 
             <div className="flex justify-end gap-3">
               <button
-                className="px-4 py-1 rounded-lg bg-gray-700 hover:bg-gray-600"
+                className="px-4 py-1 rounded-lg bg-gray-700 hover:bg-gray-600 cursor-pointer"
                 onClick={() => setShowLogoutModal(false)}
               >
-                नहीं रे.
+                No
               </button>
 
               <button
-                className="px-4 py-1 rounded-lg bg-red-600 hover:bg-red-700"
+                className="px-4 py-1 rounded-lg bg-red-600 hover:bg-red-700 cursor-pointer"
                 onClick={logoutHandler}
               >
                 Log out

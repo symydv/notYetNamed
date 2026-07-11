@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import { UserCircle, LogOutIcon, TvMinimalPlayIcon} from "lucide-react"
 import { getAvatarUrl } from "../../utils/cloudinary"
 
-function UserMenu({showUserMenu, setShowUserMenu, user}) {
+function UserMenu({showUserMenu, setShowUserMenu, setShowLogoutModal, user}) {
   return (
     <div>
       {showUserMenu && (
@@ -58,6 +58,10 @@ function UserMenu({showUserMenu, setShowUserMenu, user}) {
                 <button
                   type="button"
                   className="flex items-center w-full p-2 hover:bg-zinc-700 rounded-2xl cursor-pointer"
+                  onClick={() =>{
+                    setShowUserMenu(false)
+                    setShowLogoutModal(true)
+                  }}
                 >
                   <LogOutIcon className="size-5 mr-3" />
                   <span className="text-sm font-semibold">Logout</span>

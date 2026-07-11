@@ -11,7 +11,7 @@ function VideoCard({video, showOwner=true}) { //we dont need to show owner info 
   }
   return (
     <div
-      onClick={() => navigate(`/player/${video._id}`)} className="rounded-2xl hover:brightness-110 hover:bg-zinc-800 px-1 py-2 relative">
+      onClick={() => navigate(`/player/${video._id}`)} className="rounded-2xl hover:saturate-125 hover:bg-zinc-800 px-1 py-2 relative">
       <Link to={`/player/${video._id}`} onClick={(e) => e.stopPropagation()} className="block relative aspect-video">
         <img
           className="rounded-2xl w-full h-full object-cover pointer-events-none select-none cursor-pointer " //pointer event none to hide image/thumbnail url

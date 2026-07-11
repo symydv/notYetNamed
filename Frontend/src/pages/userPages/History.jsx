@@ -29,7 +29,7 @@ function History() {
   return (
     <div className="text-white px-8 py-6">
       <div className="mb-10 max-w-6xl bg-linear-to-r bg-zinc-900/70 backdrop-blur-xl border border-zinc-700 px-6 py-4 rounded-2xl">
-        <div className="text-3xl font-bold">
+        <div className="text-4xl font-bold tracking-tight">
           Watch history
         </div>
       </div>

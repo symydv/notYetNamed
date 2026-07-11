@@ -43,7 +43,7 @@ function Liked() {
     <div className="text-white min-h-screen px-8 py-6">
       {/* Header */}
       <div className="mb-8 max-w-6xl bg-linear-to-r bg-zinc-900/70 backdrop-blur-xl border border-zinc-700 px-6 py-4 rounded-2xl">
-        <h1 className="text-4xl font-bold tracking-tight">
+        <h1 className="text-3xl font-bold tracking-tight">
           Liked videos
         </h1>
         <p className="text-zinc-400 mt-2">
