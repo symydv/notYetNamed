@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 
 export function shareAction(video) {
   return {
-    icon: <Share2 className="size-5" />,
+    icon: <Share2 className="size-4" />,
     label: "Share",
     onClick: () => {
       navigator.clipboard.writeText(`${window.location.origin}/player/${video._id}`);
@@ -14,7 +14,7 @@ export function shareAction(video) {
 
 export function addToPlaylistAction(video, onOpenPlaylistModal) {
   return {
-    icon: <ListPlus className="size-5" />,
+    icon: <ListPlus className="size-4" />,
     label: "Save to playlist",
     onClick: () => onOpenPlaylistModal(video),
   };
@@ -22,7 +22,7 @@ export function addToPlaylistAction(video, onOpenPlaylistModal) {
 
 export function removeFromHistoryAction(video, removeMutation) {
   return {
-    icon: <Trash2 className="size-5" />,
+    icon: <Trash2 className="size-4" />,
     label: "Remove from history",
     danger: true,
     onClick: () => {

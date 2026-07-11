@@ -20,7 +20,7 @@ function VideoActions({ isOpen, onClose, actions }) {
   return (
     <div
       ref={menuRef}
-      className="absolute top-full right-0 mt-2 z-50 w-56 rounded-2xl border border-zinc-700 bg-zinc-900 py-2 shadow-xl"
+      className="absolute top-full right-0 mt-1 z-50 w-45 rounded-xl text-sm border border-zinc-700 bg-zinc-900 overflow-hidden shadow-xl"
     >
       {actions.map((action, index) => (
         <button
@@ -30,7 +30,7 @@ function VideoActions({ isOpen, onClose, actions }) {
             action.onClick?.();
             onClose();
           }}
-          className={`flex w-full items-center gap-3 px-4 py-3 text-sm font-medium cursor-pointer transition-colors
+          className={`flex w-full items-center gap-3 py-2 px-3 text-xs cursor-pointer transition-colors
             ${action.danger ? "text-red-400 hover:bg-red-500/10" : "text-zinc-100 hover:bg-zinc-700"}`}
         >
           {action.icon}

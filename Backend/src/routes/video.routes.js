@@ -45,9 +45,3 @@ router.route("/toggle/publish/:videoId").patch(verifyJWT, togglePublishStatus);
 
 export default router
 
-
-//NOTE:
-/*Although we can add any HTTP method and do what ever we want in function but it is important to mantain right scripts because:
-It breaks RESTful API principles — the HTTP method should reflect what the server does.
-Other developers (or frontend devs) will assume the DELETE route removes a resource.
-It leads to confusing, hard-to-maintain code */

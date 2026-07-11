@@ -31,7 +31,6 @@ function Liked() {
     });
 
     if(loaderRef.current){
-      console.log("observed");
       observer.observe(loaderRef.current);
     }
 

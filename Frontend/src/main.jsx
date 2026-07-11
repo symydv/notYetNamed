@@ -20,6 +20,8 @@ import You from './pages/userPages/You.jsx'
 import History from './pages/userPages/History.jsx'
 import Liked from './pages/userPages/Liked.jsx'
 import { QueryProvider } from './providers/QueryProvider.jsx'
+import Playlists from './pages/userPages/Playlists.jsx'
+import PlaylistDetails from './pages/userPages/PlaylistDetails.jsx'
 
 const router = createBrowserRouter([
   {
@@ -67,6 +69,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Liked/>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path:"playlists",
+        element:(
+          <ProtectedRoute>
+            <Playlists/>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path:"playlist/:playlistId",
+        element:(
+          <ProtectedRoute>
+            <PlaylistDetails/>
           </ProtectedRoute>
         )
       }
