@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
 import { Home, History, ListVideo, ThumbsUp, User } from "lucide-react";
-
 const links = [
   { to: "/", label: "Home", icon: Home },
   // { to: "/you", label: "You", icon: User },

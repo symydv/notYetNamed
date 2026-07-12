@@ -463,7 +463,7 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
 
     return res
     .status(200)
-    .json(new ApiResponse(200, user, "coverImage Updated successfully"))
+    .json(new ApiResponse(200, {coverImage: user.coverImage}, "coverImage Updated successfully"))
 })
 
 const getWatchHistory = asyncHandler(async(req, res) => {

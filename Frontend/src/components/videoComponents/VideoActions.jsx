@@ -7,10 +7,11 @@ function VideoActions({ isOpen, onClose, actions, anchorRef}) {
   const [coords, setCoords] = useState({top:0, left:0});
 
   const MENU_WIDTH = 180;  // matches w-45 (45 * 4 = 180px)
+  const MENU_HEIGHT = actions?.length * 35;
   useLayoutEffect(() => {
     if(!isOpen || !anchorRef.current) return;
     const rect = anchorRef.current.getBoundingClientRect();
-
+    
     let left = rect.right - 30;
     if(left<8){
       left = rect.left;
@@ -19,8 +20,17 @@ function VideoActions({ isOpen, onClose, actions, anchorRef}) {
       left = window.innerWidth - MENU_WIDTH - 20;
     }
     let top = rect.bottom + 4;
+    if (top + MENU_HEIGHT > window.innerHeight - 8) {
+      top = rect.top - MENU_HEIGHT - 4; 
+    }
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect 
     setCoords({top, left})
-  }, [isOpen, anchorRef])
+    // -- syncing menu position with the anchor button's real on-screen layout (getBoundingClientRect),
+    // an external system React can't read during render. This matches React's own
+    // documented useLayoutEffect exception for measuring DOM before paint.
+    
+  }, [isOpen, anchorRef, MENU_HEIGHT])
 
   useEffect(() => {
     if (!isOpen) return;
@@ -48,7 +58,7 @@ function VideoActions({ isOpen, onClose, actions, anchorRef}) {
       style={{ top: coords.top, left: coords.left }}
       className="fixed z-50 w-45 rounded-xl text-sm border border-zinc-700 bg-zinc-900 overflow-hidden shadow-xl"
     >
-      {actions.map((action, index) => (
+      {actions?.map((action, index) => (
         <button
           key={index}
           onClick={(e) => {
