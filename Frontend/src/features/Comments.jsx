@@ -59,7 +59,7 @@ function Comments({videoId}){
     if(!hasMore) return;
 
     fetchComments()
-  }, [page, videoId, fetchComments])
+  }, [page, videoId, fetchComments, hasMore])
 
   //add new comment.
   const addComment = async(e)=>{
@@ -76,7 +76,7 @@ function Comments({videoId}){
       setNewComment("")
       setTotalComments(prev => prev + 1);
       toast.success("comment added")
-    } catch (error) {
+    } catch {
       toast.error("something went wrong")
     }finally{
       setIsClicked(false)
@@ -115,7 +115,7 @@ function Comments({videoId}){
 
     try {
       await api.post(`/likes/toggle/c/${commentId}`);
-    } catch (error) {
+    } catch{
       // rollback safely
       setComments(prev =>
         prev.map(c =>
@@ -152,7 +152,7 @@ function Comments({videoId}){
 
       await api.delete(`comments/c/${commentId}`);
       toast.success("Comment deleted");
-    } catch (error) {
+    } catch{
       // rollback
       setComments(prevComments);
       setTotalComments(prev => prev + 1);
@@ -194,7 +194,7 @@ function Comments({videoId}){
           <img
               src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`}
               alt="avatar"
-              className="w-8 h-8 rounded-full mt-1 flex-shrink-0"
+              className="w-8 h-8 rounded-full mt-1 shrink-0"
           />
           <div className="flex items-end gap-2 flex-1 bg-zinc-800 border border-zinc-700 rounded-2xl px-3 py-2">
               <textarea
@@ -221,7 +221,7 @@ function Comments({videoId}){
               <button
                   type="submit"
                   disabled={!newComment.trim()}
-                  className="text-xs text-white bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed px-3 py-1 rounded-xl transition flex-shrink-0"
+                  className="text-xs text-white bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed px-3 py-1 rounded-xl transition shrink-0"
               >
                   Post
               </button>
@@ -250,7 +250,7 @@ function Comments({videoId}){
             <img 
               src= {getAvatarUrl(c.owner?.avatar || `https://ui-avatars.com/api/?name=${c.owner?.username}&background=0f172a&color=fff`)} 
               alt={c.owner?.username}
-              className="w-10 h-10 rounded-full border border-zinc-700 flex-shrink-0" 
+              className="w-10 h-10 rounded-full border border-zinc-700 shrink-0" 
             />
           </div>
           
@@ -360,7 +360,7 @@ const CommentContent = ({ content }) => {
     <div>
       <p
         ref={textRef}
-        className={`text-gray-300 text-sm font-normal leading-relaxed break-words overflow-wrap-anywhere ${
+        className={`text-gray-300 text-sm font-normal leading-relaxed wrap-break-word overflow-wrap-anywhere ${
           !expanded ? "line-clamp-3" : ""
         }`}
       >

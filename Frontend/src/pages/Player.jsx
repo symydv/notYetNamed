@@ -215,7 +215,7 @@ function Player(){
           ref={descRef}
           className={`
             text-white text-sm leading-relaxed
-            whitespace-pre-wrap break-words
+            whitespace-pre-wrap wrap-break-word
             transition-all duration-200
             ${expanded ? "" : "line-clamp-2 md:line-clamp-3"}
           `}

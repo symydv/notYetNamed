@@ -48,12 +48,12 @@ function Home() {
     };
 
     fetchVideos();
-  }, [page, query]);
+  },[page, query]);
 
   function getHomeVideoActions(video) {
     return [
       shareAction(video),
-      addToPlaylistAction(video, (video) => toast("Playlist feature coming soon")),
+      addToPlaylistAction(video, () => toast("Playlist feature coming soon")),
     ];
   }
 
