@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import api from "../api/axios.js";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import VideoCard from "../components/videoComponents/VideoCard.jsx";
 import VideoGrid from "../components/videoComponents/VideoGrid.jsx";
 import {LoaderCircle } from "lucide-react";
+import { shareAction, addToPlaylistAction } from "../hooks/useVideoActions.jsx";
 
 function Home() {
   const [videos, setVideos] = useState([]);
@@ -49,6 +50,13 @@ function Home() {
     fetchVideos();
   }, [page, query]);
 
+  function getHomeVideoActions(video) {
+    return [
+      shareAction(video),
+      addToPlaylistAction(video, (video) => toast("Playlist feature coming soon")),
+    ];
+  }
+
   // Intersection Observer for infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -91,8 +99,8 @@ function Home() {
 
   return (
     <>
-      
-      <VideoGrid videos={videos}/>
+
+      <VideoGrid videos={videos} getActions={getHomeVideoActions}/>
 
       {/* Loader element at the bottom */}
       <div ref={loaderRef} className="h-10"></div>

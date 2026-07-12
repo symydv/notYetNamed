@@ -19,6 +19,13 @@ function History() {
     setOpenMenuId((prev) => (prev === id ? null : id));
   };
 
+  function getHistoryVideoActions(video){
+    return [
+      shareAction(video),
+      removeFromHistoryAction(video, removeFromHistoryMutation)
+    ]
+  }
+
   const handleDeleteHistory = () => {
     deleteHistoryMutation.mutate();
   }
@@ -57,13 +64,7 @@ function History() {
                     video={video}
                     vertical={false}
                     showOwner={true}
-                    actions={[
-                      shareAction(video), 
-                      removeFromHistoryAction(
-                        video,
-                        removeFromHistoryMutation,
-                      ),
-                    ]}
+                    actions={getHistoryVideoActions(video)}
                     isMenuOpen={openMenuId === video._id}
                     onToggleMenu={toggleMenu}
                   />

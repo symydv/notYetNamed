@@ -1,26 +1,52 @@
 // VideoActions.jsx
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
-function VideoActions({ isOpen, onClose, actions }) {
+function VideoActions({ isOpen, onClose, actions, anchorRef}) {
   const menuRef = useRef(null);
+  const [coords, setCoords] = useState({top:0, left:0});
+
+  const MENU_WIDTH = 180;  // matches w-45 (45 * 4 = 180px)
+  useLayoutEffect(() => {
+    if(!isOpen || !anchorRef.current) return;
+    const rect = anchorRef.current.getBoundingClientRect();
+
+    let left = rect.right - 30;
+    if(left<8){
+      left = rect.left;
+    }
+    if(left+MENU_WIDTH > window.innerWidth){
+      left = window.innerWidth - MENU_WIDTH - 20;
+    }
+    let top = rect.bottom + 4;
+    setCoords({top, left})
+  }, [isOpen, anchorRef])
 
   useEffect(() => {
     if (!isOpen) return;
 
     const handleClickOutside = (e) => {
-      if (!menuRef.current?.contains(e.target)) onClose();
+      if (!menuRef.current?.contains(e.target) && !anchorRef.current?.contains(e.target)) {
+        onClose();
+      }
     };
+    const handleScroll = () => onClose(); // simplest: close on scroll rather than re-tracking position
 
     document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [isOpen, onClose]);
+    window.addEventListener("scroll", handleScroll, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll, true);
+    }
+  }, [isOpen, onClose, anchorRef]);
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
       ref={menuRef}
-      className="absolute top-full right-0 mt-1 z-50 w-45 rounded-xl text-sm border border-zinc-700 bg-zinc-900 overflow-hidden shadow-xl"
+      style={{ top: coords.top, left: coords.left }}
+      className="fixed z-50 w-45 rounded-xl text-sm border border-zinc-700 bg-zinc-900 overflow-hidden shadow-xl"
     >
       {actions.map((action, index) => (
         <button
@@ -37,7 +63,8 @@ function VideoActions({ isOpen, onClose, actions }) {
           <span>{action.label}</span>
         </button>
       ))}
-    </div>
+    </div>,
+    document.body
   );
 }
 

@@ -1,14 +1,18 @@
-import { getThumbnailUrl } from '../../utils/cloudinary';
+import { useRef } from 'react';
 import { useNavigate, Link} from 'react-router-dom'
 import { MoreVerticalIcon, Trash2, Share2 } from 'lucide-react';
+import { getThumbnailUrl } from '../../utils/cloudinary';
 import VideoActions from './VideoActions';
+
 function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onToggleMenu, vertical=true }) {
   const navigate = useNavigate();
+  const menuButtonRef = useRef(null);
   function formatDuration(seconds) {
     const m = Math.floor(seconds / 60);
     const s = Math.floor(seconds % 60);
     return `${m}:${s.toString().padStart(2, "0")}`;
   }
+
   return (
     <div
       onClick={() => navigate(`/player/${video._id}`)} 
@@ -31,7 +35,7 @@ function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onTog
         </Link>
       </div>
       
-      <div className="flex flex-1 relative gap-2 p-1.5">
+      <div className="flex flex-1 relative gap-2 p-1.5 pr-10">
         <div>
           <h3 className="text-stone-100 font-semibold line-clamp-2 wrap-break-words">{video.title}</h3>  {/**make changes to it later. */}
           
@@ -54,6 +58,7 @@ function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onTog
       <div className="absolute right-2 top-2 z-10">
         <div className='relative flex'>
           <div
+            ref={menuButtonRef}
             className="flex items-center justify-center rounded-full p-2 hover:bg-gray-500"
             onClick={(e) => {
               e.stopPropagation();
@@ -66,6 +71,7 @@ function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onTog
             isOpen={isMenuOpen}
             onClose={() => onToggleMenu(null)}
             actions={actions}
+            anchorRef={menuButtonRef}
           />
         </div>
       </div>
