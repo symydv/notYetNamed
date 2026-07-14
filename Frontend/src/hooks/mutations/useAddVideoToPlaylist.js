@@ -8,10 +8,6 @@ export const useAddVideoToPlaylist = (userId) => {
 
   return useMutation({
     mutationFn: addVideoToPlaylist,
-    onMutate: () => {
-      
-    },
-
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: playlistsQueryOptions(userId).queryKey, 

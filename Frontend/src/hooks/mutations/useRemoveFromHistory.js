@@ -15,7 +15,7 @@ export const useRemoveFromHistory = () => {
 
       const prevHistory = queryClient.getQueryData(queryKey)
       queryClient.setQueryData(queryKey, (old) => {
-        old?.filter((video) => video._id !== videoId);
+        return old?.filter((video) => video._id !== videoId);
       })
 
       return {prevHistory};

@@ -35,12 +35,26 @@ function History() {
   }
   return (
     <div className="text-white px-8 py-6">
-      <div className="mb-10 max-w-6xl bg-linear-to-r bg-zinc-900/70 backdrop-blur-xl border border-zinc-700 px-6 py-4 rounded-2xl">
-        <div className="text-4xl font-bold tracking-tight">
-          Watch history
+      <div className="relative mb-8 max-w-6xl overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900/70 backdrop-blur-xl px-6 py-5">
+        <div className="flex items-center justify-between gap-6">
+          <div>
+            <p className="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-amber-500/80">
+              Recently watched
+            </p>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Watch history
+            </h1>
+          </div>
+ 
+          <button
+            onClick={() => setDeleteHistoryModal(true)}
+            className="group flex items-center gap-2 rounded-full border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 transition-colors cursor-pointer hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400"
+          >
+            <Trash2 className="size-4 transition-transform group-hover:-rotate-6" />
+            Clear history
+          </button>
         </div>
       </div>
-      
 
       {videos.length === 0 ? (
         <div className="flex h-[70vh] items-center justify-center">
@@ -54,7 +68,7 @@ function History() {
           </div>
         </div>
       ) : (
-        <div className="flex gap-4">
+        <div className="flex gap-4 max-w-6xl">
           {/* Videos */}
           <div className="flex flex-col flex-2">
             <div className="gap-2 flex flex-col">
@@ -70,19 +84,6 @@ function History() {
                   />
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="flex-1">
-            <div className="p-10 text-md items-center font-semibold">
-              <div
-                className="flex gap-2 items-center hover:bg-zinc-500 rounded-full p-2 w-fit cursor-pointer transition-colors"
-                onClick={() => setDeleteHistoryModal(true)}
-              >
-                <Trash2 className="size-5" />
-                Clear watch history
-              </div>
             </div>
           </div>
         </div>
