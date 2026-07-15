@@ -30,7 +30,10 @@ const uploadOnCloudinary = async (LocalFilePath, resourceType = "auto") => {
         //file has been uploaded successfully
         // console.log("file is uploaded on cloudinary ", response.url);
         fs.unlinkSync(LocalFilePath) //it is a multer method to delete file from local storage, after successfully uploading it to cloudinary
-        return response;
+        return {
+            ...response,
+            url: response.secure_url
+        };
         
     } catch (error) {
         
