@@ -54,7 +54,7 @@ function Header() {
 
 
   return (
-    <div className="fixed top-0 left-0 h-16 w-full py-2 bg-zinc-900 z-50">
+    <div className="fixed top-0 left-0 h-16 w-full pt-2 bg-zinc-900 z-50">
       
       <div className="relative flex items-center px-4">
         
@@ -101,11 +101,23 @@ function Header() {
 
         <div className="ml-auto text-xs sm:text-sm md:text-md">
           {!user ? (
-            <button className=" flex px-4 py-1.5 bg-gray-800 text-white rounded-full hover:bg-gray-600">
-              <div onClick={goToLogin} className="hover:text-black">Login</div>
-              /
-              <div onClick={goToSignUp} className="hover:text-black">SignUp</div>
-            </button>
+            <div className="flex overflow-hidden rounded-full border border-zinc-700 bg-zinc-900 ">
+              <button
+                onClick={goToLogin}
+                className="px-5 cursor-pointer py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 hover:text-red-300"
+              >
+                Login
+              </button>
+
+              <div className="w-px bg-zinc-700" />
+
+              <button
+                onClick={goToSignUp}
+                className="px-5 cursor-pointer py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 hover:text-red-300"
+              >
+                Sign Up
+              </button>
+            </div>
           ) : (
             <div className="flex items-center gap-3">
               <div 

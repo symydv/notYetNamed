@@ -1,4 +1,5 @@
 import { useState} from "react"
+import { Helmet } from "react-helmet-async";
 import { Trash2, MoreVertical } from "lucide-react";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import VideoCardVertical from "../../components/videoComponents/VideoCardVertical";
@@ -35,6 +36,11 @@ function History() {
   }
   return (
     <div className="text-white px-8 py-6">
+      <Helmet>
+        <title>
+          Watch History - Tapes
+        </title>
+      </Helmet>
       <div className="relative mb-8 max-w-6xl overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900/70 backdrop-blur-xl px-6 py-5">
         <div className="flex items-center justify-between gap-6">
           <div>

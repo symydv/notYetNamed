@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { Helmet } from "react-helmet-async";
 import { useEffect } from "react";
 import {Link, useParams } from "react-router-dom";
 import api from "../api/axios.js";
@@ -99,6 +100,11 @@ function Player(){
   
   return (
   <div className="w-full px-6 py-2 grid grid-cols-9">
+    <Helmet>
+      <title>
+        {video?.title ? `${video.title} - Tapes` : "Loading... - Tapes"}
+      </title>
+    </Helmet>
     <div className="w-full max-w-6xl col-span-7">
       {/* Video */}
       <div className="aspect-video bg-black rounded-2xl overflow-hidden">

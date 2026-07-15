@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
+import { Helmet } from 'react-helmet-async';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -59,6 +60,11 @@ export function Upload() {
   }
   return (
     <div className="min-h-screen bg-zinc-950 text-white px-4 py-10">
+      <Helmet>
+        <title>
+          Video Upload - Tapes
+        </title>
+      </Helmet>
       <div className="max-w-3xl mx-auto">
         {/* Heading */}
         <div className="mb-8">

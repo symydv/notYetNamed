@@ -1,4 +1,5 @@
 import {useState, useEffect} from "react"
+import { Helmet } from "react-helmet-async"
 import {useParams} from "react-router-dom"
 import {useAuth} from "../context/AuthContext"
 import api from "../api/axios"
@@ -35,6 +36,13 @@ function Channel() {
   if(loading) return <LoadingSpinner />
   return (
     <div className='flex flex-col pl-2 pr-2 sm:pl-15 sm:pr-15 md:pl-20 md:pr-20'>
+      <Helmet>
+        <title>
+          {username? `${channel.fullName} - Tapes` : `Loading...`}
+        </title>
+      </Helmet>
+
+
       <ChannelBanner 
         coverImage={channel.coverImage} 
         username={username}

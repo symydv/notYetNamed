@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { Helmet } from "react-helmet-async"
 import { Loader } from "lucide-react"
 import api from "../../api/axios"
 import Input from "../../components/Input"
@@ -55,7 +56,11 @@ export const Signup = ()=>{
 
   return (
     <div className="min-h-screen flex items-center justify-center text-white px-4">
-
+      <Helmet>
+        <title>
+          Sign Up - Tapes
+        </title>
+      </Helmet>
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-zinc-900 rounded-2xl p-8"

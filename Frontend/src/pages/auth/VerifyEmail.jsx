@@ -1,5 +1,6 @@
 import React from 'react'
 import {useState} from "react"
+import { Helmet } from 'react-helmet-async'
 import toast from "react-hot-toast"
 import {useNavigate, useLocation} from "react-router-dom"
 import api from "../../api/axios"
@@ -41,6 +42,11 @@ function VerifyEmail() {
   }
   return (
     <div className="min-h-screen flex items-center justify-center text-white px-4 ">
+      <Helmet>
+        <title>
+          Verify Email - Tapes
+        </title>
+      </Helmet>
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-zinc-900 rounded-2xl p-8 border border-zinc-700"

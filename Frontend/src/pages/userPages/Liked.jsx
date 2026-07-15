@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState} from "react";
+import { Helmet } from "react-helmet-async";
 import { LoaderCircle } from "lucide-react";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { useLikedVideos } from "../../hooks/queries/useLikedVideos"
@@ -41,6 +42,11 @@ function Liked() {
   if(isLoading) return <LoadingSpinner/>
   return (
     <div className="text-white min-h-screen px-8 py-6">
+      <Helmet>
+        <title>
+          Liked Videos - Tapes
+        </title>
+      </Helmet>
       {/* Header */}
       <div className="mb-8 max-w-6xl bg-zinc-900/70 backdrop-blur-xl border border-zinc-700 px-6 py-5 rounded-2xl">
         <p className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-rose-400/80">

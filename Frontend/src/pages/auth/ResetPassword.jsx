@@ -1,5 +1,6 @@
 import React from 'react'
 import {useState} from "react"
+import { Helmet } from "react-helmet-async";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import { User, ArrowLeft, Loader, Lock } from "lucide-react";
 import Input from "../../components/Input";
@@ -31,6 +32,11 @@ function ResetPassword() {
   }
   return (
     <div className="min-h-screen flex items-center justify-center text-white px-4">
+      <Helmet>
+        <title>
+          Reset Password - Tapes
+        </title>
+      </Helmet>
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-zinc-900 rounded-2xl p-8"

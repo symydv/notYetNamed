@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "../../context/AuthContext";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { Loader, Lock, User} from "lucide-react";
@@ -48,6 +49,11 @@ export const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center text-white px-4">
+      <Helmet>
+        <title>
+          Login - Tapes
+        </title>
+      </Helmet>
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-zinc-900 rounded-2xl p-8"

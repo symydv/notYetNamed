@@ -22,6 +22,8 @@ import Liked from './pages/userPages/Liked.jsx'
 import { QueryProvider } from './providers/QueryProvider.jsx'
 import Playlists from './pages/userPages/Playlists.jsx'
 import PlaylistDetails from './pages/userPages/PlaylistDetails.jsx'
+import NotFound from './pages/NotFound.jsx'
+import { HelmetProvider } from 'react-helmet-async'
 
 const router = createBrowserRouter([
   {
@@ -135,15 +137,21 @@ const router = createBrowserRouter([
         )
       }
     ]
+  },
+  {
+    path: "*",
+    element: <NotFound/>
   }
 ])
 
 
 
 createRoot(document.getElementById('root')).render(
-  <QueryProvider>
-    <AuthProvider>
-      <RouterProvider router={router}/>
-    </AuthProvider>
-  </QueryProvider>
+  <HelmetProvider>
+    <QueryProvider>
+      <AuthProvider>
+        <RouterProvider router={router}/>
+      </AuthProvider>
+    </QueryProvider>
+  </HelmetProvider>
 )

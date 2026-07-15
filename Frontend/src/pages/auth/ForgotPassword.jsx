@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import Input from '../../components/Input'
 import { User, ArrowLeft} from 'lucide-react'
@@ -28,6 +29,11 @@ function ForgotPassword() {
   }
   return (
     <div className="min-h-screen bg-zinc-900 flex items-center justify-center p-4">
+      <Helmet>
+        <title>
+          Forgot Password - Tapes
+        </title>
+      </Helmet>
       <div className="w-full max-w-md rounded-2xl bg-zinc-900 overflow-hidden shadow-lg text-white">
 
         <div className="p-8">
