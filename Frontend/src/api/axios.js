@@ -4,7 +4,7 @@ import axios from "axios";
 // baseURL means we only need to write endpoints like "/videos"
 // instead of "http://localhost:8000/api/v1/videos" every time.
 const api = axios.create({
-  baseURL: "http://localhost:8000/api/v1",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1",
   withCredentials: true // Send cookies (access & refresh tokens) with every request.
 });
 

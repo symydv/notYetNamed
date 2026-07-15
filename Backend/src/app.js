@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser"   //cookie-parser: Middleware to parse 
 const app = express()
 //app.use() , this is used for all the middlewares and configurations.
 app.use(cors({
-    origin: "http://localhost:5173", // frontend URL
+    origin: process.env.CLIENT_URL || "http://localhost:5173", // frontend URL - set CLIENT_URL in prod
     credentials: true  // allows cookies and authentication headers to be sent/received across origins.
 }))
 

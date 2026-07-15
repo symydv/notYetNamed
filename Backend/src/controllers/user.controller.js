@@ -10,6 +10,7 @@ import { sendEmail } from "../mail/sendEmail.js";
 import { verificationTemplate, PASSWORD_RESET_TEMPLATE} from "../mail/emailTemplets.js";
 import crypto from "crypto"
 import { Video } from "../models/video.model.js";
+import { cookieOptions } from "../utils/CookieOptions.js";
 
 //for later use in the code.
 const generateAccessAndRefreshTokens = async(userId) => {
@@ -187,11 +188,11 @@ const loginUser = asyncHandler( async(req, res) => {
     delete loggedInUser.password;
     delete loggedInUser.refreshToken;
 
-    const option = {
-        httpOnly: true,
-        secure: true
-    } //understand 
-
+    // const option = {
+    //     httpOnly: true,
+    //     secure: true
+    // } //understand 
+    const options = cookieOptions;
     //5.
     return res.status(200)
     .cookie("accessToken", accessToken,option)
@@ -224,10 +225,11 @@ const logoutUser = asyncHandler(async(req, res) => {
     
     // console.log("User in logout:", req.user) //jsut to check if we are getting the correct user.
 
-    const options = {
-        httpOnly: true, //JS on the client can’t access these cookies (prevents XSS)
-        secure: true  //Cookie only sent over HTTPS
-    }
+    // const options = {
+    //     httpOnly: true, //JS on the client can’t access these cookies (prevents XSS)
+    //     secure: true  //Cookie only sent over HTTPS
+    // }
+    const options = cookieOptions
 
     return res
     .status(200)
@@ -274,6 +276,7 @@ const refreshAccessToken = asyncHandler(async(req, res) => {
         const options = {
             httpOnly: true,
             secure: true,
+            ...cookieOptions,
             maxAge: 60 * 24 * 60 * 60 * 1000 // 60 days
         }
     
