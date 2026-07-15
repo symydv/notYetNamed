@@ -19,7 +19,7 @@ Built with a strong focus on **backend architecture**, **secure authentication**
 
 # 🚀 Live Demo
 
-> Coming Soon
+> [Tapes.com](https://tapes-delta.vercel.app/)
 
 ---
 
@@ -197,6 +197,9 @@ Frontend
 The frontend separates UI, routing, API communication, and global state into dedicated modules for better maintainability.
 
 ---
+## vercel.json
+This rewrite rule ensures React Router works correctly on page refresh.
+Without it, routes like `/player/:id` or `/history` return 404 on Vercel because the server looks for physical files instead of serving `index.html`.
 
 # 🔐 Authentication Flow
 
