@@ -8,6 +8,8 @@
 // In prod: frontend (vercel.app) and backend (onrender.com) are different
 // sites entirely, both over https. That requires secure:true + sameSite:"none"
 // or the browser won't send the cookie back on cross-site requests.
+
+//sameSite = lax/strict protects from CSRF (Cross-Site Request Forgery) attacks.
 const isProd = process.env.NODE_ENV === "production";
 
 export const cookieOptions = {

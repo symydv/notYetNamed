@@ -36,7 +36,6 @@ import { errorHandler } from "./middlewares/error.middleware.js"
 app.use("/api/v1/users", userRouter) //it will direct you to "router" file of user , where we can use .get or .post such methods.
 ///api/v1/users is standard practice we use.
 app.use("/api/v1/healthcheck", healthcheckRouter)
-app.use("/api/v1/users", userRouter)
 app.use("/api/v1/tweets", tweetRouter)
 app.use("/api/v1/subscriptions", subscriptionRouter)
 app.use("/api/v1/videos", videoRouter)
