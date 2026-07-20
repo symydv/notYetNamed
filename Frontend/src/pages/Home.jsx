@@ -1,54 +1,27 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import api from "../api/axios.js";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import VideoGrid from "../components/videoComponents/VideoGrid.jsx";
 import {LoaderCircle } from "lucide-react";
 import { shareAction, addToPlaylistAction } from "../hooks/useVideoActions.jsx";
+import { useVideos } from "../hooks/queries/useVideos.js";
 
 function Home() {
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
-  const [page, setpage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  
   const search = searchParams.get("search");
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading
+  } = useVideos(search);
+  
+  const videos = data?.pages.flatMap((p) => p.videos) ?? [];
+  
   const loaderRef = useRef(null);
-  const [isFetching, setIsFetching] = useState(false);
-
-  const [query, setQuery] = useState(search);
-  // Fetch videos whenever page or search changes
-  useEffect(() => {
-    if (isFetching || !hasMore) return;
-    // console.log(page);
-    
-    const fetchVideos = async () => {
-      setIsFetching(true);
-      if (page === 1) setLoading(true);
-
-      try {
-        const res = await api.get(`/videos/?page=${page}`, {
-          params: search ? { search: query } : {},
-        });
-        
-        setVideos(prev => 
-          page === 1
-            ? res.data.data
-            : [...prev, ...res.data.data]
-        );
-        setHasMore(page < res.data.pagination.totalPages);
-      } catch (error) {
-        console.error("Error fetching videos:", error);
-      } finally {
-        setLoading(false);
-        setIsFetching(false);
-      }
-    };
-
-    fetchVideos();
-  },[page, query]);
 
   function getHomeVideoActions(video) {
     return [
@@ -59,43 +32,24 @@ function Home() {
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
+    const el = loaderRef.current;
+    if (!el) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const target = entries[0];
-        if (target.isIntersecting && hasMore && !isFetching) {
-          setpage(prev => prev + 1);
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
         }
       },
-      {
-        rootMargin: "50%",
-        threshold: 0,
-      }
+      { rootMargin: "50%" }
     );
 
-    if (loaderRef.current) {
-      observer.observe(loaderRef.current);
-    }
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-    return () => {
-      observer.disconnect();
-    };
-  }, [hasMore, isFetching]);
 
-  // Reset when search changes
-  const firstFetch = useRef(true); //prevent reset on first fetch
-  useEffect(() => {
-    if(firstFetch.current){
-      firstFetch.current = false;
-      return;
-    }
-    setVideos([]);
-    setHasMore(true);
-    setIsFetching(false);
-    setQuery(search);
-    setpage(1);
-  }, [search]);
-
-  if (loading && page===1) return <LoadingSpinner/>;
+  if (isLoading) return <LoadingSpinner/>;
 
   return (
     <>
@@ -104,7 +58,7 @@ function Home() {
 
       {/* Loader element at the bottom */}
       <div ref={loaderRef} className="h-10"></div>
-      {isFetching  && page > 1 && (
+      {isFetchingNextPage && (
         <div className="flex items-center justify-center py-4 text-white"><LoaderCircle className="animate-spin"/></div>
       )}
     </>
