@@ -16,17 +16,17 @@ function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onTog
   return (
     <div
       onClick={() => navigate(`/player/${video._id}`)} 
-      className={`flex ${vertical ? 'flex-col flex-4' : 'flex-row'} w-full rounded-2xl hover:saturate-125 hover:bg-zinc-800 px-1 py-2 relative gap-2 cursor-pointer`}
+      className={`flex ${vertical ? 'flex-col flex-4' : 'flex-col sm:flex-row'} w-full rounded-2xl hover:saturate-125 hover:bg-zinc-800 px-1 py-2 relative gap-2 cursor-pointer`}
     >
-      <div className={`relative ${vertical ? "w-72 aspect-video" : "w-72 aspect-video shrink-0"}`}>
+      <div className={`relative ${vertical ? "w-full sm:w-72 aspect-video" : "w-full sm:w-72 aspect-video sm:shrink-0"}`}>
         <Link to={`/player/${video._id}`} onClick={(e) => e.stopPropagation()} className="block relative aspect-video">
           <img
-            className="rounded-2xl w-full h-full object-cover pointer-events-none select-none cursor-pointer" //pointer event none to hide image/thumbnail url
+            className="rounded-2xl w-full h-full object-cover pointer-events-none select-none cursor-pointer"
             draggable="false"
             src={getThumbnailUrl(video.thumbnail)}
             alt={video.title}
-            loading="lazy" //load the thumbnail only when needed
-            decoding="async" // Load and decode the image without blocking page rendering.
+            loading="lazy"
+            decoding="async"
           />
           {/* Duration badge */}
           <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
@@ -37,7 +37,7 @@ function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onTog
       
       <div className="flex flex-1 relative gap-2 p-1.5 pr-10">
         <div>
-          <h3 className="text-stone-100 font-semibold line-clamp-2 wrap-break-words">{video.title}</h3>  {/**make changes to it later. */}
+          <h3 className="text-stone-100 font-semibold line-clamp-2 wrap-break-words">{video.title}</h3>
           
           <div className="flex gap-1 text-xs items-center font-semibold text-zinc-400">
             {showOwner && (
@@ -80,4 +80,4 @@ function VideoCardVertical({ video, showOwner = true, actions, isMenuOpen, onTog
   )
 }
 
-export default VideoCardVertical
+export default VideoCardVertical;

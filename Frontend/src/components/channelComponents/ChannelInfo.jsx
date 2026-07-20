@@ -42,7 +42,7 @@ function ChannelInfo({channel, username, user}) {
       </div>
 
       {descriptionBox && (
-        <div className="fixed inset-0 z-50 flex justify-center p-20">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-20">
 
           {/* Overlay */}
           <div
@@ -53,7 +53,7 @@ function ChannelInfo({channel, username, user}) {
           />
 
           {/* Modal */}
-          <div className="relative z-10 w-100 bg-[#1a1a1a] rounded-2xl p-3">
+          <div className="relative z-10 w-full max-w-md bg-[#1a1a1a] rounded-2xl p-3">
             <DescriptionBox 
               channel={channel} 
               setDescriptionBox={setDescriptionBox} 

@@ -11,7 +11,7 @@ function VideoGrid({videos, showOwner=true, getActions}) {
     return <p className="text-white p-4">No videos found</p>;
   }
   return (
-    <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-3 px-8 py-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 px-3 sm:px-6 md:px-8 py-3">
       {videos.map((video) => (
         <VideoCard 
           video={video} 

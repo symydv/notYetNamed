@@ -56,29 +56,32 @@ function Header() {
   return (
     <div className="fixed top-0 left-0 h-16 w-full pt-2 bg-zinc-900 z-50">
       
-      <div className="relative flex items-center px-4">
+      <div className="flex items-center gap-2 px-3 sm:px-4 sm:relative">
         
         {/* Left */}
-        <div className="font-bold text-white cursor-pointer hover:text-stone-300 " onClick={goHome}>
+        <div className="shrink-0 font-bold text-white cursor-pointer hover:text-stone-300 text-sm sm:text-base" onClick={goHome}>
           Header
         </div>
 
-        {/* Center */}
-        <form onSubmit={handleSubmit } className="absolute left-1/2 -translate-x-1/2 flex items-center">
-          <div className="w-48 sm:w-64 md:w-80 lg:w-120 sm:flex items-center h-9 border border-gray-700 rounded-full overflow-hidden bg-black text-gray-100 text-sm">
+        {/* Center: flows inline and flexes on mobile, floats centered from sm up */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 min-w-0 flex items-center justify-center sm:flex-none sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+        >
+          <div className="flex w-full max-w-[220px] sm:max-w-none sm:w-64 md:w-80 lg:w-120 items-center h-9 border border-gray-700 rounded-full overflow-hidden bg-black text-gray-100 text-sm">
 
             <input
               type="text"
               placeholder="Search"
               id="video-title"
-              className="h-full w-150 px-4 outline-none bg-transparent"
+              className="h-full w-full min-w-0 px-3 sm:px-4 outline-none bg-transparent"
               value={search}
               onChange={(e)=> setSearch(e.target.value)}
             />
 
             <button
               type="submit"
-              className="h-full px-5 bg-zinc-800 hover:bg-zinc-700 border-l border-zinc-800 cursor-pointer"
+              className="h-full shrink-0 px-3 sm:px-5 bg-zinc-800 hover:bg-zinc-700 border-l border-zinc-800 cursor-pointer"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -99,12 +102,12 @@ function Header() {
           </div>
         </form>
 
-        <div className="ml-auto text-xs sm:text-sm md:text-md">
+        <div className="shrink-0 ml-auto text-xs sm:text-sm md:text-md">
           {!user ? (
             <div className="flex overflow-hidden rounded-full border border-zinc-700 bg-zinc-900 ">
               <button
                 onClick={goToLogin}
-                className="px-5 cursor-pointer py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 hover:text-red-300"
+                className="px-3 sm:px-5 cursor-pointer py-2 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-zinc-800 hover:text-red-300"
               >
                 Login
               </button>
@@ -113,19 +116,19 @@ function Header() {
 
               <button
                 onClick={goToSignUp}
-                className="px-5 cursor-pointer py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 hover:text-red-300"
+                className="px-3 sm:px-5 cursor-pointer py-2 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-zinc-800 hover:text-red-300"
               >
                 Sign Up
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <div 
-                className="flex items-center bg-zinc-800 text-white rounded-2xl gap-0.5 p-1.5 text-sm cursor-pointer hover:bg-zinc-700 border border-zinc-700 " 
+                className="flex items-center bg-zinc-800 text-white rounded-2xl gap-0.5 p-1.5 text-xs sm:text-sm cursor-pointer hover:bg-zinc-700 border border-zinc-700 " 
                 onClick={() => navigate("/upload")}
               >
-                Upload
-                <MdOutlineAddCircle className=" text-white text-xl hover:text-gray-300"/>
+                <span className="hidden sm:inline">Upload</span>
+                <MdOutlineAddCircle className=" text-white text-lg sm:text-xl hover:text-gray-300"/>
               </div>
               {!showUserMenu? (
                 <img
@@ -133,10 +136,10 @@ function Header() {
                   src={getAvatarUrl(user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=0f172a&color=fff`)}  //this function is to resize the avatar image for optimization, not neccesary
                   alt="profile"
                   onClick={() =>setShowUserMenu(true)}
-                  className="w-10 h-10 rounded-full cursor-pointer border border-zinc-700"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full cursor-pointer border border-zinc-700"
                 />
               ):(
-                <div className="w-10 h-10 z-50 text-white flex items-center justify-center rounded-full border cursor-pointer border-zinc-700 " onClick={()=> setShowUserMenu(false)}><X/></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 z-50 text-white flex items-center justify-center rounded-full border cursor-pointer border-zinc-700 " onClick={()=> setShowUserMenu(false)}><X/></div>
               )}
               <UserMenu showUserMenu={showUserMenu} setShowUserMenu={setShowUserMenu} setShowLogoutModal={setShowLogoutModal} user={user}/>
             </div>

@@ -59,7 +59,7 @@ export function Upload() {
     }
   }
   return (
-    <div className="min-h-screen bg-zinc-950 text-white px-4 py-10">
+    <div className="min-h-screen bg-zinc-950 text-white px-3 sm:px-4 py-6 sm:py-10">
       <Helmet>
         <title>
           Video Upload - Tapes
@@ -68,13 +68,13 @@ export function Upload() {
       <div className="max-w-3xl mx-auto">
         {/* Heading */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold">Upload a Video</h1>
+          <h1 className="text-2xl sm:text-4xl font-bold">Upload a Video</h1>
           <p className="text-zinc-400 mt-2">
             Share your content with the world.
           </p>
         </div>
 
-        <form onSubmit={uploadHandler} className="bg-zinc-900 border border-zinc-500 rounded-2xl shadow-2xl p-8 space-y-8" >
+        <form onSubmit={uploadHandler} className="bg-zinc-900 border border-zinc-500 rounded-2xl shadow-2xl p-4 sm:p-8 space-y-6 sm:space-y-8" >
           {/* Video Upload */}
           <div>
             <h2 className="text-lg font-semibold mb-3">Video File</h2>

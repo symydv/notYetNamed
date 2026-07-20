@@ -12,8 +12,8 @@ export default function NotFound() {
         </title>
       </Helmet>
       <div className="mb-5 flex flex-col items-center justify-center font-medium">
-        <h1 className="text-8xl font-bold text-amber-200 underline font-mono mb-2">404</h1>
-        <p >The page you're looking for doesn't exist.</p>
+        <h1 className="text-6xl sm:text-8xl font-bold text-amber-200 underline font-mono mb-2">404</h1>
+        <p className="text-center px-4">The page you're looking for doesn't exist.</p>
       </div>
 
       <button 

@@ -5,7 +5,7 @@ const tabs = ["Videos", "Playlists", "Posts"];
 function ChannelTabs({ currentTab, setCurrentTab }) {
   return (
     <div className='sticky top-14 z-10 border-b border-zinc-700 backdrop-blur-xl text-zinc-950'>
-      <div className="max-h-full  mb-3 flex  justify-start gap-10 w-full text-sm font-semibold text-zinc-300">
+      <div className="max-h-full  mb-3 flex  justify-start gap-6 sm:gap-10 w-full text-sm font-semibold text-zinc-300">
         {tabs.map((tab) => (
           <TabButton
             key={tab}

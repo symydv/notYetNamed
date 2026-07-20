@@ -24,7 +24,7 @@ function App() {
     <>
       <Toaster position="top-center" />
       <Header/>
-      <div className={`pt-16 min-h-screen bg-linear-to-b from-zinc-900 via-zinc-950 to-black ${showSidebar ? "pl-16" : ""}`}>
+      <div className={`pt-16 min-h-screen bg-linear-to-b from-zinc-900 via-zinc-950 to-black ${showSidebar ? "pb-16 sm:pb-0 sm:pl-16" : ""}`}>
         {showSidebar && <Sidebar />}
         <main className="flex-1 min-w-0">
           <Outlet />

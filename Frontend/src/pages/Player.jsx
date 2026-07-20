@@ -99,13 +99,13 @@ function Player(){
 
   
   return (
-  <div className="w-full px-6 py-2 grid grid-cols-9">
+  <div className="w-full px-3 sm:px-6 py-2 grid grid-cols-1 lg:grid-cols-9">
     <Helmet>
       <title>
         {video?.title ? `${video.title} - Tapes` : "Loading... - Tapes"}
       </title>
     </Helmet>
-    <div className="w-full max-w-6xl col-span-7">
+    <div className="w-full max-w-6xl col-span-1 lg:col-span-7">
       {/* Video */}
       <div className="aspect-video bg-black rounded-2xl overflow-hidden">
         <video

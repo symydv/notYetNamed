@@ -35,14 +35,14 @@ function History() {
     return <LoadingSpinner/>
   }
   return (
-    <div className="text-white px-8 py-6">
+    <div className="text-white px-3 sm:px-6 md:px-8 py-6">
       <Helmet>
         <title>
           Watch History - Tapes
         </title>
       </Helmet>
-      <div className="relative mb-8 max-w-6xl overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900/70 backdrop-blur-xl px-6 py-5">
-        <div className="flex items-center justify-between gap-6">
+      <div className="relative mb-8 max-w-6xl overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900/70 backdrop-blur-xl px-4 sm:px-6 py-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
           <div>
             <p className="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-amber-500/80">
               Recently watched
@@ -54,7 +54,7 @@ function History() {
  
           <button
             onClick={() => setDeleteHistoryModal(true)}
-            className="group flex items-center gap-2 rounded-full border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 transition-colors cursor-pointer hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400"
+            className="group self-start sm:self-auto flex items-center gap-2 rounded-full border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 transition-colors cursor-pointer hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400"
           >
             <Trash2 className="size-4 transition-transform group-hover:-rotate-6" />
             Clear history
