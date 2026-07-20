@@ -1,4 +1,5 @@
 import { createRoot } from 'react-dom/client'
+import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import App from './App.jsx'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
@@ -20,10 +21,10 @@ import You from './pages/userPages/You.jsx'
 import History from './pages/userPages/History.jsx'
 import Liked from './pages/userPages/Liked.jsx'
 import { QueryProvider } from './providers/QueryProvider.jsx'
-import Playlists from './pages/userPages/Playlists.jsx'
+import MyPlaylists from './pages/userPages/MyPlaylists.jsx'
 import PlaylistDetails from './pages/userPages/PlaylistDetails.jsx'
 import NotFound from './pages/NotFound.jsx'
-import { HelmetProvider } from 'react-helmet-async'
+
 
 const router = createBrowserRouter([
   {
@@ -78,7 +79,7 @@ const router = createBrowserRouter([
         path:"playlists",
         element:(
           <ProtectedRoute>
-            <Playlists/>
+            <MyPlaylists/>
           </ProtectedRoute>
         )
       },

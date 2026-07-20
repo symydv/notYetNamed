@@ -9,7 +9,6 @@ dotenv.config({
 })
 
 
-
 connectDB()  //async function automatically returns a promise so we can use .then() and .catch() here.
 .then(() => {
     app.listen(process.env.PORT || 8000, () => {

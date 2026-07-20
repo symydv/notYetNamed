@@ -1,9 +1,8 @@
-import React from 'react'
+// components/channelComponents/ChannelPlaylists.jsx
+import Playlists from "../Playlists.jsx";
 
-function ChannelPlaylists() {
-  return (
-    <div className='text-white text-2xl flex justify-center items-center font-bold' >Comming soon</div>
-  )
+function ChannelPlaylists({ channel }) {
+  return <Playlists userId={channel._id} />;
 }
 
 export default ChannelPlaylists
