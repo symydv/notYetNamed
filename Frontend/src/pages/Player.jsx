@@ -90,23 +90,31 @@ function Player() {
     likeMutation.mutate();
   };
 
-  if (loading) return <LoadingSpinner />;
+  if (loading) return(
+    <>
+      <Helmet><title>Loading... - Tapes</title></Helmet>
+      <LoadingSpinner />
+    </>
+  ) 
 
   if (isError || !video) {
     return (
-      <div className="w-full py-24 text-center text-white">
-        <p className="text-xl font-semibold">Video not found</p>
-        <p className="text-zinc-400 text-sm mt-2">
-          This video may have been removed or the link is incorrect.
-        </p>
-      </div>
+      <>
+        <Helmet><title>Video not found - Tapes</title></Helmet>
+        <div className="w-full py-24 text-center text-white">
+          <p className="text-xl font-semibold">Video not found</p>
+          <p className="text-zinc-400 text-sm mt-2">
+            This video may have been removed or the link is incorrect.
+          </p>
+        </div>
+      </>
     );
   }
 
   return (
     <div className="w-full max-w-450 mx-auto px-3 sm:px-6 py-2 grid grid-cols-1 lg:grid-cols-3 gap-6">
       <Helmet>
-        <title>{video.title} - Tapes</title>
+        <title>{`${video?.title || "Video"} - Tapes`}</title>
       </Helmet>
 
       <div className="w-full col-span-1 lg:col-span-2">
